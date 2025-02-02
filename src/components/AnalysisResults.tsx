@@ -45,6 +45,37 @@ interface AnalysisResult {
       fill: boolean;
     }[];
   };
+  structuralAnalysis?: {
+    hairGrowthCycle: number[];
+    curlPatternDistribution: Array<Record<string, number>>;
+    growthPhaseDistribution: Array<Record<string, number>>;
+  };
+  quickSummary?: string;
+  hairInformation?: {
+    diagnosticAnalysis: string;
+    careTips: string[];
+  };
+  recommendedTreatments?: {
+    primary: {
+      name: string;
+      description: string;
+      match: number;
+    };
+    secondary: {
+      name: string;
+      description: string;
+      match: number;
+    };
+    supporting: {
+      name: string;
+      description: string;
+      match: number;
+    };
+    other: Array<{
+      name: string;
+      match: number;
+    }>;
+  };
 }
 
 interface HairDiameter {
@@ -84,7 +115,6 @@ const defaultMetrics = [
 ];
 
 const transformApiResponse = (apiResponse: any): AnalysisResult => {
-  // Transform metrics from object to array format
   const metricsArray = Object.entries(apiResponse.metrics || {}).map(([key, value]) => {
     const getIcon = (key: string) => {
       const iconMap: { [key: string]: string } = {
@@ -107,27 +137,45 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
       return iconMap[key] || "info";
     };
 
-    // Handle special cases like hairDiameter with type checking
     let displayValue: string;
     if (typeof value === 'object' && value !== null && 'root' in value && 'tip' in value) {
       const hairDiameter = value as HairDiameter;
       displayValue = `Root: ${hairDiameter.root}, Tip: ${hairDiameter.tip}`;
+    } else if (typeof value === 'object' && value !== null) {
+      displayValue = Object.entries(value)
+        .map(([k, v]) => `${k}: ${v}%`)
+        .join(', ');
     } else {
       displayValue = String(value);
     }
 
     return {
       icon: getIcon(key),
-      label: key.split(/(?=[A-Z])/).join(" "), // Convert camelCase to Space Separated
+      label: key.split(/(?=[A-Z])/).join(" "),
       value: displayValue,
       color: key === 'healthStatus' && value !== 'Good' ? 'text-yellow-400' : undefined
     };
   });
 
+  const healthData = apiResponse.structuralAnalysis?.hairGrowthCycle ? {
+    labels: ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
+    datasets: [{
+      label: 'Hair Growth Cycle',
+      data: apiResponse.structuralAnalysis.hairGrowthCycle,
+      borderColor: '#9b87f5',
+      backgroundColor: 'rgba(155, 135, 245, 0.1)',
+      fill: true,
+    }]
+  } : defaultHealthData;
+
   return {
     metrics: metricsArray,
     healthScore: Number(apiResponse.overallHealthScore) || 76,
-    healthData: defaultHealthData, // Keep default chart data for now
+    healthData,
+    structuralAnalysis: apiResponse.structuralAnalysis,
+    quickSummary: apiResponse.quickSummary,
+    hairInformation: apiResponse.hairInformation,
+    recommendedTreatments: apiResponse.recommendedTreatments,
   };
 };
 
@@ -215,9 +263,7 @@ const AnalysisResults = () => {
         <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
           <h3 className="text-lg font-medium mb-2">Quick Summary</h3>
           <p className="text-gray-300">
-            Your scalp and hair analysis shows key metrics including sebum levels, pore condition, inflammation markers, and follicular activity. 
-            The AI detected normal sebum production, clear pores with minimal inflammation, and 85% anagen phase follicles indicating healthy growth cycle. 
-            Your hair density is 165 hairs/cm² with average strand thickness of 0.08mm. Minimal breakage was observed at 7% of analyzed strands.
+            {analysisData.quickSummary || "Your scalp and hair analysis shows key metrics including sebum levels, pore condition, inflammation markers, and follicular activity."}
           </p>
         </div>
 
@@ -262,9 +308,7 @@ const AnalysisResults = () => {
           <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
             <h3 className="text-lg font-medium mb-2">Diagnostic Analysis</h3>
             <p className="text-gray-300">
-              Advanced microscopic analysis reveals signs of androgenetic alopecia with approximately 25% miniaturized follicles 
-              concentrated in the crown and temple areas. Telogen Effluvium is indicated by an elevated percentage (28%) of club 
-              hairs in the telogen phase, suggesting recent systemic stress.
+              {analysisData.hairInformation?.diagnosticAnalysis || "Advanced microscopic analysis reveals signs of androgenetic alopecia..."}
             </p>
           </div>
 
@@ -282,14 +326,20 @@ const AnalysisResults = () => {
           <div>
             <h3 className="text-sm text-gray-400">Care Tips</h3>
             <ul className="list-disc list-inside text-gray-300 space-y-2">
-              <li>Use DHT-blocking shampoo</li>
-              <li>Supplement with Biotin & Iron</li>
-              <li>Scalp massage 2x daily</li>
-              <li>Minimize heat styling</li>
-              <li>Practice stress management</li>
-              <li>Monthly scalp detox</li>
-              <li>Use microneeding treatment</li>
-              <li>Apply growth serums</li>
+              {analysisData.hairInformation?.careTips?.map((tip, index) => (
+                <li key={index}>{tip}</li>
+              )) || (
+                <>
+                  <li>Use DHT-blocking shampoo</li>
+                  <li>Supplement with Biotin & Iron</li>
+                  <li>Scalp massage 2x daily</li>
+                  <li>Minimize heat styling</li>
+                  <li>Practice stress management</li>
+                  <li>Monthly scalp detox</li>
+                  <li>Use microneeding treatment</li>
+                  <li>Apply growth serums</li>
+                </>
+              )}
             </ul>
           </div>
         </div>
@@ -299,71 +349,134 @@ const AnalysisResults = () => {
       <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
         <h2 className="text-xl font-semibold mb-4">Recommended Treatments</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
-            <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
-            <div className="flex items-center mb-3">
-              <i className="fas fa-check-circle text-green-500 mr-2"></i>
-              <span className="font-medium">FUE (Follicular Unit Extraction)</span>
-            </div>
-            <p className="text-sm text-gray-300">
-              Best suited for your pattern of hair loss and scalp condition. 
-              Minimally invasive with natural-looking results.
-            </p>
-            <div className="mt-3">
-              <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">98% Match</span>
-            </div>
-          </div>
+          {analysisData.recommendedTreatments ? (
+            <>
+              <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
+                <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
+                <div className="flex items-center mb-3">
+                  <i className="fas fa-check-circle text-green-500 mr-2"></i>
+                  <span className="font-medium">{analysisData.recommendedTreatments.primary.name}</span>
+                </div>
+                <p className="text-sm text-gray-300">
+                  {analysisData.recommendedTreatments.primary.description}
+                </p>
+                <div className="mt-3">
+                  <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">
+                    {analysisData.recommendedTreatments.primary.match}% Match
+                  </span>
+                </div>
+              </div>
 
-          <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
-            <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
-            <div className="flex items-center mb-3">
-              <i className="fas fa-check-circle text-blue-500 mr-2"></i>
-              <span className="font-medium">PRP Treatment</span>
-            </div>
-            <p className="text-sm text-gray-300">
-              Recommended for strengthening existing hair and promoting new growth.
-              Can be combined with FUE.
-            </p>
-            <div className="mt-3">
-              <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">85% Match</span>
-            </div>
-          </div>
+              <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
+                <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
+                <div className="flex items-center mb-3">
+                  <i className="fas fa-check-circle text-blue-500 mr-2"></i>
+                  <span className="font-medium">{analysisData.recommendedTreatments.secondary.name}</span>
+                </div>
+                <p className="text-sm text-gray-300">
+                  {analysisData.recommendedTreatments.secondary.description}
+                </p>
+                <div className="mt-3">
+                  <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
+                    {analysisData.recommendedTreatments.secondary.match}% Match
+                  </span>
+                </div>
+              </div>
 
-          <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
-            <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
-            <div className="flex items-center mb-3">
-              <i className="fas fa-check-circle text-purple-500 mr-2"></i>
-              <span className="font-medium">Exosomes Therapy</span>
-            </div>
-            <p className="text-sm text-gray-300">
-              Excellent for scalp health and strengthening follicles.
-              Complementary to main treatments.
-            </p>
-            <div className="mt-3">
-              <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">75% Match</span>
-            </div>
-          </div>
+              <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
+                <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
+                <div className="flex items-center mb-3">
+                  <i className="fas fa-check-circle text-purple-500 mr-2"></i>
+                  <span className="font-medium">{analysisData.recommendedTreatments.supporting.name}</span>
+                </div>
+                <p className="text-sm text-gray-300">
+                  {analysisData.recommendedTreatments.supporting.description}
+                </p>
+                <div className="mt-3">
+                  <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">
+                    {analysisData.recommendedTreatments.supporting.match}% Match
+                  </span>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
+                <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
+                <div className="flex items-center mb-3">
+                  <i className="fas fa-check-circle text-green-500 mr-2"></i>
+                  <span className="font-medium">FUE (Follicular Unit Extraction)</span>
+                </div>
+                <p className="text-sm text-gray-300">
+                  Best suited for your pattern of hair loss and scalp condition. 
+                  Minimally invasive with natural-looking results.
+                </p>
+                <div className="mt-3">
+                  <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">98% Match</span>
+                </div>
+              </div>
+
+              <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
+                <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
+                <div className="flex items-center mb-3">
+                  <i className="fas fa-check-circle text-blue-500 mr-2"></i>
+                  <span className="font-medium">PRP Treatment</span>
+                </div>
+                <p className="text-sm text-gray-300">
+                  Recommended for strengthening existing hair and promoting new growth.
+                  Can be combined with FUE.
+                </p>
+                <div className="mt-3">
+                  <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">85% Match</span>
+                </div>
+              </div>
+
+              <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
+                <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
+                <div className="flex items-center mb-3">
+                  <i className="fas fa-check-circle text-purple-500 mr-2"></i>
+                  <span className="font-medium">Exosomes Therapy</span>
+                </div>
+                <p className="text-sm text-gray-300">
+                  Excellent for scalp health and strengthening follicles.
+                  Complementary to main treatments.
+                </p>
+                <div className="mt-3">
+                  <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">75% Match</span>
+                </div>
+              </div>
+            </>
+          )}
         </div>
 
         <div className="mt-6">
           <h3 className="text-lg font-medium mb-3">Other Available Treatments</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="bg-gray-700/80 p-3 rounded-lg text-center">
-              <span className="text-sm">Hair Transplant</span>
-              <div className="text-xs text-gray-400 mt-1">65% Match</div>
-            </div>
-            <div className="bg-gray-700/80 p-3 rounded-lg text-center">
-              <span className="text-sm">FUT</span>
-              <div className="text-xs text-gray-400 mt-1">45% Match</div>
-            </div>
-            <div className="bg-gray-700/80 p-3 rounded-lg text-center">
-              <span className="text-sm">SMP</span>
-              <div className="text-xs text-gray-400 mt-1">40% Match</div>
-            </div>
-            <div className="bg-gray-700/80 p-3 rounded-lg text-center">
-              <span className="text-sm">Micro FUE</span>
-              <div className="text-xs text-gray-400 mt-1">55% Match</div>
-            </div>
+            {analysisData.recommendedTreatments?.other.map((treatment, index) => (
+              <div key={index} className="bg-gray-700/80 p-3 rounded-lg text-center">
+                <span className="text-sm">{treatment.name}</span>
+                <div className="text-xs text-gray-400 mt-1">{treatment.match}% Match</div>
+              </div>
+            )) || (
+              <>
+                <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                  <span className="text-sm">Hair Transplant</span>
+                  <div className="text-xs text-gray-400 mt-1">65% Match</div>
+                </div>
+                <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                  <span className="text-sm">FUT</span>
+                  <div className="text-xs text-gray-400 mt-1">45% Match</div>
+                </div>
+                <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                  <span className="text-sm">SMP</span>
+                  <div className="text-xs text-gray-400 mt-1">40% Match</div>
+                </div>
+                <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                  <span className="text-sm">Micro FUE</span>
+                  <div className="text-xs text-gray-400 mt-1">55% Match</div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
