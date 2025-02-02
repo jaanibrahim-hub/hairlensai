@@ -47,6 +47,11 @@ interface AnalysisResult {
   };
 }
 
+interface HairDiameter {
+  root: string;
+  tip: string;
+}
+
 const defaultHealthData = {
   labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
   datasets: [
@@ -102,10 +107,14 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
       return iconMap[key] || "info";
     };
 
-    // Handle special cases like hairDiameter
-    const displayValue = typeof value === 'object' 
-      ? `Root: ${value.root}, Tip: ${value.tip}`
-      : String(value);
+    // Handle special cases like hairDiameter with type checking
+    let displayValue: string;
+    if (typeof value === 'object' && value !== null && 'root' in value && 'tip' in value) {
+      const hairDiameter = value as HairDiameter;
+      displayValue = `Root: ${hairDiameter.root}, Tip: ${hairDiameter.tip}`;
+    } else {
+      displayValue = String(value);
+    }
 
     return {
       icon: getIcon(key),
