@@ -127,12 +127,11 @@ Please ensure all measurements are precise and include specific numerical values
 async function makeApiCall(imageBase64: string, apiKey: string): Promise<HairAnalysisResponse | null> {
   try {
     const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+      `https://generativelanguage.googleapis.com/v1/models/gemini-pro-vision:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
           contents: [
@@ -140,24 +139,36 @@ async function makeApiCall(imageBase64: string, apiKey: string): Promise<HairAna
               parts: [
                 { text: ANALYSIS_PROMPT },
                 {
-                  inlineData: {
-                    mimeType: "image/jpeg",
+                  inline_data: {
+                    mime_type: "image/jpeg",
                     data: imageBase64,
                   },
                 },
               ],
             },
           ],
+          generationConfig: {
+            temperature: 0.4,
+            topK: 32,
+            topP: 1,
+            maxOutputTokens: 4096,
+          },
         }),
       }
     );
 
     if (!response.ok) {
-      console.warn(`API call failed with key ${apiKey.substring(0, 5)}...`);
+      console.warn(`API call failed with key ${apiKey.substring(0, 5)}... Status: ${response.status}`);
       return null;
     }
 
     const data = await response.json();
+    
+    if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+      console.warn('Invalid response format from API');
+      return null;
+    }
+
     return JSON.parse(data.candidates[0].content.parts[0].text);
   } catch (error) {
     console.warn(`Error with API key ${apiKey.substring(0, 5)}...`, error);
