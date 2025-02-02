@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -13,7 +13,7 @@ import {
   Legend,
   Filler,
 } from 'chart.js';
-import { Line, Pie } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 
 ChartJS.register(
   ArcElement,
@@ -27,37 +27,78 @@ ChartJS.register(
   Filler
 );
 
-const AnalysisResults = () => {
-  const metrics = [
-    { icon: "cut", label: "Hair Type", value: "Type 2B Wavy" },
-    { icon: "heart", label: "Health Status", value: "Requires Attention", color: "text-yellow-400" },
-    { icon: "seedling", label: "Porosity", value: "Medium" },
-    { icon: "temperature-high", label: "Density", value: "Medium-High" },
-    { icon: "tint", label: "Elasticity", value: "Good" },
-    { icon: "sun", label: "Scalp Condition", value: "Mild Inflammation" },
-    { icon: "ruler-vertical", label: "Hair Length", value: "Medium (12-16 inches)" },
-    { icon: "flask", label: "Chemical Treatment", value: "Minimal" },
-    { icon: "shield-alt", label: "Protection Level", value: "Moderate" },
-    { icon: "scissors", label: "Breakage Rate", value: "7% (Low)" },
-    { icon: "microscope", label: "Strand Thickness", value: "0.08mm (Medium)" },
-    { icon: "grip-lines", label: "Follicle Density", value: "165 hairs/cm²" },
-    { icon: "ruler", label: "Hair Diameter", value: "Root: 0.09mm, Tip: 0.06mm" },
-    { icon: "percent", label: "Growth Phase", value: "85% Anagen" },
-    { icon: "exclamation-triangle", label: "Damage Analysis", value: "Minimal" },
-  ];
-
-  const healthData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [
-      {
-        label: 'Hair Health',
-        data: [65, 70, 68, 72, 75, 76],
-        borderColor: '#9b87f5',
-        backgroundColor: 'rgba(155, 135, 245, 0.1)',
-        fill: true,
-      }
-    ]
+interface AnalysisResult {
+  metrics: {
+    icon: string;
+    label: string;
+    value: string;
+    color?: string;
+  }[];
+  healthScore: number;
+  healthData: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      borderColor: string;
+      backgroundColor: string;
+      fill: boolean;
+    }[];
   };
+}
+
+const defaultHealthData = {
+  labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+  datasets: [
+    {
+      label: 'Hair Health',
+      data: [65, 70, 68, 72, 75, 76],
+      borderColor: '#9b87f5',
+      backgroundColor: 'rgba(155, 135, 245, 0.1)',
+      fill: true,
+    }
+  ]
+};
+
+const defaultMetrics = [
+  { icon: "cut", label: "Hair Type", value: "Type 2B Wavy" },
+  { icon: "heart", label: "Health Status", value: "Requires Attention", color: "text-yellow-400" },
+  { icon: "seedling", label: "Porosity", value: "Medium" },
+  { icon: "temperature-high", label: "Density", value: "Medium-High" },
+  { icon: "tint", label: "Elasticity", value: "Good" },
+  { icon: "sun", label: "Scalp Condition", value: "Mild Inflammation" },
+  { icon: "ruler-vertical", label: "Hair Length", value: "Medium (12-16 inches)" },
+  { icon: "flask", label: "Chemical Treatment", value: "Minimal" },
+  { icon: "shield-alt", label: "Protection Level", value: "Moderate" },
+  { icon: "scissors", label: "Breakage Rate", value: "7% (Low)" },
+  { icon: "microscope", label: "Strand Thickness", value: "0.08mm (Medium)" },
+  { icon: "grip-lines", label: "Follicle Density", value: "165 hairs/cm²" },
+  { icon: "ruler", label: "Hair Diameter", value: "Root: 0.09mm, Tip: 0.06mm" },
+  { icon: "percent", label: "Growth Phase", value: "85% Anagen" },
+  { icon: "exclamation-triangle", label: "Damage Analysis", value: "Minimal" },
+];
+
+const AnalysisResults = () => {
+  const [analysisData, setAnalysisData] = useState<AnalysisResult>({
+    metrics: defaultMetrics,
+    healthScore: 76,
+    healthData: defaultHealthData,
+  });
+
+  useEffect(() => {
+    const handleAnalysisComplete = (event: CustomEvent<AnalysisResult>) => {
+      console.log('Analysis results received:', event.detail);
+      if (event.detail) {
+        setAnalysisData(event.detail);
+      }
+    };
+
+    window.addEventListener('hairAnalysisComplete', handleAnalysisComplete as EventListener);
+
+    return () => {
+      window.removeEventListener('hairAnalysisComplete', handleAnalysisComplete as EventListener);
+    };
+  }, []);
 
   const chartOptions = {
     responsive: true,
@@ -103,15 +144,15 @@ const AnalysisResults = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-gray-600/50 p-3 rounded">
               <h4 className="font-medium mb-2">Hair Growth Cycle</h4>
-              <Line data={healthData} options={chartOptions} />
+              <Line data={analysisData.healthData} options={chartOptions} />
             </div>
             <div className="bg-gray-600/50 p-3 rounded">
               <h4 className="font-medium mb-2">Curl Pattern Distribution</h4>
-              <Line data={healthData} options={chartOptions} />
+              <Line data={analysisData.healthData} options={chartOptions} />
             </div>
             <div className="bg-gray-600/50 p-3 rounded">
               <h4 className="font-medium mb-2">Growth Phase Distribution</h4>
-              <Line data={healthData} options={chartOptions} />
+              <Line data={analysisData.healthData} options={chartOptions} />
             </div>
           </div>
         </div>
@@ -128,13 +169,13 @@ const AnalysisResults = () => {
 
         {/* Health Charts */}
         <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
-          <Line data={healthData} options={chartOptions} />
+          <Line data={analysisData.healthData} options={chartOptions} />
           <p className="text-center text-sm text-gray-400 mt-2">Hair Health Metrics Over Time</p>
         </div>
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {metrics.map((metric) => (
+          {analysisData.metrics.map((metric) => (
             <div
               key={metric.label}
               className="bg-gray-700/80 rounded-lg p-4 hover:bg-gray-700 transition-colors duration-300 flex flex-col space-y-2"
@@ -154,9 +195,9 @@ const AnalysisResults = () => {
         <div className="mt-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-400">Overall Health Score</span>
-            <span className="text-lg font-bold text-purple-400">76%</span>
+            <span className="text-lg font-bold text-purple-400">{analysisData.healthScore}%</span>
           </div>
-          <Progress value={76} className="h-2.5 bg-gray-700" />
+          <Progress value={analysisData.healthScore} className="h-2.5 bg-gray-700" />
         </div>
       </div>
 
@@ -175,11 +216,11 @@ const AnalysisResults = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
             <div className="bg-gray-700/80 rounded-lg p-4">
-              <Line data={healthData} options={chartOptions} />
+              <Line data={analysisData.healthData} options={chartOptions} />
               <p className="text-center text-sm text-gray-400 mt-2">Hair Growth Progress</p>
             </div>
             <div className="bg-gray-700/80 rounded-lg p-4">
-              <Line data={healthData} options={chartOptions} />
+              <Line data={analysisData.healthData} options={chartOptions} />
               <p className="text-center text-sm text-gray-400 mt-2">Optimal vs Current Conditions</p>
             </div>
           </div>
