@@ -45,6 +45,26 @@ interface AnalysisResult {
       fill: boolean;
     }[];
   };
+  curlPatternData: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      borderColor: string;
+      backgroundColor: string;
+      fill: boolean;
+    }[];
+  };
+  growthPhaseData: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      borderColor: string;
+      backgroundColor: string;
+      fill: boolean;
+    }[];
+  };
   structuralAnalysis?: {
     hairGrowthCycle: number[];
     curlPatternDistribution: Array<Record<string, number>>;
@@ -157,21 +177,56 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
     };
   });
 
-  const healthData = apiResponse.structuralAnalysis?.hairGrowthCycle ? {
+  // Transform hair growth cycle data
+  const healthData = {
     labels: ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
     datasets: [{
       label: 'Hair Growth Cycle',
-      data: apiResponse.structuralAnalysis.hairGrowthCycle,
+      data: apiResponse.structuralAnalysis?.hairGrowthCycle || [65, 70, 68, 72, 75, 76],
       borderColor: '#9b87f5',
       backgroundColor: 'rgba(155, 135, 245, 0.1)',
       fill: true,
     }]
-  } : defaultHealthData;
+  };
+
+  // Transform curl pattern distribution
+  const curlPatternData = {
+    labels: apiResponse.structuralAnalysis?.curlPatternDistribution?.map((item: any) => 
+      Object.keys(item)[0]
+    ) || ['Straight', 'Wavy', 'Curly'],
+    datasets: [{
+      label: 'Curl Pattern',
+      data: apiResponse.structuralAnalysis?.curlPatternDistribution?.map((item: any) => 
+        Object.values(item)[0]
+      ) || [30, 40, 30],
+      borderColor: '#9b87f5',
+      backgroundColor: 'rgba(155, 135, 245, 0.1)',
+      fill: true,
+    }]
+  };
+
+  // Transform growth phase distribution
+  const growthPhaseData = {
+    labels: apiResponse.structuralAnalysis?.growthPhaseDistribution?.map((item: any) => 
+      Object.keys(item)[0]
+    ) || ['Anagen', 'Catagen', 'Telogen'],
+    datasets: [{
+      label: 'Growth Phase',
+      data: apiResponse.structuralAnalysis?.growthPhaseDistribution?.map((item: any) => 
+        Object.values(item)[0]
+      ) || [85, 5, 10],
+      borderColor: '#9b87f5',
+      backgroundColor: 'rgba(155, 135, 245, 0.1)',
+      fill: true,
+    }]
+  };
 
   return {
     metrics: metricsArray,
     healthScore: Number(apiResponse.overallHealthScore) || 76,
     healthData,
+    curlPatternData,
+    growthPhaseData,
     structuralAnalysis: apiResponse.structuralAnalysis,
     quickSummary: apiResponse.quickSummary,
     hairInformation: apiResponse.hairInformation,
@@ -184,6 +239,26 @@ const AnalysisResults = () => {
     metrics: defaultMetrics,
     healthScore: 76,
     healthData: defaultHealthData,
+    curlPatternData: {
+      labels: ['Straight', 'Wavy', 'Curly'],
+      datasets: [{
+        label: 'Curl Pattern',
+        data: [30, 40, 30],
+        borderColor: '#9b87f5',
+        backgroundColor: 'rgba(155, 135, 245, 0.1)',
+        fill: true,
+      }]
+    },
+    growthPhaseData: {
+      labels: ['Anagen', 'Catagen', 'Telogen'],
+      datasets: [{
+        label: 'Growth Phase',
+        data: [85, 5, 10],
+        borderColor: '#9b87f5',
+        backgroundColor: 'rgba(155, 135, 245, 0.1)',
+        fill: true,
+      }]
+    }
   });
 
   useEffect(() => {
@@ -252,51 +327,32 @@ const AnalysisResults = () => {
               <div className="mt-4 bg-gray-700/50 p-4 rounded">
                 <p className="text-gray-300 text-sm leading-relaxed">
                   This graph shows your hair's growth cycle phases over time. The peaks represent optimal growth periods (anagen phase), 
-                  while the valleys indicate resting periods (telogen phase). Your current pattern suggests a {analysisData.healthScore > 70 ? "healthy" : "slightly irregular"} growth cycle. 
-                  A higher, more consistent line indicates stronger and more sustained growth phases.
+                  while the valleys indicate resting periods (telogen phase).
                 </p>
-                <div className="mt-3 flex items-center text-sm text-purple-400">
-                  <i className="fas fa-lightbulb mr-2"></i>
-                  <span>Pro Tip: Regular scalp massages can help stimulate follicles and improve your growth cycle.</span>
-                </div>
               </div>
             </div>
 
             <div className="bg-gray-600/50 p-6 rounded">
               <h4 className="font-medium mb-4 text-lg">Curl Pattern Distribution</h4>
               <div className="aspect-w-16 aspect-h-9">
-                <Line data={analysisData.healthData} options={chartOptions} />
+                <Line data={analysisData.curlPatternData} options={chartOptions} />
               </div>
               <div className="mt-4 bg-gray-700/50 p-4 rounded">
                 <p className="text-gray-300 text-sm leading-relaxed">
-                  Your curl pattern analysis reveals a mix of wave types, predominantly Type 2B (S-shaped waves). 
-                  Understanding your curl pattern is crucial for choosing the right products and styling techniques. 
-                  The graph shows the distribution of different curl patterns across your hair, helping us recommend 
-                  the most effective care routine.
+                  Your curl pattern analysis reveals the distribution of different hair textures.
                 </p>
-                <div className="mt-3 flex items-center text-sm text-purple-400">
-                  <i className="fas fa-star mr-2"></i>
-                  <span>Key Insight: Your wave pattern suggests you'll benefit most from lightweight, moisture-retaining products.</span>
-                </div>
               </div>
             </div>
 
             <div className="bg-gray-600/50 p-6 rounded">
               <h4 className="font-medium mb-4 text-lg">Growth Phase Distribution</h4>
               <div className="aspect-w-16 aspect-h-9">
-                <Line data={analysisData.healthData} options={chartOptions} />
+                <Line data={analysisData.growthPhaseData} options={chartOptions} />
               </div>
               <div className="mt-4 bg-gray-700/50 p-4 rounded">
                 <p className="text-gray-300 text-sm leading-relaxed">
-                  This visualization shows the proportion of your hair in each growth phase: anagen (growing), 
-                  catagen (transitioning), and telogen (resting). Ideally, we want to see 80-90% in the anagen phase. 
-                  Your current distribution is {analysisData.healthScore}% anagen, indicating 
-                  {analysisData.healthScore > 80 ? " excellent growth potential" : " room for improvement"}.
+                  This visualization shows the proportion of your hair in each growth phase.
                 </p>
-                <div className="mt-3 flex items-center text-sm text-purple-400">
-                  <i className="fas fa-flask mr-2"></i>
-                  <span>Scientific Note: A higher percentage of anagen phase hairs correlates with optimal scalp health.</span>
-                </div>
               </div>
             </div>
           </div>
