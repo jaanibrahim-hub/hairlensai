@@ -55,7 +55,6 @@ interface HairAnalysisResponse {
   };
 }
 
-// API keys array for fallback mechanism
 const API_KEYS = [
   'AIzaSyCbiokMrXsfZyXHi_OFwFwM5bG9QXazCPA',
   'AIzaSyBrUoI6e9BCAarqbXQf3NfTe3wyZ_4O-Mo',
@@ -124,7 +123,33 @@ const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a comprehensi
 
 Please ensure all measurements are precise and include specific numerical values where possible. Base all assessments on visible evidence in the image.`;
 
+const validateImage = (imageBase64: string): boolean => {
+  try {
+    // Check if the string is a valid base64
+    if (!imageBase64 || !/^[A-Za-z0-9+/=]+$/.test(imageBase64)) {
+      console.warn('Invalid base64 string');
+      return false;
+    }
+
+    // Check file size (max 20MB)
+    const sizeInBytes = (imageBase64.length * 3) / 4;
+    if (sizeInBytes > 20 * 1024 * 1024) {
+      console.warn('Image size exceeds 20MB limit');
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.warn('Image validation error:', error);
+    return false;
+  }
+};
+
 async function makeApiCall(imageBase64: string, apiKey: string): Promise<HairAnalysisResponse | null> {
+  if (!validateImage(imageBase64)) {
+    throw new Error("Invalid image format or size");
+  }
+
   try {
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1/models/gemini-pro-vision:generateContent?key=${apiKey}`,
@@ -137,7 +162,9 @@ async function makeApiCall(imageBase64: string, apiKey: string): Promise<HairAna
           contents: [
             {
               parts: [
-                { text: ANALYSIS_PROMPT },
+                {
+                  text: ANALYSIS_PROMPT,
+                },
                 {
                   inline_data: {
                     mime_type: "image/jpeg",
@@ -153,12 +180,31 @@ async function makeApiCall(imageBase64: string, apiKey: string): Promise<HairAna
             topP: 1,
             maxOutputTokens: 4096,
           },
+          safetySettings: [
+            {
+              category: "HARM_CATEGORY_HARASSMENT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE",
+            },
+            {
+              category: "HARM_CATEGORY_HATE_SPEECH",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE",
+            },
+            {
+              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE",
+            },
+            {
+              category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE",
+            },
+          ],
         }),
       }
     );
 
     if (!response.ok) {
-      console.warn(`API call failed with key ${apiKey.substring(0, 5)}... Status: ${response.status}`);
+      const errorData = await response.json();
+      console.warn(`API error with key ${apiKey.substring(0, 5)}...`, errorData);
       return null;
     }
 
@@ -177,6 +223,8 @@ async function makeApiCall(imageBase64: string, apiKey: string): Promise<HairAna
 }
 
 export const analyzeHairImage = async (imageBase64: string): Promise<HairAnalysisResponse> => {
+  let lastError: Error | null = null;
+
   for (const apiKey of API_KEYS) {
     try {
       const result = await makeApiCall(imageBase64, apiKey);
@@ -186,11 +234,12 @@ export const analyzeHairImage = async (imageBase64: string): Promise<HairAnalysi
       }
     } catch (error) {
       console.warn(`Failed with API key ${apiKey.substring(0, 5)}...`, error);
+      lastError = error as Error;
       continue;
     }
   }
 
   // If all API keys fail
   toast.error("Failed to analyze image. Please try again.");
-  throw new Error("All API attempts failed");
+  throw lastError || new Error("All API attempts failed");
 };
