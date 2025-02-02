@@ -62,7 +62,7 @@ const API_KEYS = [
   'AIzaSyBcyEA5uAB0RXlLy1LKvREzlymz-DVk9SI'
 ];
 
-const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a comprehensive analysis in JSON format with the following structure:
+const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a comprehensive analysis in the following JSON format (do not include markdown formatting or json code blocks, just return the raw JSON):
 
 {
   "structuralAnalysis": {
@@ -215,7 +215,18 @@ async function makeApiCall(imageBase64: string, apiKey: string): Promise<HairAna
       return null;
     }
 
-    return JSON.parse(data.candidates[0].content.parts[0].text);
+    const responseText = data.candidates[0].content.parts[0].text;
+    
+    // Clean up any markdown formatting that might be present
+    const cleanedText = responseText.replace(/```json\n|\n```/g, '').trim();
+    
+    try {
+      return JSON.parse(cleanedText);
+    } catch (parseError) {
+      console.error('JSON parsing error:', parseError);
+      console.log('Response text:', responseText);
+      return null;
+    }
   } catch (error) {
     console.warn(`Error with API key ${apiKey.substring(0, 5)}...`, error);
     return null;
