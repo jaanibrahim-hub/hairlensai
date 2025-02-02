@@ -152,7 +152,7 @@ async function makeApiCall(imageBase64: string, apiKey: string): Promise<HairAna
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1/models/gemini-pro-vision:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: {
