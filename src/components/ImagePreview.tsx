@@ -1,10 +1,63 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
+interface Hotspot {
+  id: string;
+  x: number;
+  y: number;
+  label: string;
+  description: string;
+}
+
+const defaultHotspots: Hotspot[] = [
+  {
+    id: "crown",
+    x: 50,
+    y: 20,
+    label: "Crown Area",
+    description: "Density: Medium-high, showing healthy growth patterns",
+  },
+  {
+    id: "hairline",
+    x: 50,
+    y: 10,
+    label: "Hairline",
+    description: "Natural hairline with consistent density",
+  },
+  {
+    id: "temple",
+    x: 20,
+    y: 30,
+    label: "Temple Area",
+    description: "Good follicle density, minimal recession",
+  },
+  {
+    id: "side",
+    x: 80,
+    y: 30,
+    label: "Side Growth",
+    description: "Healthy thickness and pattern consistency",
+  },
+  {
+    id: "nape",
+    x: 50,
+    y: 80,
+    label: "Nape Area",
+    description: "Strong growth with good density",
+  }
+];
 
 const ImagePreview = () => {
   const [previewUrl, setPreviewUrl] = useState<string>("/placeholder.svg");
   const [isZoomed, setIsZoomed] = useState(false);
+  const [hotspots, setHotspots] = useState<Hotspot[]>(defaultHotspots);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -110,6 +163,32 @@ const ImagePreview = () => {
               isZoomed ? 'scale-100' : 'group-hover:scale-105'
             }`}
           />
+          <div className="absolute inset-0">
+            <TooltipProvider>
+              {hotspots.map((hotspot) => (
+                <Tooltip key={hotspot.id}>
+                  <TooltipTrigger asChild>
+                    <button
+                      className="absolute w-6 h-6 rounded-full bg-purple-500/50 hover:bg-purple-500/80 
+                               border-2 border-white transform -translate-x-1/2 -translate-y-1/2 
+                               transition-all duration-300 hover:scale-110 cursor-pointer
+                               animate-pulse hover:animate-none"
+                      style={{
+                        left: `${hotspot.x}%`,
+                        top: `${hotspot.y}%`,
+                      }}
+                    >
+                      <span className="sr-only">{hotspot.label}</span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" className="bg-gray-800 p-3 max-w-xs">
+                    <h3 className="font-medium text-white mb-1">{hotspot.label}</h3>
+                    <p className="text-sm text-gray-300">{hotspot.description}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </TooltipProvider>
+          </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="absolute bottom-4 left-4 right-4">
               <p className="text-white text-sm">
@@ -153,7 +232,7 @@ const ImagePreview = () => {
       <div className="mt-4 bg-gray-700/50 rounded-lg p-3">
         <div className="flex items-center text-sm text-gray-300">
           <i className="fas fa-info-circle text-purple-400 mr-2"></i>
-          <span>Tip: For best analysis results, ensure good lighting and a clear view of your scalp and hair</span>
+          <span>Hover over the highlighted points to see detailed analysis for each area</span>
         </div>
       </div>
     </div>
