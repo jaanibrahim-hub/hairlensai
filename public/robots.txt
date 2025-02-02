@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemaps
-Sitemap: https://hairlens.ai/sitemap.xml
+Sitemap: https://hairlensai.com/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 10
