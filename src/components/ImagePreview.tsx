@@ -28,6 +28,22 @@ const ImagePreview = () => {
     };
   }, []);
 
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        setPreviewUrl(result);
+        toast({
+          title: "Image uploaded successfully",
+          description: "Your hair analysis will begin shortly.",
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleRotate = () => {
     toast({
       title: "Image rotated",
@@ -53,15 +69,33 @@ const ImagePreview = () => {
           <i className="fas fa-image mr-2 text-purple-400"></i>
           Preview
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-purple-400 hover:text-purple-300"
-          onClick={toggleZoom}
-        >
-          <i className={`fas fa-${isZoomed ? 'compress' : 'expand'} mr-1`}></i>
-          {isZoomed ? 'Minimize' : 'Expand'}
-        </Button>
+        <div className="flex gap-2">
+          <input
+            type="file"
+            id="preview-upload"
+            className="hidden"
+            accept="image/*"
+            onChange={handleFileUpload}
+          />
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-purple-400 hover:text-purple-300 bg-gray-700"
+            onClick={() => document.getElementById('preview-upload')?.click()}
+          >
+            <i className="fas fa-upload mr-1"></i>
+            Upload
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-purple-400 hover:text-purple-300"
+            onClick={toggleZoom}
+          >
+            <i className={`fas fa-${isZoomed ? 'compress' : 'expand'} mr-1`}></i>
+            {isZoomed ? 'Minimize' : 'Expand'}
+          </Button>
+        </div>
       </h2>
       <div 
         className={`relative group transition-all duration-300 ease-in-out ${
