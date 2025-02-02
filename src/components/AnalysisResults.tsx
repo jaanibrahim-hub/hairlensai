@@ -66,7 +66,7 @@ const AnalysisResults = () => {
         display: false
       },
       tooltip: {
-        mode: 'index' as const, // Type assertion to fix the error
+        mode: 'index' as const,
         intersect: false,
       },
     },
