@@ -35,7 +35,7 @@ const AnalysisResults = () => {
             <span className="text-sm text-gray-400">Overall Health Score</span>
             <span className="text-lg font-bold text-primary">76%</span>
           </div>
-          <Progress value={76} className="bg-gray-700 h-2.5" indicatorClassName="bg-primary" />
+          <Progress value={76} className="h-2.5 bg-gray-700" />
         </div>
       </div>
       
