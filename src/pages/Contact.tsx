@@ -78,9 +78,9 @@ const Contact = () => {
           <div className="mt-8 pt-8 border-t border-gray-200">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Other Ways to Reach Us</h2>
             <div className="space-y-2 text-gray-700">
-              <p>Email: support@hairlensai.com</p>
-              <p>Location: San Francisco, CA</p>
-              <p>Hours: Monday - Friday, 9AM - 5PM PST</p>
+              <p>Email: carelessinbar@icloud.com</p>
+              <p>Location: Pakistan, Lahore</p>
+              <p>Hours: Monday - Friday, 9AM - 5PM Pakistan Time</p>
             </div>
           </div>
         </div>
