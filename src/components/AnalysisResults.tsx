@@ -78,6 +78,50 @@ const defaultMetrics = [
   { icon: "exclamation-triangle", label: "Damage Analysis", value: "Minimal" },
 ];
 
+const transformApiResponse = (apiResponse: any): AnalysisResult => {
+  // Transform metrics from object to array format
+  const metricsArray = Object.entries(apiResponse.metrics || {}).map(([key, value]) => {
+    const getIcon = (key: string) => {
+      const iconMap: { [key: string]: string } = {
+        hairType: "cut",
+        healthStatus: "heart",
+        porosity: "seedling",
+        density: "temperature-high",
+        elasticity: "tint",
+        scalpCondition: "sun",
+        hairLength: "ruler-vertical",
+        chemicalTreatment: "flask",
+        protectionLevel: "shield-alt",
+        breakageRate: "scissors",
+        strandThickness: "microscope",
+        follicleDensity: "grip-lines",
+        hairDiameter: "ruler",
+        growthPhase: "percent",
+        damageAnalysis: "exclamation-triangle"
+      };
+      return iconMap[key] || "info";
+    };
+
+    // Handle special cases like hairDiameter
+    const displayValue = typeof value === 'object' 
+      ? `Root: ${value.root}, Tip: ${value.tip}`
+      : String(value);
+
+    return {
+      icon: getIcon(key),
+      label: key.split(/(?=[A-Z])/).join(" "), // Convert camelCase to Space Separated
+      value: displayValue,
+      color: key === 'healthStatus' && value !== 'Good' ? 'text-yellow-400' : undefined
+    };
+  });
+
+  return {
+    metrics: metricsArray,
+    healthScore: Number(apiResponse.overallHealthScore) || 76,
+    healthData: defaultHealthData, // Keep default chart data for now
+  };
+};
+
 const AnalysisResults = () => {
   const [analysisData, setAnalysisData] = useState<AnalysisResult>({
     metrics: defaultMetrics,
@@ -86,10 +130,11 @@ const AnalysisResults = () => {
   });
 
   useEffect(() => {
-    const handleAnalysisComplete = (event: CustomEvent<AnalysisResult>) => {
+    const handleAnalysisComplete = (event: CustomEvent<any>) => {
       console.log('Analysis results received:', event.detail);
       if (event.detail) {
-        setAnalysisData(event.detail);
+        const transformedData = transformApiResponse(event.detail);
+        setAnalysisData(transformedData);
       }
     };
 
