@@ -1,9 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Card } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect, useRef } from "react";
 import {
   Chart as ChartJS,
@@ -32,8 +28,6 @@ ChartJS.register(
 );
 
 const AnalysisResults = () => {
-  const isMobile = useIsMobile();
-  
   const metrics = [
     { icon: "cut", label: "Hair Type", value: "Type 2B Wavy" },
     { icon: "heart", label: "Health Status", value: "Requires Attention", color: "text-yellow-400" },
@@ -61,53 +55,19 @@ const AnalysisResults = () => {
         borderColor: '#9b87f5',
         backgroundColor: 'rgba(155, 135, 245, 0.1)',
         fill: true,
-        tension: 0.4,
-        pointBackgroundColor: '#9b87f5',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: '#9b87f5',
-        pointRadius: 4,
-        pointHoverRadius: 6,
       }
     ]
-  };
-
-  const pieData = {
-    labels: ['Healthy', 'Damaged', 'Growing', 'Resting'],
-    datasets: [{
-      data: [45, 15, 30, 10],
-      backgroundColor: [
-        'rgba(155, 135, 245, 0.8)',
-        'rgba(255, 99, 132, 0.8)',
-        'rgba(75, 192, 192, 0.8)',
-        'rgba(255, 206, 86, 0.8)',
-      ],
-      borderColor: 'rgba(255, 255, 255, 0.8)',
-      borderWidth: 2,
-    }],
   };
 
   const chartOptions = {
     responsive: true,
     plugins: {
       legend: {
-        display: false,
+        display: false
       },
       tooltip: {
         mode: 'index' as const,
         intersect: false,
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#fff',
-        bodyColor: '#fff',
-        borderColor: '#9b87f5',
-        borderWidth: 1,
-        padding: 12,
-        displayColors: true,
-        callbacks: {
-          label: function(context: any) {
-            return `  ${context.parsed.y}%`;
-          }
-        }
       },
     },
     scales: {
@@ -115,179 +75,220 @@ const AnalysisResults = () => {
         beginAtZero: true,
         max: 100,
         grid: {
-          color: 'rgba(255, 255, 255, 0.1)',
-          drawBorder: false,
+          color: 'rgba(255, 255, 255, 0.1)'
         },
         ticks: {
-          color: '#9b87f5',
-          padding: 10,
-          font: {
-            size: isMobile ? 10 : 12,
-          }
+          color: '#9b87f5'
         }
       },
       x: {
         grid: {
-          display: false,
+          color: 'rgba(255, 255, 255, 0.1)'
         },
         ticks: {
-          color: '#9b87f5',
-          padding: 10,
-          font: {
-            size: isMobile ? 10 : 12,
-          }
+          color: '#9b87f5'
         }
       }
-    },
-    elements: {
-      line: {
-        tension: 0.4
-      }
-    }
-  };
-
-  const pieOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'bottom' as const,
-        labels: {
-          padding: 20,
-          color: '#fff',
-          font: {
-            size: isMobile ? 10 : 12,
-          }
-        }
-      },
-      tooltip: {
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        titleColor: '#fff',
-        bodyColor: '#fff',
-        borderColor: '#9b87f5',
-        borderWidth: 1,
-        padding: 12,
-      }
-    },
-    cutout: '60%',
-    animation: {
-      animateScale: true,
-      animateRotate: true
     }
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-8rem)]">
-      <div className="space-y-6 p-4">
-        <Card className="bg-gray-800/80 p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-          <Tabs defaultValue="analysis" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4 mb-6">
-              <TabsTrigger value="analysis">Analysis</TabsTrigger>
-              <TabsTrigger value="metrics">Metrics</TabsTrigger>
-              <TabsTrigger value="information">Information</TabsTrigger>
-              <TabsTrigger value="treatments">Treatments</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="analysis" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Card className="bg-gray-700/80 p-4">
-                  <h4 className="font-medium mb-4">Hair Health Trend</h4>
-                  <Line data={healthData} options={chartOptions} />
-                </Card>
-                <Card className="bg-gray-700/80 p-4">
-                  <h4 className="font-medium mb-4">Hair Distribution</h4>
-                  <Pie data={pieData} options={pieOptions} />
-                </Card>
-                <Card className="bg-gray-700/80 p-4">
-                  <h4 className="font-medium mb-4">Growth Phases</h4>
-                  <Line data={healthData} options={chartOptions} />
-                </Card>
-              </div>
-
-              <Card className="bg-gray-700/80 p-6">
-                <h3 className="text-lg font-medium mb-4">Quick Summary</h3>
-                <p className="text-gray-300 leading-relaxed">
-                  Your scalp and hair analysis shows promising results with normal sebum production 
-                  and minimal inflammation. The AI detected healthy growth patterns with 85% of follicles 
-                  in the anagen phase. Your hair density of 165 hairs/cm² is within the optimal range.
-                </p>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="metrics" className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {metrics.map((metric) => (
-                  <Card
-                    key={metric.label}
-                    className="bg-gray-700/80 p-4 hover:bg-gray-700 transition-colors duration-300"
-                  >
-                    <div className="flex items-center mb-2">
-                      <i className={`fas fa-${metric.icon} text-purple-400 mr-3`}></i>
-                      <span>{metric.label}</span>
-                    </div>
-                    <span className={`font-medium ${metric.color || ''}`}>
-                      {metric.value}
-                    </span>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="information" className="space-y-6">
-              <Card className="bg-gray-700/80 p-6">
-                <h3 className="text-lg font-medium mb-4">Diagnostic Analysis</h3>
-                <p className="text-gray-300">
-                  Advanced microscopic analysis reveals signs of androgenetic alopecia with approximately 25% miniaturized follicles 
-                  concentrated in the crown and temple areas. Telogen Effluvium is indicated by an elevated percentage (28%) of club 
-                  hairs in the telogen phase, suggesting recent systemic stress.
-                </p>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="treatments" className="space-y-6">
-              <Card className="bg-gray-700/80 p-6">
-                <h3 className="text-lg font-medium mb-4">Recommended Treatments</h3>
-                <p className="text-gray-300">
-                  Based on your analysis, we recommend the following treatments to improve your hair health:
-                </p>
-                <ul className="list-disc list-inside text-gray-300 space-y-2">
-                  <li>Use DHT-blocking shampoo</li>
-                  <li>Supplement with Biotin & Iron</li>
-                  <li>Scalp massage 2x daily</li>
-                  <li>Minimize heat styling</li>
-                  <li>Practice stress management</li>
-                  <li>Monthly scalp detox</li>
-                  <li>Use microneeding treatment</li>
-                  <li>Apply growth serums</li>
-                </ul>
-              </Card>
-            </TabsContent>
-          </Tabs>
-
-          <div className="mt-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Overall Health Score</span>
-              <span className="text-lg font-bold text-purple-400">76%</span>
+    <div className="space-y-6">
+      <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+        <h2 className="text-xl font-semibold mb-4 text-white">Analysis Results</h2>
+        
+        {/* Structural Analysis */}
+        <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
+          <h3 className="text-lg font-medium mb-3">Structural Analysis</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-gray-600/50 p-3 rounded">
+              <h4 className="font-medium mb-2">Hair Growth Cycle</h4>
+              <Line data={healthData} options={chartOptions} />
             </div>
-            <Progress value={76} className="h-2.5 bg-gray-700" />
+            <div className="bg-gray-600/50 p-3 rounded">
+              <h4 className="font-medium mb-2">Curl Pattern Distribution</h4>
+              <Line data={healthData} options={chartOptions} />
+            </div>
+            <div className="bg-gray-600/50 p-3 rounded">
+              <h4 className="font-medium mb-2">Growth Phase Distribution</h4>
+              <Line data={healthData} options={chartOptions} />
+            </div>
           </div>
-        </Card>
+        </div>
 
-        <div className="flex flex-wrap justify-center gap-4">
-          <Button className="bg-purple-600 hover:bg-purple-700 transition-all duration-300">
-            <i className="fas fa-save mr-2"></i>Save Analysis
-          </Button>
-          <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
-            <i className="fas fa-share-alt mr-2"></i>Share Results
-          </Button>
-          <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
-            <i className="fas fa-download mr-2"></i>Download Report
-          </Button>
-          <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
-            <i className="fas fa-redo mr-2"></i>New Scan
-          </Button>
+        {/* Quick Summary */}
+        <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
+          <h3 className="text-lg font-medium mb-2">Quick Summary</h3>
+          <p className="text-gray-300">
+            Your scalp and hair analysis shows key metrics including sebum levels, pore condition, inflammation markers, and follicular activity. 
+            The AI detected normal sebum production, clear pores with minimal inflammation, and 85% anagen phase follicles indicating healthy growth cycle. 
+            Your hair density is 165 hairs/cm² with average strand thickness of 0.08mm. Minimal breakage was observed at 7% of analyzed strands.
+          </p>
+        </div>
+
+        {/* Health Charts */}
+        <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
+          <Line data={healthData} options={chartOptions} />
+          <p className="text-center text-sm text-gray-400 mt-2">Hair Health Metrics Over Time</p>
+        </div>
+
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {metrics.map((metric) => (
+            <div
+              key={metric.label}
+              className="bg-gray-700/80 rounded-lg p-4 hover:bg-gray-700 transition-colors duration-300 flex flex-col space-y-2"
+            >
+              <div className="flex items-center">
+                <i className={`fas fa-${metric.icon} text-purple-400 mr-3`}></i>
+                <span>{metric.label}</span>
+              </div>
+              <span className={`font-medium ${metric.color || ''}`}>
+                {metric.value}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* Health Score */}
+        <div className="mt-4">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm text-gray-400">Overall Health Score</span>
+            <span className="text-lg font-bold text-purple-400">76%</span>
+          </div>
+          <Progress value={76} className="h-2.5 bg-gray-700" />
         </div>
       </div>
-    </ScrollArea>
+
+      {/* Hair Information */}
+      <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+        <h2 className="text-xl font-semibold mb-4">Hair Information</h2>
+        <div className="space-y-4">
+          <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
+            <h3 className="text-lg font-medium mb-2">Diagnostic Analysis</h3>
+            <p className="text-gray-300">
+              Advanced microscopic analysis reveals signs of androgenetic alopecia with approximately 25% miniaturized follicles 
+              concentrated in the crown and temple areas. Telogen Effluvium is indicated by an elevated percentage (28%) of club 
+              hairs in the telogen phase, suggesting recent systemic stress.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+            <div className="bg-gray-700/80 rounded-lg p-4">
+              <Line data={healthData} options={chartOptions} />
+              <p className="text-center text-sm text-gray-400 mt-2">Hair Growth Progress</p>
+            </div>
+            <div className="bg-gray-700/80 rounded-lg p-4">
+              <Line data={healthData} options={chartOptions} />
+              <p className="text-center text-sm text-gray-400 mt-2">Optimal vs Current Conditions</p>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-sm text-gray-400">Care Tips</h3>
+            <ul className="list-disc list-inside text-gray-300 space-y-2">
+              <li>Use DHT-blocking shampoo</li>
+              <li>Supplement with Biotin & Iron</li>
+              <li>Scalp massage 2x daily</li>
+              <li>Minimize heat styling</li>
+              <li>Practice stress management</li>
+              <li>Monthly scalp detox</li>
+              <li>Use microneeding treatment</li>
+              <li>Apply growth serums</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Recommended Treatments */}
+      <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+        <h2 className="text-xl font-semibold mb-4">Recommended Treatments</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
+            <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
+            <div className="flex items-center mb-3">
+              <i className="fas fa-check-circle text-green-500 mr-2"></i>
+              <span className="font-medium">FUE (Follicular Unit Extraction)</span>
+            </div>
+            <p className="text-sm text-gray-300">
+              Best suited for your pattern of hair loss and scalp condition. 
+              Minimally invasive with natural-looking results.
+            </p>
+            <div className="mt-3">
+              <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">98% Match</span>
+            </div>
+          </div>
+
+          <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
+            <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
+            <div className="flex items-center mb-3">
+              <i className="fas fa-check-circle text-blue-500 mr-2"></i>
+              <span className="font-medium">PRP Treatment</span>
+            </div>
+            <p className="text-sm text-gray-300">
+              Recommended for strengthening existing hair and promoting new growth.
+              Can be combined with FUE.
+            </p>
+            <div className="mt-3">
+              <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">85% Match</span>
+            </div>
+          </div>
+
+          <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
+            <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
+            <div className="flex items-center mb-3">
+              <i className="fas fa-check-circle text-purple-500 mr-2"></i>
+              <span className="font-medium">Exosomes Therapy</span>
+            </div>
+            <p className="text-sm text-gray-300">
+              Excellent for scalp health and strengthening follicles.
+              Complementary to main treatments.
+            </p>
+            <div className="mt-3">
+              <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">75% Match</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <h3 className="text-lg font-medium mb-3">Other Available Treatments</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+              <span className="text-sm">Hair Transplant</span>
+              <div className="text-xs text-gray-400 mt-1">65% Match</div>
+            </div>
+            <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+              <span className="text-sm">FUT</span>
+              <div className="text-xs text-gray-400 mt-1">45% Match</div>
+            </div>
+            <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+              <span className="text-sm">SMP</span>
+              <div className="text-xs text-gray-400 mt-1">40% Match</div>
+            </div>
+            <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+              <span className="text-sm">Micro FUE</span>
+              <div className="text-xs text-gray-400 mt-1">55% Match</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-center space-x-4 flex-wrap gap-4">
+        <Button className="bg-purple-600 hover:bg-purple-700">
+          <i className="fas fa-save mr-2"></i>Save Analysis
+        </Button>
+        <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+          <i className="fas fa-share-alt mr-2"></i>Share Results
+        </Button>
+        <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+          <i className="fas fa-download mr-2"></i>Download Report
+        </Button>
+        <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+          <i className="fas fa-redo mr-2"></i>New Scan
+        </Button>
+      </div>
+    </div>
   );
 };
 
