@@ -198,19 +198,13 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
       label: 'Curl Pattern',
       data: [],
       borderColor: '#9b87f5',
-      backgroundColor: [
-        'rgba(255, 99, 132, 0.8)',
-        'rgba(54, 162, 235, 0.8)',
-        'rgba(255, 206, 86, 0.8)',
-        'rgba(75, 192, 192, 0.8)',
-      ],
+      backgroundColor: 'rgba(155, 135, 245, 0.1)', // Changed from array to single string
       fill: true,
     }]
   };
 
   if (apiResponse.structuralAnalysis?.curlPatternDistribution) {
     if (Array.isArray(apiResponse.structuralAnalysis.curlPatternDistribution)) {
-      // Handle array format
       curlPatternData.labels = apiResponse.structuralAnalysis.curlPatternDistribution.map((item: any) => 
         Object.keys(item)[0]
       );
@@ -218,12 +212,10 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
         Object.values(item)[0]
       );
     } else {
-      // Handle object format
       curlPatternData.labels = Object.keys(apiResponse.structuralAnalysis.curlPatternDistribution);
       curlPatternData.datasets[0].data = Object.values(apiResponse.structuralAnalysis.curlPatternDistribution);
     }
   } else {
-    // Default values if no data
     curlPatternData.labels = ['Straight', 'Wavy', 'Curly', 'Coily'];
     curlPatternData.datasets[0].data = [30, 40, 20, 10];
   }
@@ -235,18 +227,13 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
       label: 'Growth Phase',
       data: [],
       borderColor: '#9b87f5',
-      backgroundColor: [
-        'rgba(153, 102, 255, 0.8)',
-        'rgba(255, 159, 64, 0.8)',
-        'rgba(255, 99, 132, 0.8)',
-      ],
+      backgroundColor: 'rgba(153, 102, 255, 0.1)', // Changed from array to single string
       fill: true,
     }]
   };
 
   if (apiResponse.structuralAnalysis?.growthPhaseDistribution) {
     if (Array.isArray(apiResponse.structuralAnalysis.growthPhaseDistribution)) {
-      // Handle array format
       growthPhaseData.labels = apiResponse.structuralAnalysis.growthPhaseDistribution.map((item: any) => 
         Object.keys(item)[0]
       );
@@ -254,12 +241,10 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
         Object.values(item)[0]
       );
     } else {
-      // Handle object format
       growthPhaseData.labels = Object.keys(apiResponse.structuralAnalysis.growthPhaseDistribution);
       growthPhaseData.datasets[0].data = Object.values(apiResponse.structuralAnalysis.growthPhaseDistribution);
     }
   } else {
-    // Default values if no data
     growthPhaseData.labels = ['Anagen', 'Catagen', 'Telogen'];
     growthPhaseData.datasets[0].data = [85, 5, 10];
   }
