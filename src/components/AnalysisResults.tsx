@@ -191,37 +191,78 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
     }]
   };
 
-  // Transform curl pattern distribution
+  // Transform curl pattern distribution - handle both object and array formats
   const curlPatternData = {
-    labels: apiResponse.structuralAnalysis?.curlPatternDistribution?.map((item: any) => 
-      Object.keys(item)[0]
-    ) || ['Straight', 'Wavy', 'Curly'],
+    labels: [],
     datasets: [{
       label: 'Curl Pattern',
-      data: apiResponse.structuralAnalysis?.curlPatternDistribution?.map((item: any) => 
-        Object.values(item)[0]
-      ) || [30, 40, 30],
+      data: [],
       borderColor: '#9b87f5',
-      backgroundColor: 'rgba(155, 135, 245, 0.1)',
+      backgroundColor: [
+        'rgba(255, 99, 132, 0.8)',
+        'rgba(54, 162, 235, 0.8)',
+        'rgba(255, 206, 86, 0.8)',
+        'rgba(75, 192, 192, 0.8)',
+      ],
       fill: true,
     }]
   };
 
-  // Transform growth phase distribution
+  if (apiResponse.structuralAnalysis?.curlPatternDistribution) {
+    if (Array.isArray(apiResponse.structuralAnalysis.curlPatternDistribution)) {
+      // Handle array format
+      curlPatternData.labels = apiResponse.structuralAnalysis.curlPatternDistribution.map((item: any) => 
+        Object.keys(item)[0]
+      );
+      curlPatternData.datasets[0].data = apiResponse.structuralAnalysis.curlPatternDistribution.map((item: any) => 
+        Object.values(item)[0]
+      );
+    } else {
+      // Handle object format
+      curlPatternData.labels = Object.keys(apiResponse.structuralAnalysis.curlPatternDistribution);
+      curlPatternData.datasets[0].data = Object.values(apiResponse.structuralAnalysis.curlPatternDistribution);
+    }
+  } else {
+    // Default values if no data
+    curlPatternData.labels = ['Straight', 'Wavy', 'Curly', 'Coily'];
+    curlPatternData.datasets[0].data = [30, 40, 20, 10];
+  }
+
+  // Transform growth phase distribution - handle both object and array formats
   const growthPhaseData = {
-    labels: apiResponse.structuralAnalysis?.growthPhaseDistribution?.map((item: any) => 
-      Object.keys(item)[0]
-    ) || ['Anagen', 'Catagen', 'Telogen'],
+    labels: [],
     datasets: [{
       label: 'Growth Phase',
-      data: apiResponse.structuralAnalysis?.growthPhaseDistribution?.map((item: any) => 
-        Object.values(item)[0]
-      ) || [85, 5, 10],
+      data: [],
       borderColor: '#9b87f5',
-      backgroundColor: 'rgba(155, 135, 245, 0.1)',
+      backgroundColor: [
+        'rgba(153, 102, 255, 0.8)',
+        'rgba(255, 159, 64, 0.8)',
+        'rgba(255, 99, 132, 0.8)',
+      ],
       fill: true,
     }]
   };
+
+  if (apiResponse.structuralAnalysis?.growthPhaseDistribution) {
+    if (Array.isArray(apiResponse.structuralAnalysis.growthPhaseDistribution)) {
+      // Handle array format
+      growthPhaseData.labels = apiResponse.structuralAnalysis.growthPhaseDistribution.map((item: any) => 
+        Object.keys(item)[0]
+      );
+      growthPhaseData.datasets[0].data = apiResponse.structuralAnalysis.growthPhaseDistribution.map((item: any) => 
+        Object.values(item)[0]
+      );
+    } else {
+      // Handle object format
+      growthPhaseData.labels = Object.keys(apiResponse.structuralAnalysis.growthPhaseDistribution);
+      growthPhaseData.datasets[0].data = Object.values(apiResponse.structuralAnalysis.growthPhaseDistribution);
+    }
+  } else {
+    // Default values if no data
+    growthPhaseData.labels = ['Anagen', 'Catagen', 'Telogen'];
+    growthPhaseData.datasets[0].data = [85, 5, 10];
+  }
 
   return {
     metrics: metricsArray,
