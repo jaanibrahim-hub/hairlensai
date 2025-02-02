@@ -243,18 +243,61 @@ const AnalysisResults = () => {
         {/* Structural Analysis */}
         <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
           <h3 className="text-lg font-medium mb-3">Structural Analysis</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-gray-600/50 p-3 rounded">
-              <h4 className="font-medium mb-2">Hair Growth Cycle</h4>
-              <Line data={analysisData.healthData} options={chartOptions} />
+          <div className="space-y-6">
+            <div className="bg-gray-600/50 p-6 rounded">
+              <h4 className="font-medium mb-4 text-lg">Hair Growth Cycle Analysis</h4>
+              <div className="aspect-w-16 aspect-h-9">
+                <Line data={analysisData.healthData} options={chartOptions} />
+              </div>
+              <div className="mt-4 bg-gray-700/50 p-4 rounded">
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  This graph shows your hair's growth cycle phases over time. The peaks represent optimal growth periods (anagen phase), 
+                  while the valleys indicate resting periods (telogen phase). Your current pattern suggests a {analysisData.healthScore > 70 ? "healthy" : "slightly irregular"} growth cycle. 
+                  A higher, more consistent line indicates stronger and more sustained growth phases.
+                </p>
+                <div className="mt-3 flex items-center text-sm text-purple-400">
+                  <i className="fas fa-lightbulb mr-2"></i>
+                  <span>Pro Tip: Regular scalp massages can help stimulate follicles and improve your growth cycle.</span>
+                </div>
+              </div>
             </div>
-            <div className="bg-gray-600/50 p-3 rounded">
-              <h4 className="font-medium mb-2">Curl Pattern Distribution</h4>
-              <Line data={analysisData.healthData} options={chartOptions} />
+
+            <div className="bg-gray-600/50 p-6 rounded">
+              <h4 className="font-medium mb-4 text-lg">Curl Pattern Distribution</h4>
+              <div className="aspect-w-16 aspect-h-9">
+                <Line data={analysisData.healthData} options={chartOptions} />
+              </div>
+              <div className="mt-4 bg-gray-700/50 p-4 rounded">
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  Your curl pattern analysis reveals a mix of wave types, predominantly Type 2B (S-shaped waves). 
+                  Understanding your curl pattern is crucial for choosing the right products and styling techniques. 
+                  The graph shows the distribution of different curl patterns across your hair, helping us recommend 
+                  the most effective care routine.
+                </p>
+                <div className="mt-3 flex items-center text-sm text-purple-400">
+                  <i className="fas fa-star mr-2"></i>
+                  <span>Key Insight: Your wave pattern suggests you'll benefit most from lightweight, moisture-retaining products.</span>
+                </div>
+              </div>
             </div>
-            <div className="bg-gray-600/50 p-3 rounded">
-              <h4 className="font-medium mb-2">Growth Phase Distribution</h4>
-              <Line data={analysisData.healthData} options={chartOptions} />
+
+            <div className="bg-gray-600/50 p-6 rounded">
+              <h4 className="font-medium mb-4 text-lg">Growth Phase Distribution</h4>
+              <div className="aspect-w-16 aspect-h-9">
+                <Line data={analysisData.healthData} options={chartOptions} />
+              </div>
+              <div className="mt-4 bg-gray-700/50 p-4 rounded">
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  This visualization shows the proportion of your hair in each growth phase: anagen (growing), 
+                  catagen (transitioning), and telogen (resting). Ideally, we want to see 80-90% in the anagen phase. 
+                  Your current distribution is {analysisData.healthScore}% anagen, indicating 
+                  {analysisData.healthScore > 80 ? " excellent growth potential" : " room for improvement"}.
+                </p>
+                <div className="mt-3 flex items-center text-sm text-purple-400">
+                  <i className="fas fa-flask mr-2"></i>
+                  <span>Scientific Note: A higher percentage of anagen phase hairs correlates with optimal scalp health.</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
