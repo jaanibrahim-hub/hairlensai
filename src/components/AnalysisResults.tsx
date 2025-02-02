@@ -1,10 +1,31 @@
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useEffect, useRef } from "react";
-import { Chart as ChartJS, ArcElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from 'chart.js';
+import {
+  Chart as ChartJS,
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from 'chart.js';
 import { Line, Pie } from 'react-chartjs-2';
 
-ChartJS.register(ArcElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
+ChartJS.register(
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
 const AnalysisResults = () => {
   const metrics = [
@@ -21,9 +42,11 @@ const AnalysisResults = () => {
     { icon: "microscope", label: "Strand Thickness", value: "0.08mm (Medium)" },
     { icon: "grip-lines", label: "Follicle Density", value: "165 hairs/cm²" },
     { icon: "ruler", label: "Hair Diameter", value: "Root: 0.09mm, Tip: 0.06mm" },
+    { icon: "percent", label: "Growth Phase", value: "85% Anagen" },
+    { icon: "exclamation-triangle", label: "Damage Analysis", value: "Minimal" },
   ];
 
-  const chartData = {
+  const healthData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
     datasets: [
       {
@@ -41,7 +64,11 @@ const AnalysisResults = () => {
     plugins: {
       legend: {
         display: false
-      }
+      },
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+      },
     },
     scales: {
       y: {
@@ -76,7 +103,15 @@ const AnalysisResults = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-gray-600/50 p-3 rounded">
               <h4 className="font-medium mb-2">Hair Growth Cycle</h4>
-              <Line data={chartData} options={chartOptions} />
+              <Line data={healthData} options={chartOptions} />
+            </div>
+            <div className="bg-gray-600/50 p-3 rounded">
+              <h4 className="font-medium mb-2">Curl Pattern Distribution</h4>
+              <Line data={healthData} options={chartOptions} />
+            </div>
+            <div className="bg-gray-600/50 p-3 rounded">
+              <h4 className="font-medium mb-2">Growth Phase Distribution</h4>
+              <Line data={healthData} options={chartOptions} />
             </div>
           </div>
         </div>
@@ -91,48 +126,38 @@ const AnalysisResults = () => {
           </p>
         </div>
 
+        {/* Health Charts */}
+        <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
+          <Line data={healthData} options={chartOptions} />
+          <p className="text-center text-sm text-gray-400 mt-2">Hair Health Metrics Over Time</p>
+        </div>
+
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {metrics.map((metric) => (
             <div
               key={metric.label}
-              className="bg-gray-700/80 rounded-lg p-4 hover:bg-gray-700 transition-colors duration-300"
+              className="bg-gray-700/80 rounded-lg p-4 hover:bg-gray-700 transition-colors duration-300 flex flex-col space-y-2"
             >
               <div className="flex items-center">
-                <i className={`fas fa-${metric.icon} text-primary mr-3`}></i>
-                <span className="text-gray-200">{metric.label}</span>
+                <i className={`fas fa-${metric.icon} text-purple-400 mr-3`}></i>
+                <span>{metric.label}</span>
               </div>
-              <span className={`font-medium mt-2 block ${metric.color || 'text-white'}`}>
+              <span className={`font-medium ${metric.color || ''}`}>
                 {metric.value}
               </span>
             </div>
           ))}
         </div>
-        
+
         {/* Health Score */}
         <div className="mt-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-400">Overall Health Score</span>
-            <span className="text-lg font-bold text-primary">76%</span>
+            <span className="text-lg font-bold text-purple-400">76%</span>
           </div>
           <Progress value={76} className="h-2.5 bg-gray-700" />
         </div>
-      </div>
-      
-      {/* Action Buttons */}
-      <div className="flex justify-center space-x-4 flex-wrap gap-4">
-        <Button className="bg-primary hover:bg-primary/90">
-          <i className="fas fa-save mr-2"></i>Save Analysis
-        </Button>
-        <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
-          <i className="fas fa-share-alt mr-2"></i>Share Results
-        </Button>
-        <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
-          <i className="fas fa-download mr-2"></i>Download Report
-        </Button>
-        <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
-          <i className="fas fa-redo mr-2"></i>New Scan
-        </Button>
       </div>
 
       {/* Hair Information */}
@@ -148,6 +173,17 @@ const AnalysisResults = () => {
             </p>
           </div>
 
+          <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+            <div className="bg-gray-700/80 rounded-lg p-4">
+              <Line data={healthData} options={chartOptions} />
+              <p className="text-center text-sm text-gray-400 mt-2">Hair Growth Progress</p>
+            </div>
+            <div className="bg-gray-700/80 rounded-lg p-4">
+              <Line data={healthData} options={chartOptions} />
+              <p className="text-center text-sm text-gray-400 mt-2">Optimal vs Current Conditions</p>
+            </div>
+          </div>
+
           <div>
             <h3 className="text-sm text-gray-400">Care Tips</h3>
             <ul className="list-disc list-inside text-gray-300 space-y-2">
@@ -156,6 +192,9 @@ const AnalysisResults = () => {
               <li>Scalp massage 2x daily</li>
               <li>Minimize heat styling</li>
               <li>Practice stress management</li>
+              <li>Monthly scalp detox</li>
+              <li>Use microneeding treatment</li>
+              <li>Apply growth serums</li>
             </ul>
           </div>
         </div>
@@ -210,6 +249,44 @@ const AnalysisResults = () => {
             </div>
           </div>
         </div>
+
+        <div className="mt-6">
+          <h3 className="text-lg font-medium mb-3">Other Available Treatments</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+              <span className="text-sm">Hair Transplant</span>
+              <div className="text-xs text-gray-400 mt-1">65% Match</div>
+            </div>
+            <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+              <span className="text-sm">FUT</span>
+              <div className="text-xs text-gray-400 mt-1">45% Match</div>
+            </div>
+            <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+              <span className="text-sm">SMP</span>
+              <div className="text-xs text-gray-400 mt-1">40% Match</div>
+            </div>
+            <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+              <span className="text-sm">Micro FUE</span>
+              <div className="text-xs text-gray-400 mt-1">55% Match</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex justify-center space-x-4 flex-wrap gap-4">
+        <Button className="bg-purple-600 hover:bg-purple-700">
+          <i className="fas fa-save mr-2"></i>Save Analysis
+        </Button>
+        <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+          <i className="fas fa-share-alt mr-2"></i>Share Results
+        </Button>
+        <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+          <i className="fas fa-download mr-2"></i>Download Report
+        </Button>
+        <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+          <i className="fas fa-redo mr-2"></i>New Scan
+        </Button>
       </div>
     </div>
   );
