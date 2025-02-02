@@ -73,7 +73,7 @@ const ImagePreview = () => {
 
     // Fallback image if preview is not available
     if (previewUrl === "/placeholder.svg") {
-      setPreviewUrl("https://images.unsplash.com/photo-1581091226825-a6a2a5aee158");
+      setPreviewUrl("/lovable-uploads/a7cdb1d9-608f-4e95-8215-6f565f2808f8.png");
     }
 
     return () => {
