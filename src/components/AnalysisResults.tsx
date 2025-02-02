@@ -316,228 +316,267 @@ const AnalysisResults = () => {
           <p className="text-center text-sm text-gray-400 mt-2">Hair Health Metrics Over Time</p>
         </div>
 
-        {/* Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Enhanced Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {analysisData.metrics.map((metric) => (
             <div
               key={metric.label}
-              className="bg-gray-700/80 rounded-lg p-4 hover:bg-gray-700 transition-colors duration-300 flex flex-col space-y-2"
+              className="bg-gray-700/80 rounded-lg p-6 hover:bg-gray-600/80 transition-all duration-300 transform hover:scale-102 relative overflow-hidden group"
             >
-              <div className="flex items-center">
-                <i className={`fas fa-${metric.icon} text-purple-400 mr-3`}></i>
-                <span>{metric.label}</span>
+              <div className="absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 bg-purple-500/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="relative z-10">
+                <div className="flex items-center mb-3">
+                  <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mr-3">
+                    <i className={`fas fa-${metric.icon} text-purple-400`}></i>
+                  </div>
+                  <span className="text-gray-300 font-medium">{metric.label}</span>
+                </div>
+                <div className="pl-13">
+                  <span className={`text-lg font-semibold ${metric.color || 'text-white'}`}>
+                    {metric.value}
+                  </span>
+                  {metric.label === "Health Status" && (
+                    <div className="mt-2 w-full bg-gray-600 rounded-full h-1.5">
+                      <div 
+                        className="bg-purple-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${analysisData.healthScore}%` }}
+                      ></div>
+                    </div>
+                  )}
+                  {metric.label === "Scalp Condition" && (
+                    <p className="mt-2 text-sm text-gray-400 leading-relaxed">
+                      {metric.value}
+                    </p>
+                  )}
+                </div>
               </div>
-              <span className={`font-medium ${metric.color || ''}`}>
-                {metric.value}
-              </span>
             </div>
           ))}
         </div>
 
-        {/* Health Score */}
-        <div className="mt-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Overall Health Score</span>
-            <span className="text-lg font-bold text-purple-400">{analysisData.healthScore}%</span>
-          </div>
-          <Progress value={analysisData.healthScore} className="h-2.5 bg-gray-700" />
-        </div>
-      </div>
-
-      {/* Hair Information */}
-      <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-        <h2 className="text-xl font-semibold mb-4">Hair Information</h2>
-        <div className="space-y-4">
-          <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
-            <h3 className="text-lg font-medium mb-2">Diagnostic Analysis</h3>
-            <p className="text-gray-300">
-              {analysisData.hairInformation?.diagnosticAnalysis || "Advanced microscopic analysis reveals signs of androgenetic alopecia..."}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
-            <div className="bg-gray-700/80 rounded-lg p-4">
-              <Line data={analysisData.healthData} options={chartOptions} />
-              <p className="text-center text-sm text-gray-400 mt-2">Hair Growth Progress</p>
+        {/* Health Score with Enhanced Visualization */}
+        <div className="bg-gray-700/80 rounded-lg p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-xl font-semibold text-white">Overall Health Score</h3>
+              <p className="text-gray-400 text-sm mt-1">Based on comprehensive analysis</p>
             </div>
-            <div className="bg-gray-700/80 rounded-lg p-4">
-              <Line data={analysisData.healthData} options={chartOptions} />
-              <p className="text-center text-sm text-gray-400 mt-2">Optimal vs Current Conditions</p>
+            <div className="text-right">
+              <span className="text-3xl font-bold text-purple-400">{analysisData.healthScore}%</span>
+              <p className="text-sm text-gray-400 mt-1">
+                {analysisData.healthScore >= 80 ? 'Excellent' : 
+                 analysisData.healthScore >= 60 ? 'Good' : 
+                 analysisData.healthScore >= 40 ? 'Fair' : 'Needs Attention'}
+              </p>
             </div>
           </div>
-
-          <div>
-            <h3 className="text-sm text-gray-400">Care Tips</h3>
-            <ul className="list-disc list-inside text-gray-300 space-y-2">
-              {analysisData.hairInformation?.careTips?.map((tip, index) => (
-                <li key={index}>{tip}</li>
-              )) || (
-                <>
-                  <li>Use DHT-blocking shampoo</li>
-                  <li>Supplement with Biotin & Iron</li>
-                  <li>Scalp massage 2x daily</li>
-                  <li>Minimize heat styling</li>
-                  <li>Practice stress management</li>
-                  <li>Monthly scalp detox</li>
-                  <li>Use microneeding treatment</li>
-                  <li>Apply growth serums</li>
-                </>
-              )}
-            </ul>
+          <div className="relative pt-1">
+            <div className="overflow-hidden h-3 rounded-full bg-gray-600">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-500 relative"
+                style={{ width: `${analysisData.healthScore}%` }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Recommended Treatments */}
-      <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-        <h2 className="text-xl font-semibold mb-4">Recommended Treatments</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {analysisData.recommendedTreatments ? (
-            <>
-              <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
-                <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
-                <div className="flex items-center mb-3">
-                  <i className="fas fa-check-circle text-green-500 mr-2"></i>
-                  <span className="font-medium">{analysisData.recommendedTreatments.primary.name}</span>
-                </div>
-                <p className="text-sm text-gray-300">
-                  {analysisData.recommendedTreatments.primary.description}
-                </p>
-                <div className="mt-3">
-                  <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">
-                    {analysisData.recommendedTreatments.primary.match}% Match
-                  </span>
-                </div>
-              </div>
+        {/* Hair Information */}
+        <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+          <h2 className="text-xl font-semibold mb-4">Hair Information</h2>
+          <div className="space-y-4">
+            <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
+              <h3 className="text-lg font-medium mb-2">Diagnostic Analysis</h3>
+              <p className="text-gray-300">
+                {analysisData.hairInformation?.diagnosticAnalysis || "Advanced microscopic analysis reveals signs of androgenetic alopecia..."}
+              </p>
+            </div>
 
-              <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
-                <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
-                <div className="flex items-center mb-3">
-                  <i className="fas fa-check-circle text-blue-500 mr-2"></i>
-                  <span className="font-medium">{analysisData.recommendedTreatments.secondary.name}</span>
-                </div>
-                <p className="text-sm text-gray-300">
-                  {analysisData.recommendedTreatments.secondary.description}
-                </p>
-                <div className="mt-3">
-                  <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
-                    {analysisData.recommendedTreatments.secondary.match}% Match
-                  </span>
-                </div>
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-gray-700/80 rounded-lg p-4">
+                <Line data={analysisData.healthData} options={chartOptions} />
+                <p className="text-center text-sm text-gray-400 mt-2">Hair Growth Progress</p>
               </div>
+              <div className="bg-gray-700/80 rounded-lg p-4">
+                <Line data={analysisData.healthData} options={chartOptions} />
+                <p className="text-center text-sm text-gray-400 mt-2">Optimal vs Current Conditions</p>
+              </div>
+            </div>
 
-              <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
-                <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
-                <div className="flex items-center mb-3">
-                  <i className="fas fa-check-circle text-purple-500 mr-2"></i>
-                  <span className="font-medium">{analysisData.recommendedTreatments.supporting.name}</span>
-                </div>
-                <p className="text-sm text-gray-300">
-                  {analysisData.recommendedTreatments.supporting.description}
-                </p>
-                <div className="mt-3">
-                  <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">
-                    {analysisData.recommendedTreatments.supporting.match}% Match
-                  </span>
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
-                <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
-                <div className="flex items-center mb-3">
-                  <i className="fas fa-check-circle text-green-500 mr-2"></i>
-                  <span className="font-medium">FUE (Follicular Unit Extraction)</span>
-                </div>
-                <p className="text-sm text-gray-300">
-                  Best suited for your pattern of hair loss and scalp condition. 
-                  Minimally invasive with natural-looking results.
-                </p>
-                <div className="mt-3">
-                  <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">98% Match</span>
-                </div>
-              </div>
-
-              <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
-                <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
-                <div className="flex items-center mb-3">
-                  <i className="fas fa-check-circle text-blue-500 mr-2"></i>
-                  <span className="font-medium">PRP Treatment</span>
-                </div>
-                <p className="text-sm text-gray-300">
-                  Recommended for strengthening existing hair and promoting new growth.
-                  Can be combined with FUE.
-                </p>
-                <div className="mt-3">
-                  <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">85% Match</span>
-                </div>
-              </div>
-
-              <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
-                <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
-                <div className="flex items-center mb-3">
-                  <i className="fas fa-check-circle text-purple-500 mr-2"></i>
-                  <span className="font-medium">Exosomes Therapy</span>
-                </div>
-                <p className="text-sm text-gray-300">
-                  Excellent for scalp health and strengthening follicles.
-                  Complementary to main treatments.
-                </p>
-                <div className="mt-3">
-                  <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">75% Match</span>
-                </div>
-              </div>
-            </>
-          )}
+            <div>
+              <h3 className="text-sm text-gray-400">Care Tips</h3>
+              <ul className="list-disc list-inside text-gray-300 space-y-2">
+                {analysisData.hairInformation?.careTips?.map((tip, index) => (
+                  <li key={index}>{tip}</li>
+                )) || (
+                  <>
+                    <li>Use DHT-blocking shampoo</li>
+                    <li>Supplement with Biotin & Iron</li>
+                    <li>Scalp massage 2x daily</li>
+                    <li>Minimize heat styling</li>
+                    <li>Practice stress management</li>
+                    <li>Monthly scalp detox</li>
+                    <li>Use microneeding treatment</li>
+                    <li>Apply growth serums</li>
+                  </>
+                )}
+              </ul>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-6">
-          <h3 className="text-lg font-medium mb-3">Other Available Treatments</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {analysisData.recommendedTreatments?.other.map((treatment, index) => (
-              <div key={index} className="bg-gray-700/80 p-3 rounded-lg text-center">
-                <span className="text-sm">{treatment.name}</span>
-                <div className="text-xs text-gray-400 mt-1">{treatment.match}% Match</div>
-              </div>
-            )) || (
+        {/* Recommended Treatments */}
+        <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+          <h2 className="text-xl font-semibold mb-4">Recommended Treatments</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {analysisData.recommendedTreatments ? (
               <>
-                <div className="bg-gray-700/80 p-3 rounded-lg text-center">
-                  <span className="text-sm">Hair Transplant</span>
-                  <div className="text-xs text-gray-400 mt-1">65% Match</div>
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
+                  <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
+                  <div className="flex items-center mb-3">
+                    <i className="fas fa-check-circle text-green-500 mr-2"></i>
+                    <span className="font-medium">{analysisData.recommendedTreatments.primary.name}</span>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    {analysisData.recommendedTreatments.primary.description}
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">
+                      {analysisData.recommendedTreatments.primary.match}% Match
+                    </span>
+                  </div>
                 </div>
-                <div className="bg-gray-700/80 p-3 rounded-lg text-center">
-                  <span className="text-sm">FUT</span>
-                  <div className="text-xs text-gray-400 mt-1">45% Match</div>
+
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
+                  <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
+                  <div className="flex items-center mb-3">
+                    <i className="fas fa-check-circle text-blue-500 mr-2"></i>
+                    <span className="font-medium">{analysisData.recommendedTreatments.secondary.name}</span>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    {analysisData.recommendedTreatments.secondary.description}
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
+                      {analysisData.recommendedTreatments.secondary.match}% Match
+                    </span>
+                  </div>
                 </div>
-                <div className="bg-gray-700/80 p-3 rounded-lg text-center">
-                  <span className="text-sm">SMP</span>
-                  <div className="text-xs text-gray-400 mt-1">40% Match</div>
+
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
+                  <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
+                  <div className="flex items-center mb-3">
+                    <i className="fas fa-check-circle text-purple-500 mr-2"></i>
+                    <span className="font-medium">{analysisData.recommendedTreatments.supporting.name}</span>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    {analysisData.recommendedTreatments.supporting.description}
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">
+                      {analysisData.recommendedTreatments.supporting.match}% Match
+                    </span>
+                  </div>
                 </div>
-                <div className="bg-gray-700/80 p-3 rounded-lg text-center">
-                  <span className="text-sm">Micro FUE</span>
-                  <div className="text-xs text-gray-400 mt-1">55% Match</div>
+              </>
+            ) : (
+              <>
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
+                  <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
+                  <div className="flex items-center mb-3">
+                    <i className="fas fa-check-circle text-green-500 mr-2"></i>
+                    <span className="font-medium">FUE (Follicular Unit Extraction)</span>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    Best suited for your pattern of hair loss and scalp condition. 
+                    Minimally invasive with natural-looking results.
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">98% Match</span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
+                  <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
+                  <div className="flex items-center mb-3">
+                    <i className="fas fa-check-circle text-blue-500 mr-2"></i>
+                    <span className="font-medium">PRP Treatment</span>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    Recommended for strengthening existing hair and promoting new growth.
+                    Can be combined with FUE.
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">85% Match</span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
+                  <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
+                  <div className="flex items-center mb-3">
+                    <i className="fas fa-check-circle text-purple-500 mr-2"></i>
+                    <span className="font-medium">Exosomes Therapy</span>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    Excellent for scalp health and strengthening follicles.
+                    Complementary to main treatments.
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">75% Match</span>
+                  </div>
                 </div>
               </>
             )}
           </div>
-        </div>
-      </div>
 
-      {/* Action Buttons */}
-      <div className="flex justify-center space-x-4 flex-wrap gap-4">
-        <Button className="bg-purple-600 hover:bg-purple-700">
-          <i className="fas fa-save mr-2"></i>Save Analysis
-        </Button>
-        <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
-          <i className="fas fa-share-alt mr-2"></i>Share Results
-        </Button>
-        <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
-          <i className="fas fa-download mr-2"></i>Download Report
-        </Button>
-        <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
-          <i className="fas fa-redo mr-2"></i>New Scan
-        </Button>
+          <div className="mt-6">
+            <h3 className="text-lg font-medium mb-3">Other Available Treatments</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {analysisData.recommendedTreatments?.other.map((treatment, index) => (
+                <div key={index} className="bg-gray-700/80 p-3 rounded-lg text-center">
+                  <span className="text-sm">{treatment.name}</span>
+                  <div className="text-xs text-gray-400 mt-1">{treatment.match}% Match</div>
+                </div>
+              )) || (
+                <>
+                  <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                    <span className="text-sm">Hair Transplant</span>
+                    <div className="text-xs text-gray-400 mt-1">65% Match</div>
+                  </div>
+                  <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                    <span className="text-sm">FUT</span>
+                    <div className="text-xs text-gray-400 mt-1">45% Match</div>
+                  </div>
+                  <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                    <span className="text-sm">SMP</span>
+                    <div className="text-xs text-gray-400 mt-1">40% Match</div>
+                  </div>
+                  <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                    <span className="text-sm">Micro FUE</span>
+                    <div className="text-xs text-gray-400 mt-1">55% Match</div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-center space-x-4 flex-wrap gap-4">
+          <Button className="bg-purple-600 hover:bg-purple-700">
+            <i className="fas fa-save mr-2"></i>Save Analysis
+          </Button>
+          <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+            <i className="fas fa-share-alt mr-2"></i>Share Results
+          </Button>
+          <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+            <i className="fas fa-download mr-2"></i>Download Report
+          </Button>
+          <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+            <i className="fas fa-redo mr-2"></i>New Scan
+          </Button>
+        </div>
       </div>
     </div>
   );
