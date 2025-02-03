@@ -10,7 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { useToast } from "@/components/ui/use-toast";
-import type { ChartEvent, ActiveElement } from 'chart.js';
+import type { ChartEvent } from 'chart.js';
 
 // Register ChartJS components
 ChartJS.register(
@@ -198,9 +198,9 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
     return descriptions[metric] || '';
   };
 
-  const handleChartClick = (_: MouseEvent, elements: ActiveElement[]) => {
+  const handleChartClick = (event: ChartEvent, elements: Array<{ index: number; element: { chart: ChartJS } }>) => {
     if (elements[0]) {
-      const chart = elements[0].chart;
+      const chart = elements[0].element.chart;
       const index = elements[0].index;
       const isDoughnutChart = chart.canvas.id === 'doughnut-chart';
       
