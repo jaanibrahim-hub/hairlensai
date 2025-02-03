@@ -63,22 +63,10 @@ export default {
         shimmer: {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(100%)' }
-        },
-        wave: {
-          '0%': { transform: 'translateX(-100%)' },
-          '50%': { transform: 'translateX(100%)' },
-          '100%': { transform: 'translateX(-100%)' }
-        },
-        glow: {
-          '0%': { filter: 'brightness(1)' },
-          '50%': { filter: 'brightness(1.2)' },
-          '100%': { filter: 'brightness(1)' }
         }
       },
       animation: {
-        shimmer: 'shimmer 2s infinite',
-        'wave': 'wave 3s linear infinite',
-        'glow': 'glow 2s ease-in-out infinite'
+        shimmer: 'shimmer 2s infinite'
       }
     },
   },
