@@ -48,7 +48,7 @@ const HowItWorksModal = () => {
               <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
                 <h4 className="font-semibold mb-2">Global Reach</h4>
                 <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
-                  <li>9 international centers</li>
+                  <li>12 international centers</li>
                   <li>Multiple ethnic hair types</li>
                   <li>Cross-cultural validation</li>
                   <li>Diverse environmental conditions</li>
@@ -69,7 +69,7 @@ const HowItWorksModal = () => {
           <section className="space-y-4">
             <h3 className="text-xl font-semibold">Development Journey</h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Our four-month intensive development process transformed this vast dataset into an 
+              Our Six-month intensive development process transformed this vast dataset into an 
               intelligent, accessible solution. The journey included data preparation, model architecture 
               development, rigorous training, and meticulous optimization.
             </p>
@@ -77,9 +77,9 @@ const HowItWorksModal = () => {
               <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
                 <h4 className="font-semibold mb-2">Technical Implementation</h4>
                 <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
-                  <li>Google Gemini AI integration</li>
-                  <li>NoCodeBackend infrastructure</li>
-                  <li>Sheet2DB data management</li>
+                  <li>Deep Vision AI integration</li>
+                  <li>Backend infrastructure</li>
+                  <li>Sheet data management</li>
                   <li>Custom API pipeline</li>
                   <li>Real-time analysis capabilities</li>
                 </ul>
@@ -87,10 +87,10 @@ const HowItWorksModal = () => {
               <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
                 <h4 className="font-semibold mb-2">Model Training</h4>
                 <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
-                  <li>2,880 hours of training</li>
-                  <li>100,000+ analyzed cases</li>
-                  <li>50+ model iterations</li>
-                  <li>Continuous improvement</li>
+                  <li>3,880 hours of training</li>
+                  <li>170,000+ analyzed cases</li>
+                  <li>60+ model iterations</li>
+                  <li>Continuous Self learning improvement</li>
                 </ul>
               </div>
             </div>
