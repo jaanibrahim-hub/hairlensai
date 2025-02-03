@@ -7,9 +7,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { useToast } from "@/components/ui/use-toast";
 import type { MouseEvent } from 'react';
+import type { ChartEvent } from 'chart.js';
+
+// Register ChartJS components
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement
+);
 
 interface AdvancedAnalysisProps {
   data: any;
@@ -187,13 +199,13 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
     return descriptions[metric] || '';
   };
 
-  const handleChartClick = (event: MouseEvent<HTMLCanvasElement>, elements: any[]) => {
+  const handleChartClick = (event: ChartEvent, elements: any[]) => {
     if (elements[0]) {
       const index = elements[0].index;
-      const metric = event.currentTarget.id === 'doughnut-chart' 
+      const metric = (event.currentTarget as HTMLCanvasElement).id === 'doughnut-chart' 
         ? doughnutData.labels[index]
         : barData.labels[index];
-      const value = event.currentTarget.id === 'doughnut-chart'
+      const value = (event.currentTarget as HTMLCanvasElement).id === 'doughnut-chart'
         ? doughnutData.datasets[0].data[index]
         : barData.datasets[0].data[index];
       handleMetricClick(metric, value);
