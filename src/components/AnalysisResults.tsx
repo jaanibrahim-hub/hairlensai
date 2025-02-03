@@ -329,7 +329,6 @@ const AnalysisResults = () => {
     },
   };
 
-  // Updated data with custom colors
   const curlPatternData = {
     labels: analysisData.curlPatternData.labels,
     datasets: [{
@@ -363,34 +362,6 @@ const AnalysisResults = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-3 space-y-6">
         <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-          <div className="bg-gray-700/80 rounded-lg p-6 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h3 className="text-xl font-semibold text-white">Overall Health Score</h3>
-                <p className="text-gray-400 text-sm mt-1">Based on comprehensive analysis</p>
-              </div>
-              <div className="text-right">
-                <span className="text-3xl font-bold text-purple-400">{analysisData.healthScore}%</span>
-                <p className="text-sm text-gray-400 mt-1">
-                  {analysisData.healthScore >= 80 ? 'Excellent' : 
-                   analysisData.healthScore >= 60 ? 'Good' : 
-                   analysisData.healthScore >= 40 ? 'Fair' : 'Needs Attention'}
-                </p>
-              </div>
-            </div>
-            <div className="relative pt-1">
-              <div className="overflow-hidden h-3 rounded-full bg-gray-600">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-500 relative"
-                  style={{ width: `${analysisData.healthScore}%` }}
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Summary - Moved up */}
           <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
             <h3 className="text-lg font-medium mb-2">Quick Summary</h3>
             <p className="text-gray-300">
@@ -398,7 +369,7 @@ const AnalysisResults = () => {
             </p>
           </div>
 
-          {/* Curl Pattern Distribution - Moved up */}
+          {/* Curl Pattern Distribution */}
           <div className="bg-gray-600/50 p-6 rounded mb-6">
             <h4 className="font-medium mb-4 text-lg">Curl Pattern Distribution</h4>
             <div className="aspect-w-16 aspect-h-9">
@@ -423,7 +394,7 @@ const AnalysisResults = () => {
             </div>
           </div>
 
-          {/* Growth Phase Distribution - Moved up */}
+          {/* Growth Phase Distribution */}
           <div className="bg-gray-600/50 p-6 rounded mb-6">
             <h4 className="font-medium mb-4 text-lg">Growth Phase Distribution</h4>
             <div className="aspect-w-16 aspect-h-9">
@@ -467,56 +438,6 @@ const AnalysisResults = () => {
                     This graph shows your hair's growth journey over time. The higher the line goes, the better your hair is growing! 
                     A healthy pattern usually shows steady growth or gentle ups and downs, which is totally normal.
                   </p>
-                </div>
-              </div>
-
-              <div className="bg-gray-600/50 p-6 rounded">
-                <h4 className="font-medium mb-4 text-lg">Curl Pattern Distribution</h4>
-                <div className="aspect-w-16 aspect-h-9">
-                  <Doughnut data={curlPatternData} options={doughnutOptions} />
-                </div>
-                <div className="mt-4 space-y-4">
-                  <div className="bg-gray-700/50 p-4 rounded">
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                      This chart shows how your different hair textures are distributed. It's perfectly normal to have a mix!
-                    </p>
-                    <ul className="mt-3 space-y-2 text-sm text-gray-300">
-                      <li><span className="text-purple-400">•</span> Straight: Smooth, no waves or curls</li>
-                      <li><span className="text-orange-400">•</span> Wavy: Gentle S-shaped waves</li>
-                      <li><span className="text-blue-400">•</span> Curly: Springy, defined curls</li>
-                      <li><span className="text-pink-400">•</span> Coily: Tight, compact curls</li>
-                    </ul>
-                    <p className="mt-3 text-sm text-gray-400">
-                      Reference: Most people have a mix of patterns. What matters most is understanding your dominant pattern 
-                      to choose the right hair care routine!
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gray-600/50 p-6 rounded">
-                <h4 className="font-medium mb-4 text-lg">Growth Phase Distribution</h4>
-                <div className="aspect-w-16 aspect-h-9">
-                  <Doughnut data={growthPhaseData} options={doughnutOptions} />
-                </div>
-                <div className="mt-4 space-y-4">
-                  <div className="bg-gray-700/50 p-4 rounded">
-                    <p className="text-gray-300 text-sm leading-relaxed">
-                      Your hair goes through different growth phases - think of it like a garden's growing cycle!
-                    </p>
-                    <ul className="mt-3 space-y-2 text-sm text-gray-300">
-                      <li><span className="text-blue-400">•</span> Anagen (Growing): The active growth phase. Ideally 80-90% of your hair should be here!</li>
-                      <li><span className="text-purple-400">•</span> Catagen (Transitioning): A short resting phase. Usually 1-2% is normal.</li>
-                      <li><span className="text-orange-400">•</span> Telogen (Resting/Shedding): The shedding phase. Typically 8-10% of hair is here.</li>
-                    </ul>
-                    <p className="mt-3 text-sm text-gray-400">
-                      Reference: A healthy scalp typically has:
-                      - 80-90% in Anagen
-                      - 1-2% in Catagen
-                      - 8-10% in Telogen
-                      Don't worry if yours is a bit different - many factors can influence these numbers!
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
