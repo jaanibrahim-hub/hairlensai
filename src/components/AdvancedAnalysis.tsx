@@ -26,6 +26,8 @@ interface AdvancedAnalysisProps {
 }
 
 const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
+  console.log("Advanced Analysis Data:", data); // Debug log
+
   return (
     <div className="space-y-6">
       <Tabs defaultValue="microscopic" className="w-full">
@@ -62,21 +64,58 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
                   <div>
                     <div className="flex justify-between mb-2">
                       <span>Cuticle Score</span>
-                      <span className="text-purple-400">{data?.microscopicAnalysis?.cuticleLayerScore || "N/A"}</span>
+                      <span className="text-purple-400">
+                        {data?.microscopicAnalysis?.cuticleLayerScore || "N/A"}
+                      </span>
                     </div>
-                    <Progress value={data?.microscopicAnalysis?.cuticleLayerScore || 0} className="h-2" />
+                    <Progress 
+                      value={data?.microscopicAnalysis?.cuticleLayerScore || 0} 
+                      className="h-2" 
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-gray-700/50 p-4 rounded-lg">
+                      <h4 className="text-sm font-medium mb-2">Shaft Integrity</h4>
+                      <p className="text-sm text-gray-300">
+                        {data?.microscopicAnalysis?.shaftStructure?.integrity || "N/A"}%
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {data?.microscopicAnalysis?.shaftStructure?.pattern || "No pattern data"}
+                      </p>
+                    </div>
+                    <div className="bg-gray-700/50 p-4 rounded-lg">
+                      <h4 className="text-sm font-medium mb-2">Medulla Analysis</h4>
+                      <p className="text-sm text-gray-300">
+                        Continuity: {data?.microscopicAnalysis?.medullaAnalysis?.continuity || "N/A"}%
+                      </p>
+                    </div>
                   </div>
                   <div className="h-[200px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <RadarChart data={[
-                        { subject: "Integrity", value: data?.microscopicAnalysis?.shaftStructure?.integrity || 0 },
-                        { subject: "Uniformity", value: data?.microscopicAnalysis?.crossSection?.uniformity || 0 },
-                        { subject: "Continuity", value: data?.microscopicAnalysis?.medullaAnalysis?.continuity || 0 },
+                        { 
+                          subject: "Integrity", 
+                          value: data?.microscopicAnalysis?.shaftStructure?.integrity || 0 
+                        },
+                        { 
+                          subject: "Uniformity", 
+                          value: data?.microscopicAnalysis?.crossSection?.uniformity || 0 
+                        },
+                        { 
+                          subject: "Continuity", 
+                          value: data?.microscopicAnalysis?.medullaAnalysis?.continuity || 0 
+                        },
                       ]}>
                         <PolarGrid />
                         <PolarAngleAxis dataKey="subject" />
                         <PolarRadiusAxis />
-                        <Radar dataKey="value" fill="#9b87f5" fillOpacity={0.6} />
+                        <Radar 
+                          name="Hair Analysis" 
+                          dataKey="value" 
+                          fill="#9b87f5" 
+                          fillOpacity={0.6} 
+                        />
+                        <Tooltip />
                       </RadarChart>
                     </ResponsiveContainer>
                   </div>
@@ -94,24 +133,34 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-gray-700/50 p-4 rounded-lg">
                       <h4 className="text-sm font-medium mb-2">Texture</h4>
-                      <p className="text-sm text-gray-300">{data?.microscopicAnalysis?.surfaceMapping?.texture || "N/A"}</p>
+                      <p className="text-sm text-gray-300">
+                        {data?.microscopicAnalysis?.surfaceMapping?.texture || "No texture data"}
+                      </p>
                     </div>
                     <div className="bg-gray-700/50 p-4 rounded-lg">
                       <h4 className="text-sm font-medium mb-2">Damage</h4>
-                      <p className="text-sm text-gray-300">{data?.microscopicAnalysis?.surfaceMapping?.damage || "N/A"}</p>
+                      <p className="text-sm text-gray-300">
+                        {data?.microscopicAnalysis?.surfaceMapping?.damage || "No damage data"}
+                      </p>
                     </div>
                   </div>
                   <div className="h-[200px]">
                     <ResponsiveContainer width="100%" height="100%">
                       <LineChart data={[
-                        { name: "Start", value: 65 },
-                        { name: "Mid", value: 75 },
-                        { name: "End", value: 85 },
+                        { name: "Start", value: data?.microscopicAnalysis?.cuticleLayerScore || 0 },
+                        { name: "Mid", value: data?.microscopicAnalysis?.shaftStructure?.integrity || 0 },
+                        { name: "End", value: data?.microscopicAnalysis?.crossSection?.uniformity || 0 },
                       ]}>
                         <XAxis dataKey="name" />
                         <YAxis />
                         <Tooltip />
-                        <Line type="monotone" dataKey="value" stroke="#9b87f5" />
+                        <Line 
+                          type="monotone" 
+                          dataKey="value" 
+                          stroke="#9b87f5" 
+                          strokeWidth={2}
+                          dot={{ fill: "#9b87f5" }}
+                        />
                       </LineChart>
                     </ResponsiveContainer>
                   </div>
