@@ -10,7 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from 'chart.js';
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { useToast } from "@/components/ui/use-toast";
-import type { ChartEvent } from 'chart.js';
+import type { ChartEvent, ActiveElement, Chart } from 'chart.js';
 
 // Register ChartJS components
 ChartJS.register(
@@ -41,6 +41,42 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
     surfaceTexture: 85,
     damageLevel: 25,
     protectionScore: 90
+  };
+
+  const handleMetricClick = (metric: string, value: number) => {
+    toast({
+      title: `${metric} Details`,
+      description: `Current value: ${value}%. ${getMetricDescription(metric)}`,
+      duration: 3000,
+    });
+  };
+
+  const getMetricDescription = (metric: string) => {
+    const descriptions: { [key: string]: string } = {
+      'Cuticle Layer': 'The protective outer layer of your hair. Higher scores indicate better protection.',
+      'Shaft Integrity': 'Overall strength of your hair strands. Above 75% is considered healthy.',
+      'Medulla Continuity': 'Quality of your hair\'s inner structure. Higher scores mean better formation.',
+      'Surface Texture': 'Smoothness and uniformity of hair surface.',
+      'Damage Assessment': 'Level of damage detected. Lower scores are better.',
+      'Protection Level': 'How well your hair is protected from environmental factors.'
+    };
+    return descriptions[metric] || '';
+  };
+
+  const handleChartClick = (event: ChartEvent, elements: ActiveElement[], chart: Chart) => {
+    if (elements.length > 0) {
+      const index = elements[0].index;
+      const isDoughnutChart = chart.canvas.id === 'doughnut-chart';
+      
+      const metric = isDoughnutChart 
+        ? doughnutData.labels[index]
+        : barData.labels[index];
+      const value = isDoughnutChart
+        ? doughnutData.datasets[0].data[index]
+        : barData.datasets[0].data[index];
+      
+      handleMetricClick(metric, value);
+    }
   };
 
   const doughnutData = {
@@ -178,43 +214,6 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
       easing: 'easeInOutQuart' as const
     },
     onClick: handleChartClick
-  };
-
-  const handleMetricClick = (metric: string, value: number) => {
-    toast({
-      title: `${metric} Details`,
-      description: `Current value: ${value}%. ${getMetricDescription(metric)}`,
-      duration: 3000,
-    });
-  };
-
-  const getMetricDescription = (metric: string) => {
-    const descriptions: { [key: string]: string } = {
-      'Cuticle Layer': 'The protective outer layer of your hair. Higher scores indicate better protection.',
-      'Shaft Integrity': 'Overall strength of your hair strands. Above 75% is considered healthy.',
-      'Medulla Continuity': 'Quality of your hair\'s inner structure. Higher scores mean better formation.',
-      'Surface Texture': 'Smoothness and uniformity of hair surface.',
-      'Damage Assessment': 'Level of damage detected. Lower scores are better.',
-      'Protection Level': 'How well your hair is protected from environmental factors.'
-    };
-    return descriptions[metric] || '';
-  };
-
-  const handleChartClick = (event: ChartEvent, elements: Array<{ index: number; element: { chart: ChartJS } }>) => {
-    if (elements[0]) {
-      const chart = elements[0].element.chart;
-      const index = elements[0].index;
-      const isDoughnutChart = chart.canvas.id === 'doughnut-chart';
-      
-      const metric = isDoughnutChart 
-        ? doughnutData.labels[index]
-        : barData.labels[index];
-      const value = isDoughnutChart
-        ? doughnutData.datasets[0].data[index]
-        : barData.datasets[0].data[index];
-      
-      handleMetricClick(metric, value);
-    }
   };
 
   return (
