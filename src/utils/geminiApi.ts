@@ -62,66 +62,142 @@ const API_KEYS = [
   'AIzaSyBcyEA5uAB0RXlLy1LKvREzlymz-DVk9SI'
 ];
 
-const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a comprehensive analysis in the following JSON format (do not include markdown formatting or json code blocks, just return the raw JSON):
+const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a comprehensive analysis in the following JSON format:
 
 {
-  "structuralAnalysis": {
-    "hairGrowthCycle": [numbers for 6 months showing growth progression],
-    "curlPatternDistribution": [percentages of different curl patterns],
-    "growthPhaseDistribution": [percentages in anagen, catagen, telogen phases]
+  "microscopicAnalysis": {
+    "cuticleLayerScore": "0-100 score with detailed integrity assessment",
+    "shaftStructure": {
+      "integrity": "0-100",
+      "pattern": "detailed pattern description",
+      "abnormalities": ["list of any structural issues"]
+    },
+    "medullaAnalysis": {
+      "presence": "percentage",
+      "continuity": "0-100",
+      "healthMetrics": ["detailed health indicators"]
+    },
+    "crossSection": {
+      "shape": "detailed shape analysis",
+      "diameter": "measurements in micrometers",
+      "uniformity": "0-100"
+    },
+    "surfaceMapping": {
+      "texture": "detailed texture analysis",
+      "damage": "damage patterns and severity",
+      "scales": "condition of cuticle scales"
+    }
   },
-  "quickSummary": "Detailed analysis of sebum levels, pore condition, inflammation markers, etc.",
-  "metrics": {
-    "hairType": "Specific hair type classification",
-    "healthStatus": "Overall health assessment",
-    "porosity": "Low/Medium/High with percentage",
-    "density": "Hairs per square cm",
-    "elasticity": "Measurement of stretch and return",
-    "scalpCondition": "Detailed scalp health analysis",
-    "hairLength": "Average length in inches/cm",
-    "chemicalTreatment": "Assessment of chemical exposure",
-    "protectionLevel": "Current protection status",
-    "breakageRate": "Percentage of broken strands",
-    "strandThickness": "Measurement in millimeters",
-    "follicleDensity": "Follicles per square cm",
-    "hairDiameter": {
-      "root": "Diameter at root in mm",
-      "tip": "Diameter at tip in mm"
+  "scalpHealth": {
+    "follicleDensity": {
+      "average": "follicles per cm²",
+      "distribution": "pattern description",
+      "mapping": ["density zones"]
     },
-    "growthPhase": "Current growth phase percentage",
-    "damageAnalysis": "Detailed damage assessment"
+    "phLevels": {
+      "current": "numerical pH value",
+      "optimal": "target pH range",
+      "variations": ["pH patterns"]
+    },
+    "sebumProduction": {
+      "rate": "production level",
+      "distribution": "pattern analysis",
+      "quality": "composition assessment"
+    },
+    "microcirculation": {
+      "bloodFlow": "0-100",
+      "oxygenation": "percentage",
+      "inflammation": "presence and severity"
+    }
   },
-  "overallHealthScore": "Score between 0-100",
-  "hairInformation": {
-    "diagnosticAnalysis": "Comprehensive diagnostic findings",
-    "careTips": ["Array of specific care recommendations"]
+  "growthCycle": {
+    "anagenTelogenRatio": {
+      "current": "ratio value",
+      "optimal": "target ratio",
+      "distribution": ["area-specific ratios"]
+    },
+    "growthRate": {
+      "velocity": "mm per month",
+      "consistency": "0-100",
+      "patterns": ["growth patterns"]
+    },
+    "sheddingMetrics": {
+      "daily": "average count",
+      "pattern": "shedding pattern analysis",
+      "severity": "0-100"
+    },
+    "miniaturization": {
+      "score": "0-100",
+      "affected": "percentage of affected follicles",
+      "progression": "rate of change"
+    }
   },
-  "recommendedTreatments": {
-    "primary": {
-      "name": "Primary treatment recommendation",
-      "description": "Detailed treatment description",
-      "match": "Match percentage (0-100)"
+  "chemicalComposition": {
+    "proteinContent": {
+      "level": "percentage",
+      "quality": "protein structure assessment",
+      "deficiencies": ["specific deficiencies"]
     },
-    "secondary": {
-      "name": "Secondary treatment option",
-      "description": "Treatment description",
-      "match": "Match percentage (0-100)"
+    "hydrationLevels": {
+      "surface": "percentage",
+      "cortex": "percentage",
+      "retention": "0-100"
     },
-    "supporting": {
-      "name": "Supporting treatment",
-      "description": "Treatment description",
-      "match": "Match percentage (0-100)"
+    "lipidProfile": {
+      "surface": "lipid content analysis",
+      "internal": "structural lipids assessment",
+      "balance": "0-100"
     },
-    "other": [
-      {
-        "name": "Alternative treatment name",
-        "match": "Match percentage (0-100)"
-      }
-    ]
+    "mineralContent": {
+      "present": ["detected minerals"],
+      "deficient": ["deficient minerals"],
+      "excess": ["excess minerals"]
+    }
+  },
+  "environmentalImpact": {
+    "uvDamage": {
+      "severity": "0-100",
+      "type": "damage pattern",
+      "depth": "affected layers"
+    },
+    "pollutionEffects": {
+      "exposure": "0-100",
+      "particleMatter": "concentration",
+      "oxidativeStress": "severity"
+    },
+    "heatDamage": {
+      "current": "damage assessment",
+      "cumulative": "long-term impact",
+      "recovery": "potential"
+    }
+  },
+  "treatmentPredictions": {
+    "successProbability": {
+      "overall": "percentage",
+      "byTreatment": ["treatment-specific probabilities"]
+    },
+    "timeline": {
+      "expected": "weeks to visible results",
+      "milestones": ["expected progress points"]
+    },
+    "combinations": {
+      "recommended": ["optimal treatment combinations"],
+      "contraindications": ["treatments to avoid"]
+    }
   }
 }
 
-Please ensure all measurements are precise and include specific numerical values where possible. Base all assessments on visible evidence in the image.`;
+Base your analysis on visible evidence in the image, considering:
+1. Microscopic details visible in high-resolution areas
+2. Color patterns and variations
+3. Surface texture and reflectivity
+4. Scalp visibility and condition
+5. Hair density and distribution
+6. Signs of damage or stress
+7. Growth patterns and variations
+8. Environmental exposure indicators
+
+Provide specific numerical values where possible and detailed descriptions for qualitative assessments.`;
 
 const validateImage = (imageBase64: string): boolean => {
   try {
@@ -145,7 +221,7 @@ const validateImage = (imageBase64: string): boolean => {
   }
 };
 
-async function makeApiCall(imageBase64: string, apiKey: string): Promise<HairAnalysisResponse | null> {
+async function makeApiCall(imageBase64: string, apiKey: string) {
   if (!validateImage(imageBase64)) {
     throw new Error("Invalid image format or size");
   }
@@ -162,9 +238,7 @@ async function makeApiCall(imageBase64: string, apiKey: string): Promise<HairAna
           contents: [
             {
               parts: [
-                {
-                  text: ANALYSIS_PROMPT,
-                },
+                { text: ANALYSIS_PROMPT },
                 {
                   inline_data: {
                     mime_type: "image/jpeg",
@@ -175,10 +249,10 @@ async function makeApiCall(imageBase64: string, apiKey: string): Promise<HairAna
             },
           ],
           generationConfig: {
-            temperature: 0.4,
-            topK: 32,
-            topP: 1,
-            maxOutputTokens: 4096,
+            temperature: 0.3,
+            topK: 40,
+            topP: 0.8,
+            maxOutputTokens: 8192,
           },
           safetySettings: [
             {

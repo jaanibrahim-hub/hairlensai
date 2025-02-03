@@ -15,6 +15,7 @@ import {
   RadialLinearScale,
 } from 'chart.js';
 import { Line, Doughnut, PolarArea } from 'react-chartjs-2';
+import AdvancedAnalysis from "./AdvancedAnalysis";
 
 ChartJS.register(
   ArcElement,
@@ -98,11 +99,6 @@ interface AnalysisResult {
       match: number;
     }>;
   };
-}
-
-interface HairDiameter {
-  root: string;
-  tip: string;
 }
 
 const defaultHealthData = {
@@ -338,9 +334,6 @@ const AnalysisResults = () => {
   return (
     <div className="space-y-6">
       <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-        <h2 className="text-xl font-semibold mb-4 text-white">Analysis Results</h2>
-
-        {/* Health Score with Enhanced Visualization - Moved to top */}
         <div className="bg-gray-700/80 rounded-lg p-6 mb-4">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -376,11 +369,8 @@ const AnalysisResults = () => {
           </p>
         </div>
 
-        {/* Health Charts - Moved up */}
-        <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
-          <Line data={analysisData.healthData} options={chartOptions} />
-          <p className="text-center text-sm text-gray-400 mt-2">Hair Health Metrics Over Time</p>
-        </div>
+        {/* Advanced Analysis Section */}
+        <AdvancedAnalysis data={analysisData} />
 
         {/* Structural Analysis */}
         <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
