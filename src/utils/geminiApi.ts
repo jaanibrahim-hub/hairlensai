@@ -28,37 +28,6 @@ interface HairAnalysisResponse {
     damageAnalysis: string;
   };
   overallHealthScore: number;
-  healthScore: number; // Added this property
-  healthData: {
-    labels: string[];
-    datasets: {
-      label: string;
-      data: number[];
-      borderColor: string;
-      backgroundColor: string;
-      fill: boolean;
-    }[];
-  };
-  curlPatternData: {
-    labels: string[];
-    datasets: {
-      label: string;
-      data: number[];
-      borderColor: string;
-      backgroundColor: string;
-      fill: boolean;
-    }[];
-  };
-  growthPhaseData: {
-    labels: string[];
-    datasets: {
-      label: string;
-      data: number[];
-      borderColor: string;
-      backgroundColor: string;
-      fill: boolean;
-    }[];
-  };
   hairInformation: {
     diagnosticAnalysis: string;
     careTips: string[];
@@ -93,131 +62,110 @@ const API_KEYS = [
   'AIzaSyBcyEA5uAB0RXlLy1LKvREzlymz-DVk9SI'
 ];
 
-const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a detailed assessment focusing on these key areas:
-
-1. Microscopic Analysis:
-- Cuticle layer condition (0-100 score)
-- Shaft structure integrity (0-100)
-- Cross-section uniformity (0-100)
-- Surface texture mapping
-- Medulla analysis
-- Damage patterns
-
-2. Scalp Health:
-- Sebum levels (0-100)
-- Hydration levels (0-100)
-- Inflammation indicators
-- Follicle condition
-- Scalp pH balance
-- Microbial balance
-
-3. Growth Cycle Analysis:
-- Anagen/Catagen/Telogen distribution
-- Growth rate indicators
-- Follicle density
-- Growth pattern uniformity
-- Miniaturization assessment
-- Growth phase transitions
-
-4. Chemical Analysis:
-- Treatment residue levels
-- Chemical damage indicators
-- Protein loss assessment
-- Mineral buildup
-- pH levels
-- Chemical bond status
-
-5. Environmental Impact:
-- UV damage markers
-- Pollution particle presence
-- Moisture retention
-- Environmental stress indicators
-- Protective barrier status
-- Climate adaptation signs
-
-6. Treatment Requirements:
-- Primary treatment needs
-- Secondary interventions
-- Supporting treatments
-- Treatment compatibility
-- Expected efficacy rates
-- Treatment timeline
-
-Return the analysis in this JSON format:
+const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a detailed assessment. Focus on visible features and provide specific values where possible. Return the analysis in this JSON format:
 
 {
+  "metrics": {
+    "hairType": "Describe the hair type (e.g., 1A-4C)",
+    "healthStatus": "Overall health assessment",
+    "porosity": "Low/Medium/High based on shine and texture",
+    "density": "Assessment of hair density",
+    "elasticity": "Based on visible hair pattern",
+    "scalpCondition": "Visible scalp health indicators",
+    "hairLength": "Approximate length in inches",
+    "chemicalTreatment": "Signs of chemical processing",
+    "protectionLevel": "Assessment of hair protection",
+    "breakageRate": "Visible damage percentage",
+    "strandThickness": "Fine/Medium/Coarse assessment",
+    "follicleDensity": "Visible density pattern",
+    "hairDiameter": {
+      "root": "Estimated root diameter",
+      "tip": "Estimated tip diameter"
+    },
+    "growthPhase": "Dominant growth phase estimate",
+    "damageAnalysis": "Visible damage assessment"
+  },
+  "overallHealthScore": "Numerical score 0-100",
+  "structuralAnalysis": {
+    "hairGrowthCycle": [65, 70, 75, 80, 85, 90],
+    "curlPatternDistribution": [
+      {"Straight": 30},
+      {"Wavy": 40},
+      {"Curly": 20},
+      {"Coily": 10}
+    ],
+    "growthPhaseDistribution": [
+      {"Anagen": 85},
+      {"Catagen": 5},
+      {"Telogen": 10}
+    ]
+  },
   "microscopicAnalysis": {
-    "cuticleLayerScore": number,
+    "cuticleLayerScore": 75,
     "shaftStructure": {
-      "integrity": number,
-      "pattern": string
+      "integrity": 80,
+      "pattern": "Regular/Irregular pattern description"
     },
     "medullaAnalysis": {
-      "continuity": number,
-      "pattern": string
+      "continuity": 85
     },
     "crossSection": {
-      "uniformity": number
+      "uniformity": 90
     },
     "surfaceMapping": {
-      "texture": string,
-      "damage": string
+      "texture": "Detailed texture description",
+      "damage": "Specific damage patterns"
     }
   },
-  "scalpHealth": {
-    "sebumLevel": number,
-    "hydrationLevel": number,
-    "inflammation": string,
-    "follicleCondition": string,
-    "pHBalance": number,
-    "microbialBalance": string
+  "quickSummary": "Brief analysis summary highlighting key findings",
+  "hairInformation": {
+    "diagnosticAnalysis": "Detailed diagnostic findings",
+    "careTips": [
+      "Specific care recommendation 1",
+      "Specific care recommendation 2",
+      "Specific care recommendation 3"
+    ]
   },
-  "growthCycleAnalysis": {
-    "distribution": {
-      "anagen": number,
-      "catagen": number,
-      "telogen": number
-    },
-    "growthRate": number,
-    "follicleDensity": number,
-    "uniformity": number,
-    "miniaturization": string
-  },
-  "chemicalAnalysis": {
-    "treatmentResidueLevel": number,
-    "damageLevel": number,
-    "proteinLoss": number,
-    "mineralBuildup": string,
-    "pHLevel": number
-  },
-  "environmentalImpact": {
-    "uvDamage": number,
-    "pollutionLevel": number,
-    "moistureRetention": number,
-    "stressIndicators": string,
-    "protectiveBarrier": number
-  },
-  "treatmentPlan": {
+  "recommendedTreatments": {
     "primary": {
-      "name": string,
-      "description": string,
-      "efficacy": number,
-      "timeline": string
+      "name": "Primary treatment name",
+      "description": "Treatment description",
+      "match": 95
     },
     "secondary": {
-      "name": string,
-      "description": string,
-      "efficacy": number
+      "name": "Secondary treatment name",
+      "description": "Treatment description",
+      "match": 85
     },
     "supporting": {
-      "name": string,
-      "description": string,
-      "efficacy": number
-    }
+      "name": "Supporting treatment name",
+      "description": "Treatment description",
+      "match": 75
+    },
+    "other": [
+      {
+        "name": "Alternative treatment 1",
+        "match": 65
+      },
+      {
+        "name": "Alternative treatment 2",
+        "match": 55
+      }
+    ]
   }
 }
 
-Provide specific numerical values (0-100) for all metrics where applicable. Make reasonable estimates based on visible indicators rather than marking as "Unable to assess".`;
+Important guidelines for analysis:
+1. Provide specific numerical values whenever possible
+2. Focus on visible characteristics in the image
+3. Make reasonable estimates based on visible features
+4. Use comparative analysis with standard hair types
+5. Consider both close-up details and overall appearance
+6. Assess multiple areas of the image for comprehensive analysis
+7. Note any distinct patterns or variations
+8. Include specific measurements where visible indicators allow estimation
+
+If a feature cannot be fully assessed, provide a best estimate based on visible indicators rather than marking as "Unable to assess".`;
 
 const validateImage = (imageBase64: string): boolean => {
   try {
@@ -334,161 +282,6 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
   }
 }
 
-const transformApiResponse = (apiResponse: any): HairAnalysisResponse => {
-  console.log('Transforming API response:', apiResponse);
-
-  // Transform metrics into the expected format
-  const metrics = {
-    hairType: apiResponse?.hairType || "Type 2B Wavy",
-    healthStatus: apiResponse?.healthStatus || "Requires Attention",
-    porosity: apiResponse?.porosity || "Medium",
-    density: apiResponse?.density || "Medium-High",
-    elasticity: apiResponse?.elasticity || "Good",
-    scalpCondition: apiResponse?.scalpCondition || "Mild Inflammation",
-    hairLength: apiResponse?.hairLength || "Medium (12-16 inches)",
-    chemicalTreatment: apiResponse?.chemicalTreatment || "Minimal",
-    protectionLevel: apiResponse?.protectionLevel || "Moderate",
-    breakageRate: apiResponse?.breakageRate || "7% (Low)",
-    strandThickness: apiResponse?.strandThickness || "0.08mm (Medium)",
-    follicleDensity: apiResponse?.follicleDensity || "165 hairs/cm²",
-    hairDiameter: {
-      root: apiResponse?.hairDiameter?.root || "0.09mm",
-      tip: apiResponse?.hairDiameter?.tip || "0.06mm"
-    },
-    growthPhase: apiResponse?.growthPhase || "85% Anagen",
-    damageAnalysis: apiResponse?.damageAnalysis || "Minimal"
-  };
-
-  // Calculate overall health score based on multiple factors
-  const healthScore = Math.round(
-    (
-      (apiResponse.microscopicAnalysis?.cuticleLayerScore || 0) +
-      (apiResponse.scalpHealth?.hydrationLevel || 0) +
-      (apiResponse.growthCycleAnalysis?.follicleDensity || 0) +
-      (100 - (apiResponse.chemicalAnalysis?.damageLevel || 0)) +
-      (apiResponse.environmentalImpact?.protectiveBarrier || 0)
-    ) / 5
-  );
-
-  // Create health data trend
-  const healthData = {
-    labels: ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
-    datasets: [{
-      label: 'Hair Growth Cycle',
-      data: apiResponse.growthCycleAnalysis?.distribution ? [
-        apiResponse.growthCycleAnalysis.distribution.anagen || 85,
-        apiResponse.growthCycleAnalysis.distribution.catagen || 5,
-        apiResponse.growthCycleAnalysis.distribution.telogen || 10,
-        apiResponse.growthCycleAnalysis.follicleDensity || 75,
-        apiResponse.growthCycleAnalysis.uniformity || 80,
-        healthScore
-      ] : [65, 70, 68, 72, 75, 76],
-      borderColor: '#9b87f5',
-      backgroundColor: 'rgba(155, 135, 245, 0.1)',
-      fill: true,
-    }]
-  };
-
-  // Map curl pattern distribution
-  const curlPatternData = {
-    labels: ['Type 1 (Straight)', 'Type 2 (Wavy)', 'Type 3 (Curly)', 'Type 4 (Coily)'],
-    datasets: [{
-      label: 'Hair Type Distribution',
-      data: [25, 35, 25, 15],
-      borderColor: '#9b87f5',
-      backgroundColor: 'rgba(155, 135, 245, 0.1)',
-      fill: true,
-    }]
-  };
-
-  // Map growth phase distribution
-  const growthPhaseData = {
-    labels: ['Anagen', 'Catagen', 'Telogen'],
-    datasets: [{
-      label: 'Growth Phase Distribution',
-      data: [
-        apiResponse.growthCycleAnalysis?.distribution?.anagen || 85,
-        apiResponse.growthCycleAnalysis?.distribution?.catagen || 5,
-        apiResponse.growthCycleAnalysis?.distribution?.telogen || 10
-      ],
-      borderColor: '#9b87f5',
-      backgroundColor: 'rgba(155, 135, 245, 0.1)',
-      fill: true,
-    }]
-  };
-
-  // Create structural analysis with correct types
-  const structuralAnalysis = {
-    hairGrowthCycle: [
-      apiResponse.growthCycleAnalysis?.distribution?.anagen || 85,
-      apiResponse.growthCycleAnalysis?.distribution?.catagen || 5,
-      apiResponse.growthCycleAnalysis?.distribution?.telogen || 10
-    ],
-    curlPatternDistribution: [25, 35, 25, 15],
-    growthPhaseDistribution: [85, 5, 10]
-  };
-
-  // Create quick summary
-  const quickSummary = `Based on the analysis: Cuticle layer score is ${apiResponse.microscopicAnalysis?.cuticleLayerScore || 70}%, 
-    scalp hydration at ${apiResponse.scalpHealth?.hydrationLevel || 70}%, 
-    with ${apiResponse.growthCycleAnalysis?.distribution?.anagen || 85}% of hair in growth phase. 
-    ${apiResponse.treatmentPlan?.primary?.name || 'Treatment'} is recommended.`;
-
-  // Map hair information
-  const hairInformation = {
-    diagnosticAnalysis: apiResponse.microscopicAnalysis?.shaftStructure?.pattern || 
-      "Relatively intact, some minor irregularities visible",
-    careTips: [
-      `Maintain pH level of ${apiResponse.scalpHealth?.pHBalance || 5.5}`,
-      `Focus on ${apiResponse.treatmentPlan?.primary?.name || 'recommended treatment'}`,
-      `Monitor ${apiResponse.environmentalImpact?.stressIndicators || 'environmental factors'}`,
-      "Regular scalp care routine",
-      "Gentle styling practices"
-    ]
-  };
-
-  // Map recommended treatments
-  const recommendedTreatments = {
-    primary: {
-      name: apiResponse.treatmentPlan?.primary?.name || "Scalp and Hair Strengthening Treatment",
-      description: apiResponse.treatmentPlan?.primary?.description || 
-        "A treatment focusing on strengthening the hair shaft, improving scalp health and promoting healthy hair growth.",
-      match: apiResponse.treatmentPlan?.primary?.efficacy || 75
-    },
-    secondary: {
-      name: apiResponse.treatmentPlan?.secondary?.name || "Hair Growth Stimulant",
-      description: apiResponse.treatmentPlan?.secondary?.description || 
-        "Supporting treatment protocol",
-      match: apiResponse.treatmentPlan?.secondary?.efficacy || 60
-    },
-    supporting: {
-      name: apiResponse.treatmentPlan?.supporting?.name || "Healthy Diet and Lifestyle",
-      description: apiResponse.treatmentPlan?.supporting?.description || 
-        "Daily care routine",
-      match: apiResponse.treatmentPlan?.supporting?.efficacy || 80
-    },
-    other: [
-      { name: "Scalp Treatment", match: 60 },
-      { name: "Protein Treatment", match: 55 },
-      { name: "Deep Conditioning", match: 50 },
-      { name: "Heat Protection", match: 45 }
-    ]
-  };
-
-  return {
-    metrics,
-    overallHealthScore: healthScore, // Add this line to fix the error
-    healthScore,
-    healthData,
-    curlPatternData,
-    growthPhaseData,
-    structuralAnalysis,
-    quickSummary,
-    hairInformation,
-    recommendedTreatments
-  };
-};
-
 export const analyzeHairImage = async (imageBase64: string): Promise<HairAnalysisResponse> => {
   let lastError: Error | null = null;
 
@@ -497,7 +290,7 @@ export const analyzeHairImage = async (imageBase64: string): Promise<HairAnalysi
       const result = await makeApiCall(imageBase64, apiKey);
       if (result) {
         console.log('Successfully analyzed image with API key:', apiKey.substring(0, 5) + '...');
-        return transformApiResponse(result);
+        return result;
       }
     } catch (error) {
       console.warn(`Failed with API key ${apiKey.substring(0, 5)}...`, error);
