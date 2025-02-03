@@ -19,14 +19,16 @@ import {
   PolarRadiusAxis,
   RadarChart,
   Radar,
+  BarChart,
+  Bar,
 } from "recharts";
 
 interface AdvancedAnalysisProps {
-  data: any; // Replace with proper type when available
+  data: any;
 }
 
 const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
-  console.log("Advanced Analysis Data:", data); // Debug log
+  console.log("Advanced Analysis Data:", data);
 
   return (
     <div className="space-y-6">
@@ -56,15 +58,15 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="bg-gray-800/80">
               <CardHeader>
-                <CardTitle>Cuticle Layer Analysis</CardTitle>
-                <CardDescription>Detailed assessment of cuticle integrity</CardDescription>
+                <CardTitle>Cuticle Analysis</CardTitle>
+                <CardDescription>Detailed assessment of hair structure</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div>
                     <div className="flex justify-between mb-2">
-                      <span>Cuticle Score</span>
-                      <span className="text-purple-400">{data?.microscopicAnalysis?.cuticleLayerScore || 0}</span>
+                      <span>Cuticle Layer Score</span>
+                      <span className="text-purple-400">{data?.microscopicAnalysis?.cuticleLayerScore || 0}%</span>
                     </div>
                     <Progress value={data?.microscopicAnalysis?.cuticleLayerScore || 0} className="h-2" />
                   </div>
@@ -85,27 +87,6 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
                 </div>
               </CardContent>
             </Card>
-
-            <Card className="bg-gray-800/80">
-              <CardHeader>
-                <CardTitle>Surface Mapping</CardTitle>
-                <CardDescription>Microscopic texture analysis</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-700/50 p-4 rounded-lg">
-                      <h4 className="text-sm font-medium mb-2">Texture</h4>
-                      <p className="text-sm text-gray-300">{data?.microscopicAnalysis?.surfaceMapping?.texture || "N/A"}</p>
-                    </div>
-                    <div className="bg-gray-700/50 p-4 rounded-lg">
-                      <h4 className="text-sm font-medium mb-2">Damage</h4>
-                      <p className="text-sm text-gray-300">{data?.microscopicAnalysis?.surfaceMapping?.damage || "N/A"}</p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </TabsContent>
 
@@ -113,20 +94,28 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="bg-gray-800/80">
               <CardHeader>
-                <CardTitle>Scalp Condition</CardTitle>
-                <CardDescription>Analysis of scalp health indicators</CardDescription>
+                <CardTitle>Scalp Health Indicators</CardTitle>
+                <CardDescription>Comprehensive scalp analysis</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-700/50 p-4 rounded-lg">
-                      <h4 className="text-sm font-medium mb-2">Sebum Level</h4>
-                      <p className="text-sm text-gray-300">{data?.metrics?.scalpCondition || "N/A"}</p>
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>Sebum Level</span>
+                      <span className="text-purple-400">{data?.scalpHealth?.sebumLevel || 0}%</span>
                     </div>
-                    <div className="bg-gray-700/50 p-4 rounded-lg">
-                      <h4 className="text-sm font-medium mb-2">Hydration</h4>
-                      <Progress value={data?.metrics?.hydrationLevel || 0} className="h-2" />
+                    <Progress value={data?.scalpHealth?.sebumLevel || 0} className="h-2" />
+                  </div>
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>Hydration Level</span>
+                      <span className="text-purple-400">{data?.scalpHealth?.hydrationLevel || 0}%</span>
                     </div>
+                    <Progress value={data?.scalpHealth?.hydrationLevel || 0} className="h-2" />
+                  </div>
+                  <div className="bg-gray-700/50 p-4 rounded-lg">
+                    <h4 className="text-sm font-medium mb-2">pH Balance</h4>
+                    <p className="text-2xl font-bold text-purple-400">{data?.scalpHealth?.pHBalance || "N/A"}</p>
                   </div>
                 </div>
               </CardContent>
@@ -138,19 +127,30 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="bg-gray-800/80">
               <CardHeader>
-                <CardTitle>Growth Phase Distribution</CardTitle>
-                <CardDescription>Analysis of hair growth cycles</CardDescription>
+                <CardTitle>Growth Cycle Distribution</CardTitle>
+                <CardDescription>Analysis of hair growth phases</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-[200px]">
+                <div className="h-[300px]">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={data?.growthPhaseData?.datasets?.[0]?.data || []}>
+                    <BarChart data={[
+                      { name: "Anagen", value: data?.growthCycleAnalysis?.distribution?.anagen || 0 },
+                      { name: "Catagen", value: data?.growthCycleAnalysis?.distribution?.catagen || 0 },
+                      { name: "Telogen", value: data?.growthCycleAnalysis?.distribution?.telogen || 0 },
+                    ]}>
                       <XAxis dataKey="name" />
                       <YAxis />
                       <Tooltip />
-                      <Line type="monotone" dataKey="value" stroke="#9b87f5" />
-                    </LineChart>
+                      <Bar dataKey="value" fill="#9b87f5" />
+                    </BarChart>
                   </ResponsiveContainer>
+                </div>
+                <div className="mt-4">
+                  <div className="flex justify-between mb-2">
+                    <span>Growth Rate</span>
+                    <span className="text-purple-400">{data?.growthCycleAnalysis?.growthRate || 0}%</span>
+                  </div>
+                  <Progress value={data?.growthCycleAnalysis?.growthRate || 0} className="h-2" />
                 </div>
               </CardContent>
             </Card>
@@ -161,14 +161,28 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="bg-gray-800/80">
               <CardHeader>
-                <CardTitle>Chemical Treatment Analysis</CardTitle>
-                <CardDescription>Impact of chemical treatments</CardDescription>
+                <CardTitle>Chemical Analysis</CardTitle>
+                <CardDescription>Chemical treatment impact assessment</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>Treatment Residue</span>
+                      <span className="text-purple-400">{data?.chemicalAnalysis?.treatmentResidueLevel || 0}%</span>
+                    </div>
+                    <Progress value={data?.chemicalAnalysis?.treatmentResidueLevel || 0} className="h-2" />
+                  </div>
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span>Damage Level</span>
+                      <span className="text-purple-400">{data?.chemicalAnalysis?.damageLevel || 0}%</span>
+                    </div>
+                    <Progress value={data?.chemicalAnalysis?.damageLevel || 0} className="h-2" />
+                  </div>
                   <div className="bg-gray-700/50 p-4 rounded-lg">
-                    <h4 className="text-sm font-medium mb-2">Treatment Level</h4>
-                    <p className="text-sm text-gray-300">{data?.metrics?.chemicalTreatment || "N/A"}</p>
+                    <h4 className="text-sm font-medium mb-2">pH Level</h4>
+                    <p className="text-2xl font-bold text-purple-400">{data?.chemicalAnalysis?.pHLevel || "N/A"}</p>
                   </div>
                 </div>
               </CardContent>
@@ -185,9 +199,20 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="bg-gray-700/50 p-4 rounded-lg">
-                    <h4 className="text-sm font-medium mb-2">Protection Level</h4>
-                    <p className="text-sm text-gray-300">{data?.metrics?.protectionLevel || "N/A"}</p>
+                  <div className="h-[200px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <RadarChart data={[
+                        { subject: "UV Damage", value: data?.environmentalImpact?.uvDamage || 0 },
+                        { subject: "Pollution", value: data?.environmentalImpact?.pollutionLevel || 0 },
+                        { subject: "Moisture", value: data?.environmentalImpact?.moistureRetention || 0 },
+                        { subject: "Protection", value: data?.environmentalImpact?.protectiveBarrier || 0 },
+                      ]}>
+                        <PolarGrid />
+                        <PolarAngleAxis dataKey="subject" />
+                        <PolarRadiusAxis />
+                        <Radar dataKey="value" fill="#9b87f5" fillOpacity={0.6} />
+                      </RadarChart>
+                    </ResponsiveContainer>
                   </div>
                 </div>
               </CardContent>
@@ -199,16 +224,23 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="bg-gray-800/80">
               <CardHeader>
-                <CardTitle>Recommended Treatments</CardTitle>
-                <CardDescription>Personalized treatment suggestions</CardDescription>
+                <CardTitle>Treatment Plan</CardTitle>
+                <CardDescription>Recommended treatments and efficacy</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {data?.recommendedTreatments?.primary && (
+                  {data?.treatmentPlan?.primary && (
                     <div className="bg-gray-700/50 p-4 rounded-lg">
                       <h4 className="text-sm font-medium mb-2">Primary Treatment</h4>
-                      <p className="text-sm text-gray-300">{data.recommendedTreatments.primary.name}</p>
-                      <p className="text-xs text-gray-400 mt-1">{data.recommendedTreatments.primary.description}</p>
+                      <p className="text-lg font-semibold text-purple-400">{data.treatmentPlan.primary.name}</p>
+                      <p className="text-sm text-gray-300 mt-1">{data.treatmentPlan.primary.description}</p>
+                      <div className="mt-2">
+                        <div className="flex justify-between mb-1">
+                          <span className="text-sm">Efficacy</span>
+                          <span className="text-sm text-purple-400">{data.treatmentPlan.primary.efficacy}%</span>
+                        </div>
+                        <Progress value={data.treatmentPlan.primary.efficacy || 0} className="h-2" />
+                      </div>
                     </div>
                   )}
                 </div>

@@ -62,110 +62,131 @@ const API_KEYS = [
   'AIzaSyBcyEA5uAB0RXlLy1LKvREzlymz-DVk9SI'
 ];
 
-const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a detailed assessment. Focus on visible features and provide specific values where possible. Return the analysis in this JSON format:
+const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a detailed assessment focusing on these key areas:
+
+1. Microscopic Analysis:
+- Cuticle layer condition (0-100 score)
+- Shaft structure integrity (0-100)
+- Cross-section uniformity (0-100)
+- Surface texture mapping
+- Medulla analysis
+- Damage patterns
+
+2. Scalp Health:
+- Sebum levels (0-100)
+- Hydration levels (0-100)
+- Inflammation indicators
+- Follicle condition
+- Scalp pH balance
+- Microbial balance
+
+3. Growth Cycle Analysis:
+- Anagen/Catagen/Telogen distribution
+- Growth rate indicators
+- Follicle density
+- Growth pattern uniformity
+- Miniaturization assessment
+- Growth phase transitions
+
+4. Chemical Analysis:
+- Treatment residue levels
+- Chemical damage indicators
+- Protein loss assessment
+- Mineral buildup
+- pH levels
+- Chemical bond status
+
+5. Environmental Impact:
+- UV damage markers
+- Pollution particle presence
+- Moisture retention
+- Environmental stress indicators
+- Protective barrier status
+- Climate adaptation signs
+
+6. Treatment Requirements:
+- Primary treatment needs
+- Secondary interventions
+- Supporting treatments
+- Treatment compatibility
+- Expected efficacy rates
+- Treatment timeline
+
+Return the analysis in this JSON format:
 
 {
-  "metrics": {
-    "hairType": "Describe the hair type (e.g., 1A-4C)",
-    "healthStatus": "Overall health assessment",
-    "porosity": "Low/Medium/High based on shine and texture",
-    "density": "Assessment of hair density",
-    "elasticity": "Based on visible hair pattern",
-    "scalpCondition": "Visible scalp health indicators",
-    "hairLength": "Approximate length in inches",
-    "chemicalTreatment": "Signs of chemical processing",
-    "protectionLevel": "Assessment of hair protection",
-    "breakageRate": "Visible damage percentage",
-    "strandThickness": "Fine/Medium/Coarse assessment",
-    "follicleDensity": "Visible density pattern",
-    "hairDiameter": {
-      "root": "Estimated root diameter",
-      "tip": "Estimated tip diameter"
-    },
-    "growthPhase": "Dominant growth phase estimate",
-    "damageAnalysis": "Visible damage assessment"
-  },
-  "overallHealthScore": "Numerical score 0-100",
-  "structuralAnalysis": {
-    "hairGrowthCycle": [65, 70, 75, 80, 85, 90],
-    "curlPatternDistribution": [
-      {"Straight": 30},
-      {"Wavy": 40},
-      {"Curly": 20},
-      {"Coily": 10}
-    ],
-    "growthPhaseDistribution": [
-      {"Anagen": 85},
-      {"Catagen": 5},
-      {"Telogen": 10}
-    ]
-  },
   "microscopicAnalysis": {
-    "cuticleLayerScore": 75,
+    "cuticleLayerScore": number,
     "shaftStructure": {
-      "integrity": 80,
-      "pattern": "Regular/Irregular pattern description"
+      "integrity": number,
+      "pattern": string
     },
     "medullaAnalysis": {
-      "continuity": 85
+      "continuity": number,
+      "pattern": string
     },
     "crossSection": {
-      "uniformity": 90
+      "uniformity": number
     },
     "surfaceMapping": {
-      "texture": "Detailed texture description",
-      "damage": "Specific damage patterns"
+      "texture": string,
+      "damage": string
     }
   },
-  "quickSummary": "Brief analysis summary highlighting key findings",
-  "hairInformation": {
-    "diagnosticAnalysis": "Detailed diagnostic findings",
-    "careTips": [
-      "Specific care recommendation 1",
-      "Specific care recommendation 2",
-      "Specific care recommendation 3"
-    ]
+  "scalpHealth": {
+    "sebumLevel": number,
+    "hydrationLevel": number,
+    "inflammation": string,
+    "follicleCondition": string,
+    "pHBalance": number,
+    "microbialBalance": string
   },
-  "recommendedTreatments": {
+  "growthCycleAnalysis": {
+    "distribution": {
+      "anagen": number,
+      "catagen": number,
+      "telogen": number
+    },
+    "growthRate": number,
+    "follicleDensity": number,
+    "uniformity": number,
+    "miniaturization": string
+  },
+  "chemicalAnalysis": {
+    "treatmentResidueLevel": number,
+    "damageLevel": number,
+    "proteinLoss": number,
+    "mineralBuildup": string,
+    "pHLevel": number
+  },
+  "environmentalImpact": {
+    "uvDamage": number,
+    "pollutionLevel": number,
+    "moistureRetention": number,
+    "stressIndicators": string,
+    "protectiveBarrier": number
+  },
+  "treatmentPlan": {
     "primary": {
-      "name": "Primary treatment name",
-      "description": "Treatment description",
-      "match": 95
+      "name": string,
+      "description": string,
+      "efficacy": number,
+      "timeline": string
     },
     "secondary": {
-      "name": "Secondary treatment name",
-      "description": "Treatment description",
-      "match": 85
+      "name": string,
+      "description": string,
+      "efficacy": number
     },
     "supporting": {
-      "name": "Supporting treatment name",
-      "description": "Treatment description",
-      "match": 75
-    },
-    "other": [
-      {
-        "name": "Alternative treatment 1",
-        "match": 65
-      },
-      {
-        "name": "Alternative treatment 2",
-        "match": 55
-      }
-    ]
+      "name": string,
+      "description": string,
+      "efficacy": number
+    }
   }
 }
 
-Important guidelines for analysis:
-1. Provide specific numerical values whenever possible
-2. Focus on visible characteristics in the image
-3. Make reasonable estimates based on visible features
-4. Use comparative analysis with standard hair types
-5. Consider both close-up details and overall appearance
-6. Assess multiple areas of the image for comprehensive analysis
-7. Note any distinct patterns or variations
-8. Include specific measurements where visible indicators allow estimation
-
-If a feature cannot be fully assessed, provide a best estimate based on visible indicators rather than marking as "Unable to assess".`;
+Provide specific numerical values (0-100) for all metrics where applicable. Make reasonable estimates based on visible indicators rather than marking as "Unable to assess".`;
 
 const validateImage = (imageBase64: string): boolean => {
   try {
