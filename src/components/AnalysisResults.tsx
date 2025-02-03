@@ -16,6 +16,7 @@ import {
 } from 'chart.js';
 import { Line, Doughnut, PolarArea } from 'react-chartjs-2';
 import AdvancedAnalysis from "./AdvancedAnalysis";
+import CombinedInsights from "./CombinedInsights";
 
 ChartJS.register(
   ArcElement,
@@ -329,7 +330,7 @@ const AnalysisResults = () => {
     },
   };
 
-   const growthPhaseData = {
+  const growthPhaseData = {
     labels: analysisData.growthPhaseData.labels,
     datasets: [{
       label: 'Growth Phase',
@@ -420,6 +421,12 @@ const AnalysisResults = () => {
               </div>
             </div>
           </div>
+
+          {/* Combined Insights */}
+          <CombinedInsights 
+            growthPhaseData={analysisData.growthPhaseData}
+            healthScore={analysisData.healthScore}
+          />
 
           {/* Advanced Analysis Section */}
           <AdvancedAnalysis data={analysisData} />
