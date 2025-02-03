@@ -138,7 +138,6 @@ const HowItWorksModal = () => {
               <li>Real-time comparison with similar cases from our extensive database</li>
               <li>Continuously improving accuracy through machine learning</li>
               <li>Each analysis is backed by thousands of similar, successful cases</li>
-              <li>Evidence-based recommendations</li>
             </ul>
           </section>
 
