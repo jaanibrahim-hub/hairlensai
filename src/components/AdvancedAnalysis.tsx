@@ -106,7 +106,8 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
       animateRotate: true,
       duration: 2000,
       easing: 'easeInOutQuart' as const
-    }
+    },
+    onClick: handleChartClick
   };
 
   const barData = {
@@ -175,7 +176,8 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
     animation: {
       duration: 2000,
       easing: 'easeInOutQuart' as const
-    }
+    },
+    onClick: handleChartClick
   };
 
   const handleMetricClick = (metric: string, value: number) => {
@@ -253,7 +255,6 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
                       id="doughnut-chart"
                       data={doughnutData} 
                       options={doughnutOptions}
-                      onClick={handleChartClick}
                     />
                   </div>
                   <div className="mt-4 space-y-2 animate-[fade-in_0.3s_ease-out]">
@@ -290,7 +291,6 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
                       id="bar-chart"
                       data={barData} 
                       options={barOptions}
-                      onClick={handleChartClick}
                     />
                   </div>
                   <div className="mt-4 space-y-2 animate-[fade-in_0.3s_ease-out]">
