@@ -1,5 +1,4 @@
 import { toast } from "sonner";
-import { analyzeLightingConditions, compensateForLighting } from "./imageAnalysis";
 
 interface HairAnalysisResponse {
   structuralAnalysis: {
@@ -166,6 +165,8 @@ Important guidelines for analysis:
 7. Note any distinct patterns or variations
 8. Include specific measurements where visible indicators allow estimation
 
+If a feature cannot be fully assessed, provide a best estimate based on visible indicators rather than marking as "Unable to assess".`;
+
 const validateImage = (imageBase64: string): boolean => {
   try {
     // Check if the string is a valid base64
@@ -194,28 +195,6 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
   }
 
   try {
-    // Convert base64 to ImageData for lighting analysis
-    const img = new Image();
-    img.src = `data:image/jpeg;base64,${imageBase64}`;
-    
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    
-    await new Promise((resolve) => {
-      img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx?.drawImage(img, 0, 0);
-        resolve(true);
-      };
-    });
-
-    const imageData = ctx?.getImageData(0, 0, canvas.width, canvas.height);
-    const lightingConditions = analyzeLightingConditions(imageData!);
-    
-    console.log("Detected lighting conditions:", lightingConditions);
-
-    // Make the API call
     const response = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
@@ -291,12 +270,7 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
     try {
       const parsedData = JSON.parse(jsonText);
       console.log('Successfully parsed JSON:', parsedData);
-      
-      // Apply lighting compensation to the results
-      const compensatedResults = compensateForLighting(parsedData, lightingConditions);
-      console.log('Results after lighting compensation:', compensatedResults);
-      
-      return compensatedResults;
+      return parsedData;
     } catch (parseError) {
       console.error('JSON parsing error:', parseError);
       console.log('Attempted to parse text:', jsonText);
