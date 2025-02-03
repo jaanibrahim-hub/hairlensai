@@ -4,10 +4,12 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { analyzeHairImage } from "@/utils/geminiApi";
 import { toast } from "sonner";
+import { Progress } from "@/components/ui/progress";
 
 const ImageUpload = () => {
   const [multipleMode, setMultipleMode] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [lightingQuality, setLightingQuality] = useState<number | null>(null);
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -24,7 +26,20 @@ const ImageUpload = () => {
         
         try {
           const analysisResults = await analyzeHairImage(base64String);
-          // You can emit an event or use a state management solution to update AnalysisResults
+          
+          // Set lighting quality based on the analysis
+          const avgLightingQuality = 
+            (analysisResults.lightingConditions?.brightness +
+             analysisResults.lightingConditions?.contrast +
+             analysisResults.lightingConditions?.uniformity) / 3;
+          
+          setLightingQuality(avgLightingQuality);
+
+          if (avgLightingQuality < 70) {
+            toast.warning("Lighting conditions could be improved for better analysis");
+          }
+
+          // Dispatch analysis results
           window.dispatchEvent(new CustomEvent('hairAnalysisComplete', { detail: analysisResults }));
           toast.success("Analysis complete!");
         } catch (error) {
@@ -83,6 +98,34 @@ const ImageUpload = () => {
                 </>
               )}
             </Button>
+
+            {lightingQuality !== null && (
+              <div className="mt-4">
+                <div className="flex justify-between text-sm mb-2">
+                  <span>Lighting Quality</span>
+                  <span className={`
+                    ${lightingQuality >= 80 ? 'text-green-400' : 
+                      lightingQuality >= 60 ? 'text-yellow-400' : 'text-red-400'}
+                  `}>
+                    {lightingQuality >= 80 ? 'Excellent' : 
+                     lightingQuality >= 60 ? 'Good' : 'Poor'}
+                  </span>
+                </div>
+                <Progress 
+                  value={lightingQuality} 
+                  className="h-2"
+                  indicatorClassName={`
+                    ${lightingQuality >= 80 ? 'bg-green-400' : 
+                      lightingQuality >= 60 ? 'bg-yellow-400' : 'bg-red-400'}
+                  `}
+                />
+                {lightingQuality < 70 && (
+                  <p className="text-xs text-yellow-400 mt-2">
+                    Tip: Ensure even lighting and avoid shadows for better analysis
+                  </p>
+                )}
+              </div>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
