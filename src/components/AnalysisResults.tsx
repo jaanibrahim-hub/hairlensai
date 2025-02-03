@@ -179,7 +179,6 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
     };
   });
 
-  // Transform hair growth cycle data
   const healthData = {
     labels: ['Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
     datasets: [{
@@ -191,14 +190,13 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
     }]
   };
 
-  // Transform curl pattern distribution - handle both object and array formats
   const curlPatternData = {
     labels: [],
     datasets: [{
       label: 'Curl Pattern',
       data: [],
       borderColor: '#9b87f5',
-      backgroundColor: 'rgba(155, 135, 245, 0.1)', // Changed from array to single string
+      backgroundColor: 'rgba(155, 135, 245, 0.1)',
       fill: true,
     }]
   };
@@ -220,14 +218,13 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
     curlPatternData.datasets[0].data = [30, 40, 20, 10];
   }
 
-  // Transform growth phase distribution - handle both object and array formats
   const growthPhaseData = {
     labels: [],
     datasets: [{
       label: 'Growth Phase',
       data: [],
       borderColor: '#9b87f5',
-      backgroundColor: 'rgba(153, 102, 255, 0.1)', // Changed from array to single string
+      backgroundColor: 'rgba(153, 102, 255, 0.1)',
       fill: true,
     }]
   };
@@ -342,7 +339,49 @@ const AnalysisResults = () => {
     <div className="space-y-6">
       <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
         <h2 className="text-xl font-semibold mb-4 text-white">Analysis Results</h2>
-        
+
+        {/* Health Score with Enhanced Visualization - Moved to top */}
+        <div className="bg-gray-700/80 rounded-lg p-6 mb-4">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-xl font-semibold text-white">Overall Health Score</h3>
+              <p className="text-gray-400 text-sm mt-1">Based on comprehensive analysis</p>
+            </div>
+            <div className="text-right">
+              <span className="text-3xl font-bold text-purple-400">{analysisData.healthScore}%</span>
+              <p className="text-sm text-gray-400 mt-1">
+                {analysisData.healthScore >= 80 ? 'Excellent' : 
+                 analysisData.healthScore >= 60 ? 'Good' : 
+                 analysisData.healthScore >= 40 ? 'Fair' : 'Needs Attention'}
+              </p>
+            </div>
+          </div>
+          <div className="relative pt-1">
+            <div className="overflow-hidden h-3 rounded-full bg-gray-600">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-500 relative"
+                style={{ width: `${analysisData.healthScore}%` }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Summary - Moved up */}
+        <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
+          <h3 className="text-lg font-medium mb-2">Quick Summary</h3>
+          <p className="text-gray-300">
+            {analysisData.quickSummary || "Your scalp and hair analysis shows key metrics including sebum levels, pore condition, inflammation markers, and follicular activity."}
+          </p>
+        </div>
+
+        {/* Health Charts - Moved up */}
+        <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
+          <Line data={analysisData.healthData} options={chartOptions} />
+          <p className="text-center text-sm text-gray-400 mt-2">Hair Health Metrics Over Time</p>
+        </div>
+
         {/* Structural Analysis */}
         <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
           <h3 className="text-lg font-medium mb-3">Structural Analysis</h3>
@@ -386,20 +425,6 @@ const AnalysisResults = () => {
           </div>
         </div>
 
-        {/* Quick Summary */}
-        <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
-          <h3 className="text-lg font-medium mb-2">Quick Summary</h3>
-          <p className="text-gray-300">
-            {analysisData.quickSummary || "Your scalp and hair analysis shows key metrics including sebum levels, pore condition, inflammation markers, and follicular activity."}
-          </p>
-        </div>
-
-        {/* Health Charts */}
-        <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
-          <Line data={analysisData.healthData} options={chartOptions} />
-          <p className="text-center text-sm text-gray-400 mt-2">Hair Health Metrics Over Time</p>
-        </div>
-
         {/* Enhanced Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {analysisData.metrics.map((metric) => (
@@ -436,34 +461,6 @@ const AnalysisResults = () => {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Health Score with Enhanced Visualization */}
-        <div className="bg-gray-700/80 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-xl font-semibold text-white">Overall Health Score</h3>
-              <p className="text-gray-400 text-sm mt-1">Based on comprehensive analysis</p>
-            </div>
-            <div className="text-right">
-              <span className="text-3xl font-bold text-purple-400">{analysisData.healthScore}%</span>
-              <p className="text-sm text-gray-400 mt-1">
-                {analysisData.healthScore >= 80 ? 'Excellent' : 
-                 analysisData.healthScore >= 60 ? 'Good' : 
-                 analysisData.healthScore >= 40 ? 'Fair' : 'Needs Attention'}
-              </p>
-            </div>
-          </div>
-          <div className="relative pt-1">
-            <div className="overflow-hidden h-3 rounded-full bg-gray-600">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-500 relative"
-                style={{ width: `${analysisData.healthScore}%` }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Hair Information */}
