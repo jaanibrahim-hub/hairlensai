@@ -14,14 +14,11 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  PolarArea,
   PolarGrid,
   PolarAngleAxis,
   PolarRadiusAxis,
   RadarChart,
   Radar,
-  RadarGrid,
-  RadarLine,
 } from "recharts";
 
 interface AdvancedAnalysisProps {

@@ -30,6 +30,11 @@ ChartJS.register(
   RadialLinearScale
 );
 
+interface HairDiameter {
+  root: string;
+  tip: string;
+}
+
 interface AnalysisResult {
   metrics: {
     icon: string;
