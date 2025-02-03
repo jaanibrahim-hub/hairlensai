@@ -477,6 +477,7 @@ const transformApiResponse = (apiResponse: any): HairAnalysisResponse => {
 
   return {
     metrics,
+    overallHealthScore: healthScore, // Add this line to fix the error
     healthScore,
     healthData,
     curlPatternData,
