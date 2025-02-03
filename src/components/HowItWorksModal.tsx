@@ -31,17 +31,32 @@ const HowItWorksModal = () => {
             <p className="text-gray-600 dark:text-gray-300">
               HairLens AI emerged from a critical observation in the hair care industry: despite technological 
               advancements in numerous healthcare sectors, hair analysis remained largely subjective and 
-              inaccessible. This gap in the market sparked an intensive four-month development journey 
+              inaccessible. This gap in the market sparked an intensive six-month development journey 
               that would transform raw clinical data into actionable intelligence.
             </p>
+          </section>
+
+          <section className="space-y-4">
+            <h3 className="text-xl font-semibold">Looking Forward</h3>
+            <p className="text-gray-600 dark:text-gray-300">
+            The Challenge:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
+              <li>Traditional hair analysis methods faced several limitations</li>
+              <li>Inconsistent results across different professionals</li>
+              <li>Limited accessibility to expert analysis</li>
+              <li>Time-consuming manual assessments</li>
+              <li>Lack of quantifiable metrics</li>
+              <li>High costs for professional consultations</li>
+            </ul>
           </section>
 
           <section className="space-y-4">
             <h3 className="text-xl font-semibold">Our Unique Dataset</h3>
             <p className="text-gray-600 dark:text-gray-300">
               Through a groundbreaking collaboration with leading multinational hair treatment clinics, 
-              we gained access to an extraordinary dataset of over 100,000 authenticated patient records 
-              across nine international clinical centers. This diverse data spans multiple ethnicities, 
+              we gained access to an extraordinary dataset of over 170,000+ authenticated patient records 
+              across 12 international clinical centers. This diverse data spans multiple ethnicities, 
               hair types, and treatment outcomes, providing an unparalleled foundation for our AI model.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
@@ -87,9 +102,11 @@ const HowItWorksModal = () => {
               <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
                 <h4 className="font-semibold mb-2">Model Training</h4>
                 <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
-                  <li>3,880 hours of training</li>
+                  <li>3,880 hours of AI training</li>
                   <li>170,000+ analyzed cases</li>
                   <li>60+ model iterations</li>
+                  <li>Extensive cross-cultural validation</li>
+                  <li>Rigorous security implementation</li>
                   <li>Continuous Self learning improvement</li>
                 </ul>
               </div>
@@ -107,6 +124,23 @@ const HowItWorksModal = () => {
               <li>Mobile platform development</li>
               <li>Professional integration suite</li>
               <li>Research collaboration initiatives</li>
+            </ul>
+          </section>
+
+          <section className="space-y-4">
+            <h3 className="text-xl font-semibold">Looking Forward</h3>
+            <p className="text-gray-600 dark:text-gray-300">
+            What sets HairLensAI apart is our foundation in real clinical data:
+            </p>
+            <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
+              <li>While competitors rely on generic AI models, our system is trained on verified clinical outcomes</li>
+              <li>Documented treatments across different climates and environments</li>
+              <li>Treatment recommendations are based on actual success rates, not theoretical assumptions</li>
+              <li>Multiple ethnicities and hair types, Different age groups and genders</li>
+              <li>Real-time comparison with similar cases from our extensive database</li>
+              <li>Continuously improving accuracy through machine learning</li>
+              <li>Each analysis is backed by thousands of similar, successful cases</li>
+              <li>Evidence-based recommendations</li>
             </ul>
           </section>
 
