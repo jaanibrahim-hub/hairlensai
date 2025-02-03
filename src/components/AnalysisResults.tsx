@@ -301,37 +301,20 @@ const AnalysisResults = () => {
     };
   }, []);
 
-  const chartOptions = {
+  const doughnutOptions = {
     responsive: true,
     plugins: {
       legend: {
-        display: false
+        position: 'bottom' as const,
+        labels: {
+          color: '#9b87f5'
+        }
       },
       tooltip: {
         mode: 'index' as const,
         intersect: false,
       },
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-        max: 100,
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        ticks: {
-          color: '#9b87f5'
-        }
-      },
-      x: {
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        ticks: {
-          color: '#9b87f5'
-        }
-      }
-    }
   };
 
   return (
@@ -383,7 +366,7 @@ const AnalysisResults = () => {
               <div className="bg-gray-600/50 p-6 rounded">
                 <h4 className="font-medium mb-4 text-lg">Hair Growth Cycle Analysis</h4>
                 <div className="aspect-w-16 aspect-h-9">
-                  <Line data={analysisData.healthData} options={chartOptions} />
+                  <Line data={analysisData.healthData} options={doughnutOptions} />
                 </div>
                 <div className="mt-4 bg-gray-700/50 p-4 rounded">
                   <p className="text-gray-300 text-sm leading-relaxed">
@@ -396,7 +379,7 @@ const AnalysisResults = () => {
               <div className="bg-gray-600/50 p-6 rounded">
                 <h4 className="font-medium mb-4 text-lg">Curl Pattern Distribution</h4>
                 <div className="aspect-w-16 aspect-h-9">
-                  <Line data={analysisData.curlPatternData} options={chartOptions} />
+                  <Doughnut data={analysisData.curlPatternData} options={doughnutOptions} />
                 </div>
                 <div className="mt-4 bg-gray-700/50 p-4 rounded">
                   <p className="text-gray-300 text-sm leading-relaxed">
@@ -408,7 +391,7 @@ const AnalysisResults = () => {
               <div className="bg-gray-600/50 p-6 rounded">
                 <h4 className="font-medium mb-4 text-lg">Growth Phase Distribution</h4>
                 <div className="aspect-w-16 aspect-h-9">
-                  <Line data={analysisData.growthPhaseData} options={chartOptions} />
+                  <Doughnut data={analysisData.growthPhaseData} options={doughnutOptions} />
                 </div>
                 <div className="mt-4 bg-gray-700/50 p-4 rounded">
                   <p className="text-gray-300 text-sm leading-relaxed">
@@ -470,11 +453,11 @@ const AnalysisResults = () => {
 
               <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
                 <div className="bg-gray-700/80 rounded-lg p-4">
-                  <Line data={analysisData.healthData} options={chartOptions} />
+                  <Line data={analysisData.healthData} options={doughnutOptions} />
                   <p className="text-center text-sm text-gray-400 mt-2">Hair Growth Progress</p>
                 </div>
                 <div className="bg-gray-700/80 rounded-lg p-4">
-                  <Line data={analysisData.healthData} options={chartOptions} />
+                  <Line data={analysisData.healthData} options={doughnutOptions} />
                   <p className="text-center text-sm text-gray-400 mt-2">Optimal vs Current Conditions</p>
                 </div>
               </div>
