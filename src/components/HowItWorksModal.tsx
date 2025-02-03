@@ -37,12 +37,11 @@ const HowItWorksModal = () => {
           </section>
 
           <section className="space-y-4">
-            <h3 className="text-xl font-semibold">Looking Forward</h3>
+            <h3 className="text-xl font-semibold">The Challenge</h3>
             <p className="text-gray-600 dark:text-gray-300">
-            The Challenge:
+            Traditional hair analysis methods faced several limitations:
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
-              <li>Traditional hair analysis methods faced several limitations</li>
               <li>Inconsistent results across different professionals</li>
               <li>Limited accessibility to expert analysis</li>
               <li>Time-consuming manual assessments</li>
@@ -128,12 +127,11 @@ const HowItWorksModal = () => {
           </section>
 
           <section className="space-y-4">
-            <h3 className="text-xl font-semibold">Looking Forward</h3>
+            <h3 className="text-xl font-semibold">What sets HairLensAI apart is our foundation in real clinical data</h3>
             <p className="text-gray-600 dark:text-gray-300">
-            What sets HairLensAI apart is our foundation in real clinical data:
+            While competitors rely on generic AI models, our system is trained on verified clinical outcomes:
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
-              <li>While competitors rely on generic AI models, our system is trained on verified clinical outcomes</li>
               <li>Documented treatments across different climates and environments</li>
               <li>Treatment recommendations are based on actual success rates, not theoretical assumptions</li>
               <li>Multiple ethnicities and hair types, Different age groups and genders</li>
