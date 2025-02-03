@@ -7,19 +7,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import {
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  Tooltip,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  RadarChart,
-  Radar,
-} from "recharts";
+import { Doughnut, Bar } from 'react-chartjs-2';
+import { useToast } from "@/components/ui/use-toast";
 
 interface AdvancedAnalysisProps {
   data: any;
@@ -27,6 +16,7 @@ interface AdvancedAnalysisProps {
 
 const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
   console.log("Advanced Analysis Data:", data);
+  const { toast } = useToast();
 
   // Extract microscopic analysis data with fallbacks
   const microscopicData = {
@@ -35,7 +25,167 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
     medullaContinuity: data?.microscopicAnalysis?.medullaAnalysis?.continuity || 0,
     texture: data?.microscopicAnalysis?.surfaceMapping?.texture || "Mixed texture with predominantly smooth sections",
     damage: data?.microscopicAnalysis?.surfaceMapping?.damage || "Minimal surface damage visible",
-    cuticleScore: data?.microscopicAnalysis?.cuticleLayerScore || 75
+    cuticleScore: data?.microscopicAnalysis?.cuticleLayerScore || 75,
+    surfaceTexture: 85, // Example value
+    damageLevel: 25,    // Example value
+    protectionScore: 90 // Example value
+  };
+
+  // Doughnut chart configuration
+  const doughnutData = {
+    labels: ['Cuticle Layer', 'Shaft Integrity', 'Medulla Continuity'],
+    datasets: [{
+      data: [
+        microscopicData.cuticleScore,
+        microscopicData.shaftIntegrity,
+        microscopicData.medullaContinuity
+      ],
+      backgroundColor: [
+        '#9b87f5',  // Primary purple
+        '#64b5f6',  // Light blue
+        '#81c784'   // Light green
+      ],
+      borderWidth: 2,
+      borderColor: 'rgba(255, 255, 255, 0.1)'
+    }]
+  };
+
+  const doughnutOptions = {
+    cutout: '70%',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+        labels: {
+          color: '#fff',
+          padding: 20,
+          font: {
+            size: 14
+          },
+          generateLabels: (chart: any) => {
+            const data = chart.data;
+            return data.labels.map((label: string, index: number) => ({
+              text: `${label}: ${data.datasets[0].data[index]}%`,
+              fillStyle: data.datasets[0].backgroundColor[index],
+              strokeStyle: data.datasets[0].backgroundColor[index],
+              lineWidth: 0,
+              hidden: false,
+              index: index
+            }));
+          }
+        }
+      },
+      tooltip: {
+        enabled: true,
+        callbacks: {
+          label: (context: any) => `${context.label}: ${context.raw}%`
+        },
+        titleFont: {
+          size: 16
+        },
+        bodyFont: {
+          size: 14
+        },
+        padding: 16
+      }
+    },
+    animation: {
+      animateScale: true,
+      animateRotate: true,
+      duration: 2000,
+      easing: 'easeInOutQuart'
+    }
+  };
+
+  // Bar chart configuration
+  const barData = {
+    labels: ['Surface Texture', 'Damage Assessment', 'Protection Level'],
+    datasets: [{
+      data: [
+        microscopicData.surfaceTexture,
+        microscopicData.damageLevel,
+        microscopicData.protectionScore
+      ],
+      backgroundColor: [
+        '#ff9800',  // Orange
+        '#f44336',  // Red
+        '#4caf50'   // Green
+      ],
+      borderRadius: 8,
+      borderWidth: 0,
+      maxBarThickness: 50
+    }]
+  };
+
+  const barOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100,
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)'
+        },
+        ticks: {
+          color: '#fff',
+          font: {
+            size: 12
+          }
+        }
+      },
+      x: {
+        grid: {
+          display: false
+        },
+        ticks: {
+          color: '#fff',
+          font: {
+            size: 12
+          }
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        display: false
+      },
+      tooltip: {
+        enabled: true,
+        padding: 16,
+        titleFont: {
+          size: 16
+        },
+        bodyFont: {
+          size: 14
+        }
+      }
+    },
+    animation: {
+      duration: 2000,
+      easing: 'easeInOutQuart'
+    }
+  };
+
+  const handleMetricClick = (metric: string, value: number) => {
+    toast({
+      title: `${metric} Details`,
+      description: `Current value: ${value}%. ${getMetricDescription(metric)}`,
+      duration: 3000,
+    });
+  };
+
+  const getMetricDescription = (metric: string) => {
+    const descriptions: { [key: string]: string } = {
+      'Cuticle Layer': 'The protective outer layer of your hair. Higher scores indicate better protection.',
+      'Shaft Integrity': 'Overall strength of your hair strands. Above 75% is considered healthy.',
+      'Medulla Continuity': 'Quality of your hair\'s inner structure. Higher scores mean better formation.',
+      'Surface Texture': 'Smoothness and uniformity of hair surface.',
+      'Damage Assessment': 'Level of damage detected. Lower scores are better.',
+      'Protection Level': 'How well your hair is protected from environmental factors.'
+    };
+    return descriptions[metric] || '';
   };
 
   return (
@@ -64,123 +214,95 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
 
         <TabsContent value="microscopic" className="mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-gray-800/80">
+            <Card className="bg-gray-800/80 hover:bg-gray-700/80 transition-colors duration-300">
               <CardHeader>
-                <CardTitle>Cuticle Layer Analysis</CardTitle>
-                <CardDescription>Detailed assessment of cuticle integrity</CardDescription>
+                <CardTitle>Hair Structure Analysis</CardTitle>
+                <CardDescription>Comprehensive assessment of hair composition</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div>
-                    <div className="flex justify-between mb-2">
-                      <span>Cuticle Score</span>
-                      <span className="text-purple-400">
-                        {microscopicData.cuticleScore}%
-                      </span>
-                    </div>
-                    <Progress 
-                      value={microscopicData.cuticleScore} 
-                      className="h-2" 
+                  <div className="h-[300px] animate-[scale-in_0.5s_ease-out]">
+                    <Doughnut 
+                      data={doughnutData} 
+                      options={doughnutOptions}
+                      onClick={(event, elements) => {
+                        if (elements[0]) {
+                          const index = elements[0].index;
+                          handleMetricClick(
+                            doughnutData.labels[index],
+                            doughnutData.datasets[0].data[index]
+                          );
+                        }
+                      }}
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-700/50 p-4 rounded-lg">
-                      <h4 className="text-sm font-medium mb-2">Shaft Integrity</h4>
-                      <p className="text-sm text-gray-300">
-                        {microscopicData.shaftIntegrity}%
-                      </p>
-                      <p className="text-xs text-gray-400 mt-1">
-                        {microscopicData.shaftPattern}
-                      </p>
-                    </div>
-                    <div className="bg-gray-700/50 p-4 rounded-lg">
-                      <h4 className="text-sm font-medium mb-2">Medulla Analysis</h4>
-                      <p className="text-sm text-gray-300">
-                        Continuity: {microscopicData.medullaContinuity}%
-                      </p>
-                    </div>
-                  </div>
-                  <div className="h-[200px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart data={[
-                        { 
-                          subject: "Integrity", 
-                          value: microscopicData.shaftIntegrity
-                        },
-                        { 
-                          subject: "Cuticle", 
-                          value: microscopicData.cuticleScore
-                        },
-                        { 
-                          subject: "Continuity", 
-                          value: microscopicData.medullaContinuity
-                        },
-                      ]}>
-                        <PolarGrid />
-                        <PolarAngleAxis dataKey="subject" />
-                        <PolarRadiusAxis />
-                        <Radar 
-                          name="Hair Analysis" 
-                          dataKey="value" 
-                          fill="#9b87f5" 
-                          fillOpacity={0.6} 
+                  <div className="mt-4 space-y-2 animate-[fade-in_0.3s_ease-out]">
+                    {doughnutData.labels.map((label, index) => (
+                      <div 
+                        key={label}
+                        className="bg-gray-700/50 p-3 rounded-lg cursor-pointer hover:bg-gray-600/50 transition-colors duration-300"
+                        onClick={() => handleMetricClick(label, doughnutData.datasets[0].data[index])}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">{label}</span>
+                          <span className="text-sm text-purple-400">{doughnutData.datasets[0].data[index]}%</span>
+                        </div>
+                        <Progress 
+                          value={doughnutData.datasets[0].data[index]} 
+                          className="h-2 mt-2" 
                         />
-                        <Tooltip />
-                      </RadarChart>
-                    </ResponsiveContainer>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-800/80">
+            <Card className="bg-gray-800/80 hover:bg-gray-700/80 transition-colors duration-300">
               <CardHeader>
-                <CardTitle>Surface Mapping</CardTitle>
-                <CardDescription>Microscopic texture analysis</CardDescription>
+                <CardTitle>Surface Analysis</CardTitle>
+                <CardDescription>Detailed surface condition assessment</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-gray-700/50 p-4 rounded-lg">
-                      <h4 className="text-sm font-medium mb-2">Texture</h4>
-                      <p className="text-sm text-gray-300">
-                        {microscopicData.texture}
-                      </p>
-                    </div>
-                    <div className="bg-gray-700/50 p-4 rounded-lg">
-                      <h4 className="text-sm font-medium mb-2">Damage</h4>
-                      <p className="text-sm text-gray-300">
-                        {microscopicData.damage}
-                      </p>
-                    </div>
+                  <div className="h-[300px] animate-[scale-in_0.5s_ease-out]">
+                    <Bar 
+                      data={barData} 
+                      options={barOptions}
+                      onClick={(event, elements) => {
+                        if (elements[0]) {
+                          const index = elements[0].index;
+                          handleMetricClick(
+                            barData.labels[index],
+                            barData.datasets[0].data[index]
+                          );
+                        }
+                      }}
+                    />
                   </div>
-                  <div className="h-[200px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={[
-                        { name: "Root", value: microscopicData.shaftIntegrity },
-                        { name: "Mid", value: microscopicData.cuticleScore },
-                        { name: "Tip", value: microscopicData.medullaContinuity },
-                      ]}>
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Line 
-                          type="monotone" 
-                          dataKey="value" 
-                          stroke="#9b87f5" 
-                          strokeWidth={2}
-                          dot={{ fill: "#9b87f5" }}
+                  <div className="mt-4 space-y-2 animate-[fade-in_0.3s_ease-out]">
+                    {barData.labels.map((label, index) => (
+                      <div 
+                        key={label}
+                        className="bg-gray-700/50 p-3 rounded-lg cursor-pointer hover:bg-gray-600/50 transition-colors duration-300"
+                        onClick={() => handleMetricClick(label, barData.datasets[0].data[index])}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">{label}</span>
+                          <span className="text-sm text-purple-400">{barData.datasets[0].data[index]}%</span>
+                        </div>
+                        <Progress 
+                          value={barData.datasets[0].data[index]} 
+                          className="h-2 mt-2" 
                         />
-                      </LineChart>
-                    </ResponsiveContainer>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
         </TabsContent>
-
-        {/* Similar structure for other tabs... */}
       </Tabs>
     </div>
   );
