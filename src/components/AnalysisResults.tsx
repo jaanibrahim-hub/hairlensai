@@ -203,16 +203,15 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
   };
 
   if (apiResponse.structuralAnalysis?.curlPatternDistribution) {
-    if (Array.isArray(apiResponse.structuralAnalysis.curlPatternDistribution)) {
-      curlPatternData.labels = apiResponse.structuralAnalysis.curlPatternDistribution.map((item: any) => 
-        Object.keys(item)[0]
-      );
-      curlPatternData.datasets[0].data = apiResponse.structuralAnalysis.curlPatternDistribution.map((item: any) => 
-        Object.values(item)[0]
-      );
-    } else {
-      curlPatternData.labels = Object.keys(apiResponse.structuralAnalysis.curlPatternDistribution);
-      curlPatternData.datasets[0].data = Object.values(apiResponse.structuralAnalysis.curlPatternDistribution);
+    const distribution = apiResponse.structuralAnalysis.curlPatternDistribution;
+    console.log("Curl Pattern Distribution:", distribution);
+    
+    if (Array.isArray(distribution)) {
+      distribution.forEach(item => {
+        const [key, value] = Object.entries(item)[0];
+        curlPatternData.labels.push(key);
+        curlPatternData.datasets[0].data.push(value);
+      });
     }
   } else {
     curlPatternData.labels = ['Straight', 'Wavy', 'Curly', 'Coily'];
@@ -231,16 +230,15 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
   };
 
   if (apiResponse.structuralAnalysis?.growthPhaseDistribution) {
-    if (Array.isArray(apiResponse.structuralAnalysis.growthPhaseDistribution)) {
-      growthPhaseData.labels = apiResponse.structuralAnalysis.growthPhaseDistribution.map((item: any) => 
-        Object.keys(item)[0]
-      );
-      growthPhaseData.datasets[0].data = apiResponse.structuralAnalysis.growthPhaseDistribution.map((item: any) => 
-        Object.values(item)[0]
-      );
-    } else {
-      growthPhaseData.labels = Object.keys(apiResponse.structuralAnalysis.growthPhaseDistribution);
-      growthPhaseData.datasets[0].data = Object.values(apiResponse.structuralAnalysis.growthPhaseDistribution);
+    const distribution = apiResponse.structuralAnalysis.growthPhaseDistribution;
+    console.log("Growth Phase Distribution:", distribution);
+    
+    if (Array.isArray(distribution)) {
+      distribution.forEach(item => {
+        const [key, value] = Object.entries(item)[0];
+        growthPhaseData.labels.push(key);
+        growthPhaseData.datasets[0].data.push(value);
+      });
     }
   } else {
     growthPhaseData.labels = ['Anagen', 'Catagen', 'Telogen'];
