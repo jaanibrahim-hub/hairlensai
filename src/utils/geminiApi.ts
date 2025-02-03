@@ -283,6 +283,7 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
     }
 
     const data = await response.json();
+    console.log('Raw API response:', data);
     
     if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
       console.warn('Invalid response format from API');
@@ -290,15 +291,21 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
     }
 
     const responseText = data.candidates[0].content.parts[0].text;
+    console.log('Response text:', responseText);
     
-    // Clean up any markdown formatting that might be present
-    const cleanedText = responseText.replace(/```json\n|\n```/g, '').trim();
+    // Extract JSON from markdown if present
+    let jsonText = responseText;
+    if (responseText.includes('```json')) {
+      jsonText = responseText.split('```json')[1].split('```')[0].trim();
+    }
     
     try {
-      return JSON.parse(cleanedText);
+      const parsedData = JSON.parse(jsonText);
+      console.log('Successfully parsed JSON:', parsedData);
+      return parsedData;
     } catch (parseError) {
       console.error('JSON parsing error:', parseError);
-      console.log('Response text:', responseText);
+      console.log('Attempted to parse text:', jsonText);
       return null;
     }
   } catch (error) {
