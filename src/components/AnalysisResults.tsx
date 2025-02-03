@@ -329,6 +329,20 @@ const AnalysisResults = () => {
     },
   };
 
+   const growthPhaseData = {
+    labels: analysisData.growthPhaseData.labels,
+    datasets: [{
+      label: 'Growth Phase',
+      data: analysisData.growthPhaseData.datasets[0].data,
+      backgroundColor: [
+        '#0EA5E9', // Ocean Blue for Anagen
+        '#9b87f5', // Purple for Catagen
+        '#F97316'  // Orange for Telogen
+      ],
+      borderColor: 'transparent'
+    }]
+  };
+
   const curlPatternData = {
     labels: analysisData.curlPatternData.labels,
     datasets: [{
@@ -339,20 +353,6 @@ const AnalysisResults = () => {
         '#F97316', // Bright Orange
         '#0EA5E9', // Ocean Blue
         '#D946EF'  // Magenta Pink
-      ],
-      borderColor: 'transparent'
-    }]
-  };
-
-  const growthPhaseData = {
-    labels: analysisData.growthPhaseData.labels,
-    datasets: [{
-      label: 'Growth Phase',
-      data: analysisData.growthPhaseData.datasets[0].data,
-      backgroundColor: [
-        '#0EA5E9', // Ocean Blue for Anagen
-        '#9b87f5', // Purple for Catagen
-        '#F97316'  // Orange for Telogen
       ],
       borderColor: 'transparent'
     }]
