@@ -28,6 +28,37 @@ interface HairAnalysisResponse {
     damageAnalysis: string;
   };
   overallHealthScore: number;
+  healthScore: number; // Added this property
+  healthData: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      borderColor: string;
+      backgroundColor: string;
+      fill: boolean;
+    }[];
+  };
+  curlPatternData: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      borderColor: string;
+      backgroundColor: string;
+      fill: boolean;
+    }[];
+  };
+  growthPhaseData: {
+    labels: string[];
+    datasets: {
+      label: string;
+      data: number[];
+      borderColor: string;
+      backgroundColor: string;
+      fill: boolean;
+    }[];
+  };
   hairInformation: {
     diagnosticAnalysis: string;
     careTips: string[];
