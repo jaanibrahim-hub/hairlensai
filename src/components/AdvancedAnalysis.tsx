@@ -26,6 +26,8 @@ interface AdvancedAnalysisProps {
 }
 
 const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
+  console.log("Advanced Analysis Data:", data); // Debug log
+
   return (
     <div className="space-y-6">
       <Tabs defaultValue="microscopic" className="w-full">
@@ -62,7 +64,7 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
                   <div>
                     <div className="flex justify-between mb-2">
                       <span>Cuticle Score</span>
-                      <span className="text-purple-400">{data?.microscopicAnalysis?.cuticleLayerScore || "N/A"}</span>
+                      <span className="text-purple-400">{data?.microscopicAnalysis?.cuticleLayerScore || 0}</span>
                     </div>
                     <Progress value={data?.microscopicAnalysis?.cuticleLayerScore || 0} className="h-2" />
                   </div>
@@ -101,19 +103,30 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
                       <p className="text-sm text-gray-300">{data?.microscopicAnalysis?.surfaceMapping?.damage || "N/A"}</p>
                     </div>
                   </div>
-                  <div className="h-[200px]">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={[
-                        { name: "Start", value: 65 },
-                        { name: "Mid", value: 75 },
-                        { name: "End", value: 85 },
-                      ]}>
-                        <XAxis dataKey="name" />
-                        <YAxis />
-                        <Tooltip />
-                        <Line type="monotone" dataKey="value" stroke="#9b87f5" />
-                      </LineChart>
-                    </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="scalp" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-gray-800/80">
+              <CardHeader>
+                <CardTitle>Scalp Condition</CardTitle>
+                <CardDescription>Analysis of scalp health indicators</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-gray-700/50 p-4 rounded-lg">
+                      <h4 className="text-sm font-medium mb-2">Sebum Level</h4>
+                      <p className="text-sm text-gray-300">{data?.metrics?.scalpCondition || "N/A"}</p>
+                    </div>
+                    <div className="bg-gray-700/50 p-4 rounded-lg">
+                      <h4 className="text-sm font-medium mb-2">Hydration</h4>
+                      <Progress value={data?.metrics?.hydrationLevel || 0} className="h-2" />
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -121,8 +134,88 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
           </div>
         </TabsContent>
 
-        {/* Similar structure for other tabs... */}
-        {/* Add TabsContent for scalp, growth, chemical, environmental, and treatment */}
+        <TabsContent value="growth" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-gray-800/80">
+              <CardHeader>
+                <CardTitle>Growth Phase Distribution</CardTitle>
+                <CardDescription>Analysis of hair growth cycles</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[200px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={data?.growthPhaseData?.datasets?.[0]?.data || []}>
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Line type="monotone" dataKey="value" stroke="#9b87f5" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="chemical" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-gray-800/80">
+              <CardHeader>
+                <CardTitle>Chemical Treatment Analysis</CardTitle>
+                <CardDescription>Impact of chemical treatments</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="bg-gray-700/50 p-4 rounded-lg">
+                    <h4 className="text-sm font-medium mb-2">Treatment Level</h4>
+                    <p className="text-sm text-gray-300">{data?.metrics?.chemicalTreatment || "N/A"}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="environmental" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-gray-800/80">
+              <CardHeader>
+                <CardTitle>Environmental Impact</CardTitle>
+                <CardDescription>Analysis of environmental factors</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="bg-gray-700/50 p-4 rounded-lg">
+                    <h4 className="text-sm font-medium mb-2">Protection Level</h4>
+                    <p className="text-sm text-gray-300">{data?.metrics?.protectionLevel || "N/A"}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="treatment" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-gray-800/80">
+              <CardHeader>
+                <CardTitle>Recommended Treatments</CardTitle>
+                <CardDescription>Personalized treatment suggestions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {data?.recommendedTreatments?.primary && (
+                    <div className="bg-gray-700/50 p-4 rounded-lg">
+                      <h4 className="text-sm font-medium mb-2">Primary Treatment</h4>
+                      <p className="text-sm text-gray-300">{data.recommendedTreatments.primary.name}</p>
+                      <p className="text-xs text-gray-400 mt-1">{data.recommendedTreatments.primary.description}</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
       </Tabs>
     </div>
   );
