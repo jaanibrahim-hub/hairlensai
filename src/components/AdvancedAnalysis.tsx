@@ -9,6 +9,7 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { Doughnut, Bar } from 'react-chartjs-2';
 import { useToast } from "@/components/ui/use-toast";
+import type { MouseEvent } from 'react';
 
 interface AdvancedAnalysisProps {
   data: any;
@@ -26,12 +27,11 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
     texture: data?.microscopicAnalysis?.surfaceMapping?.texture || "Mixed texture with predominantly smooth sections",
     damage: data?.microscopicAnalysis?.surfaceMapping?.damage || "Minimal surface damage visible",
     cuticleScore: data?.microscopicAnalysis?.cuticleLayerScore || 75,
-    surfaceTexture: 85, // Example value
-    damageLevel: 25,    // Example value
-    protectionScore: 90 // Example value
+    surfaceTexture: 85,
+    damageLevel: 25,
+    protectionScore: 90
   };
 
-  // Doughnut chart configuration
   const doughnutData = {
     labels: ['Cuticle Layer', 'Shaft Integrity', 'Medulla Continuity'],
     datasets: [{
@@ -41,9 +41,9 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
         microscopicData.medullaContinuity
       ],
       backgroundColor: [
-        '#9b87f5',  // Primary purple
-        '#64b5f6',  // Light blue
-        '#81c784'   // Light green
+        '#9b87f5',
+        '#64b5f6',
+        '#81c784'
       ],
       borderWidth: 2,
       borderColor: 'rgba(255, 255, 255, 0.1)'
@@ -94,11 +94,10 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
       animateScale: true,
       animateRotate: true,
       duration: 2000,
-      easing: 'easeInOutQuart'
+      easing: 'easeInOutQuart' as const
     }
   };
 
-  // Bar chart configuration
   const barData = {
     labels: ['Surface Texture', 'Damage Assessment', 'Protection Level'],
     datasets: [{
@@ -108,9 +107,9 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
         microscopicData.protectionScore
       ],
       backgroundColor: [
-        '#ff9800',  // Orange
-        '#f44336',  // Red
-        '#4caf50'   // Green
+        '#ff9800',
+        '#f44336',
+        '#4caf50'
       ],
       borderRadius: 8,
       borderWidth: 0,
@@ -164,7 +163,7 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
     },
     animation: {
       duration: 2000,
-      easing: 'easeInOutQuart'
+      easing: 'easeInOutQuart' as const
     }
   };
 
@@ -186,6 +185,19 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
       'Protection Level': 'How well your hair is protected from environmental factors.'
     };
     return descriptions[metric] || '';
+  };
+
+  const handleChartClick = (event: MouseEvent<HTMLCanvasElement>, elements: any[]) => {
+    if (elements[0]) {
+      const index = elements[0].index;
+      const metric = event.currentTarget.id === 'doughnut-chart' 
+        ? doughnutData.labels[index]
+        : barData.labels[index];
+      const value = event.currentTarget.id === 'doughnut-chart'
+        ? doughnutData.datasets[0].data[index]
+        : barData.datasets[0].data[index];
+      handleMetricClick(metric, value);
+    }
   };
 
   return (
@@ -223,17 +235,10 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
                 <div className="space-y-4">
                   <div className="h-[300px] animate-[scale-in_0.5s_ease-out]">
                     <Doughnut 
+                      id="doughnut-chart"
                       data={doughnutData} 
                       options={doughnutOptions}
-                      onClick={(event, elements) => {
-                        if (elements[0]) {
-                          const index = elements[0].index;
-                          handleMetricClick(
-                            doughnutData.labels[index],
-                            doughnutData.datasets[0].data[index]
-                          );
-                        }
-                      }}
+                      onClick={handleChartClick}
                     />
                   </div>
                   <div className="mt-4 space-y-2 animate-[fade-in_0.3s_ease-out]">
@@ -267,17 +272,10 @@ const AdvancedAnalysis = ({ data }: AdvancedAnalysisProps) => {
                 <div className="space-y-4">
                   <div className="h-[300px] animate-[scale-in_0.5s_ease-out]">
                     <Bar 
+                      id="bar-chart"
                       data={barData} 
                       options={barOptions}
-                      onClick={(event, elements) => {
-                        if (elements[0]) {
-                          const index = elements[0].index;
-                          handleMetricClick(
-                            barData.labels[index],
-                            barData.datasets[0].data[index]
-                          );
-                        }
-                      }}
+                      onClick={handleChartClick}
                     />
                   </div>
                   <div className="mt-4 space-y-2 animate-[fade-in_0.3s_ease-out]">
