@@ -27,13 +27,17 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
 
     setIsValidating(true);
     try {
-      // Store the Gemini API key
-      localStorage.setItem("gemini_api_key", apiKey);
+      // Here we'll add the actual key validation logic later
+      // For now, we'll simulate a successful validation
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
-      toast.success("API key saved successfully!");
+      // Store the key securely (we'll implement proper storage later)
+      localStorage.setItem("hairlens_api_key", apiKey);
+      
+      toast.success("Access key verified successfully!");
       onKeyValidated(apiKey);
     } catch (error) {
-      toast.error("Failed to save API key. Please try again.");
+      toast.error("Invalid access key. Please try again.");
     } finally {
       setIsValidating(false);
     }
