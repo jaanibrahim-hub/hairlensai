@@ -100,53 +100,21 @@ const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a detailed as
       {"Telogen": 10}
     ]
   },
-  "regionalAnalysis": {
-    "crown": {
-      "density": "Numerical density value",
-      "health": "Health score 0-100",
-      "concerns": ["Issue 1", "Issue 2"]
+  "microscopicAnalysis": {
+    "cuticleLayerScore": 75,
+    "shaftStructure": {
+      "integrity": 80,
+      "pattern": "Regular/Irregular pattern description"
     },
-    "temples": {
-      "density": "Numerical density value",
-      "health": "Health score 0-100",
-      "concerns": ["Issue 1", "Issue 2"]
+    "medullaAnalysis": {
+      "continuity": 85
     },
-    "nape": {
-      "density": "Numerical density value",
-      "health": "Health score 0-100",
-      "concerns": ["Issue 1", "Issue 2"]
-    }
-  },
-  "compositionAnalysis": {
-    "proteinContent": {
-      "score": "0-100",
-      "distribution": ["Area 1", "Area 2"]
+    "crossSection": {
+      "uniformity": 90
     },
-    "lipidLevels": {
-      "score": "0-100",
-      "balance": "Description"
-    },
-    "mineralContent": {
-      "levels": ["Mineral 1", "Mineral 2"],
-      "deficiencies": ["Deficiency 1"]
-    }
-  },
-  "growthAnalysis": {
-    "direction": "Growth direction pattern",
-    "consistency": "0-100",
-    "whorlPattern": "Description",
-    "growthZones": {
-      "strong": ["Zone 1", "Zone 2"],
-      "weak": ["Zone 1", "Zone 2"]
-    }
-  },
-  "scalpHealth": {
-    "hydrationLevel": "0-100",
-    "sebumProduction": "Low/Medium/High",
-    "microbialBalance": "0-100",
-    "inflammationZones": {
-      "locations": ["Location 1", "Location 2"],
-      "severity": "0-100"
+    "surfaceMapping": {
+      "texture": "Detailed texture description",
+      "damage": "Specific damage patterns"
     }
   },
   "quickSummary": "Brief analysis summary highlighting key findings",
@@ -185,7 +153,19 @@ const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a detailed as
       }
     ]
   }
-}`;
+}
+
+Important guidelines for analysis:
+1. Provide specific numerical values whenever possible
+2. Focus on visible characteristics in the image
+3. Make reasonable estimates based on visible features
+4. Use comparative analysis with standard hair types
+5. Consider both close-up details and overall appearance
+6. Assess multiple areas of the image for comprehensive analysis
+7. Note any distinct patterns or variations
+8. Include specific measurements where visible indicators allow estimation
+
+If a feature cannot be fully assessed, provide a best estimate based on visible indicators rather than marking as "Unable to assess".`;
 
 const validateImage = (imageBase64: string): boolean => {
   try {

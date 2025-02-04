@@ -9,9 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Brain } from "lucide-react";
-import { CircularProgress } from "@/components/charts/CircularProgress";
-import { RadialGauge } from "@/components/charts/RadialGauge";
-import { HeatMap } from "@/components/charts/HeatMap";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -343,6 +340,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         metrics: analysisData.metrics,
       });
 
+      // Create the request body
       const requestBody = {
         model: 'llama-3.1-sonar-small-128k-online',
         messages: [
@@ -363,6 +361,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         max_tokens: 2000,
       };
 
+      // Make the API call with proper CORS settings
       const response = await fetch('https://api.perplexity.ai/chat/completions', {
         method: 'POST',
         mode: 'cors',
@@ -409,7 +408,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     }
   };
 
-  const chartOptions = {
+  const doughnutOptions = {
     responsive: true,
     plugins: {
       legend: {
@@ -423,66 +422,46 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         }
       },
       tooltip: {
-        enabled: true,
         mode: 'index' as const,
         intersect: false,
+        padding: 12,
         backgroundColor: 'rgba(17, 24, 39, 0.95)',
-        titleFont: { size: 14 },
-        bodyFont: { size: 13 }
-      }
-    },
-    scales: {
-      r: {
-        min: 0,
-        max: 100,
-        beginAtZero: true,
-        ticks: {
-          stepSize: 20,
-          backdropColor: 'transparent',
-          color: '#9b87f5',
-          font: {
-            size: 10
-          }
+        titleFont: {
+          size: 14
         },
-        grid: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        angleLines: {
-          color: 'rgba(255, 255, 255, 0.1)'
-        },
-        pointLabels: {
-          color: '#9b87f5',
-          font: {
-            size: 12
-          }
+        bodyFont: {
+          size: 13
         }
-      }
-    }
-  };
-
-  const healthChartData = {
-    labels: ['Health Score'],
-    datasets: [{
-      label: 'Overall Health',
-      data: [analysisData.healthScore],
-      backgroundColor: ['rgba(155, 135, 245, 0.6)'],
-      borderColor: ['#9b87f5'],
-      borderWidth: 1,
-    }]
+      },
+    },
   };
 
   const growthPhaseData = {
     labels: analysisData.growthPhaseData.labels,
     datasets: [{
-      label: 'Growth Phase Distribution',
+      label: 'Growth Phase',
       data: analysisData.growthPhaseData.datasets[0].data,
       backgroundColor: [
-        'rgba(155, 135, 245, 0.6)',
-        'rgba(99, 102, 241, 0.6)',
-        'rgba(129, 140, 248, 0.6)'
+        '#0EA5E9', // Ocean Blue for Anagen
+        '#9b87f5', // Purple for Catagen
+        '#F97316'  // Orange for Telogen
       ],
-      borderColor: ['#9b87f5', '#6366f1', '#818cf8'],
-      borderWidth: 1,
+      borderColor: 'transparent'
+    }]
+  };
+
+  const curlPatternData = {
+    labels: analysisData.curlPatternData.labels,
+    datasets: [{
+      label: 'Curl Pattern',
+      data: analysisData.curlPatternData.datasets[0].data,
+      backgroundColor: [
+        '#9b87f5', // Primary Purple
+        '#F97316', // Bright Orange
+        '#0EA5E9', // Ocean Blue
+        '#D946EF'  // Magenta Pink
+      ],
+      borderColor: 'transparent'
     }]
   };
 
@@ -490,6 +469,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-3 space-y-6">
         <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+          {/* AI Doctor Button */}
           <div className="mb-6">
             <Button
               onClick={handleAIDoctorClick}
@@ -503,6 +483,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
             </Button>
           </div>
 
+          {/* AI Analysis Dialog */}
           <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
             <DialogContent className="sm:max-w-[600px] bg-gray-900 text-white">
               <DialogHeader>
@@ -526,6 +507,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
                       </div>
                     )}
                     
+                    {/* Key Metrics Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="bg-gray-800 p-4 rounded-lg">
                         <h3 className="text-lg font-semibold mb-2">Health Score</h3>
@@ -548,6 +530,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
                       </div>
                     </div>
 
+                    {/* Action Buttons */}
                     <div className="flex justify-end space-x-4">
                       <Button
                         variant="outline"
@@ -558,6 +541,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
                       </Button>
                       <Button
                         onClick={() => {
+                          // Implement save functionality
                           toast({
                             title: "Analysis Saved",
                             description: "Your AI analysis has been saved successfully.",
@@ -581,68 +565,69 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-gray-700/80 rounded-lg p-4">
-              <h3 className="text-lg font-medium mb-4">Overall Health Score</h3>
-              <div className="relative h-64">
-                <Doughnut 
-                  data={healthChartData}
-                  options={{
-                    ...chartOptions,
-                    cutout: '70%',
-                    plugins: {
-                      ...chartOptions.plugins,
-                      tooltip: {
-                        ...chartOptions.plugins.tooltip,
-                        callbacks: {
-                          label: (context: any) => `Health Score: ${context.raw}%`
-                        }
-                      }
-                    }
-                  }}
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <span className="text-3xl font-bold text-purple-400">
-                      {analysisData.healthScore}%
-                    </span>
-                  </div>
-                </div>
-              </div>
+          {/* Curl Pattern Distribution */}
+          <div className="bg-gray-600/50 p-6 rounded mb-6">
+            <h4 className="font-medium mb-4 text-lg">Curl Pattern Distribution</h4>
+            <div className="aspect-w-16 aspect-h-9">
+              <Doughnut data={curlPatternData} options={doughnutOptions} />
             </div>
-
-            <div className="bg-gray-700/80 rounded-lg p-4">
-              <h3 className="text-lg font-medium mb-4">Growth Phase Distribution</h3>
-              <div className="h-64">
-                <PolarArea 
-                  data={growthPhaseData}
-                  options={{
-                    ...chartOptions,
-                    scales: {
-                      r: {
-                        ...chartOptions.scales.r,
-                        ticks: {
-                          ...chartOptions.scales.r.ticks,
-                          display: true,
-                          count: 5
-                        }
-                      }
-                    }
-                  }}
-                />
+            <div className="mt-4 space-y-4">
+              <div className="bg-gray-700/50 p-4 rounded">
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  This chart shows how your different hair textures are distributed. It's perfectly normal to have a mix!
+                </p>
+                <ul className="mt-3 space-y-2 text-sm text-gray-300">
+                  <li><span className="text-purple-400">•</span> Straight: Smooth, no waves or curls</li>
+                  <li><span className="text-orange-400">•</span> Wavy: Gentle S-shaped waves</li>
+                  <li><span className="text-blue-400">•</span> Curly: Springy, defined curls</li>
+                  <li><span className="text-pink-400">•</span> Coily: Tight, compact curls</li>
+                </ul>
+                <p className="mt-3 text-sm text-gray-400">
+                  Reference: Most people have a mix of patterns. What matters most is understanding your dominant pattern 
+                  to choose the right hair care routine!
+                </p>
               </div>
             </div>
           </div>
 
+          {/* Growth Phase Distribution */}
+          <div className="bg-gray-600/50 p-6 rounded mb-6">
+            <h4 className="font-medium mb-4 text-lg">Growth Phase Distribution</h4>
+            <div className="aspect-w-16 aspect-h-9">
+              <Doughnut data={growthPhaseData} options={doughnutOptions} />
+            </div>
+            <div className="mt-4 space-y-4">
+              <div className="bg-gray-700/50 p-4 rounded">
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  Your hair goes through different growth phases - think of it like a garden's growing cycle!
+                </p>
+                <ul className="mt-3 space-y-2 text-sm text-gray-300">
+                  <li><span className="text-blue-400">•</span> Anagen (Growing): The active growth phase. Ideally 80-90% of your hair should be here!</li>
+                  <li><span className="text-purple-400">•</span> Catagen (Transitioning): A short resting phase. Usually 1-2% is normal.</li>
+                  <li><span className="text-orange-400">•</span> Telogen (Resting/Shedding): The shedding phase. Typically 8-10% of hair is here.</li>
+                </ul>
+                <p className="mt-3 text-sm text-gray-400">
+                  Reference: A healthy scalp typically has:
+                  - 80-90% in Anagen
+                  - 1-2% in Catagen
+                  - 8-10% in Telogen
+                  Don't worry if yours is a bit different - many factors can influence these numbers!
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Advanced Analysis Section */}
           <AdvancedAnalysis data={analysisData} />
 
+          {/* Structural Analysis */}
           <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
             <h3 className="text-lg font-medium mb-3">Structural Analysis</h3>
             <div className="space-y-6">
               <div className="bg-gray-600/50 p-6 rounded">
                 <h4 className="font-medium mb-4 text-lg">Hair Growth Cycle Analysis</h4>
                 <div className="aspect-w-16 aspect-h-9">
-                  <Line data={analysisData.healthData} options={chartOptions} />
+                  <Line data={analysisData.healthData} options={doughnutOptions} />
                 </div>
                 <div className="mt-4 bg-gray-700/50 p-4 rounded">
                   <p className="text-gray-300 text-sm leading-relaxed">
@@ -654,6 +639,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
             </div>
           </div>
 
+          {/* Enhanced Metrics Grid */}
           <div className="space-y-4">
             {analysisData.metrics.map((metric) => (
               <div
@@ -691,6 +677,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
             ))}
           </div>
 
+          {/* Hair Information */}
           <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
             <h2 className="text-xl font-semibold mb-4">Hair Information</h2>
             <div className="space-y-4">
@@ -703,11 +690,11 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
 
               <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
                 <div className="bg-gray-700/80 rounded-lg p-4">
-                  <Line data={analysisData.healthData} options={chartOptions} />
+                  <Line data={analysisData.healthData} options={doughnutOptions} />
                   <p className="text-center text-sm text-gray-400 mt-2">Hair Growth Progress</p>
                 </div>
                 <div className="bg-gray-700/80 rounded-lg p-4">
-                  <Line data={analysisData.healthData} options={chartOptions} />
+                  <Line data={analysisData.healthData} options={doughnutOptions} />
                   <p className="text-center text-sm text-gray-400 mt-2">Optimal vs Current Conditions</p>
                 </div>
               </div>
@@ -734,6 +721,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
             </div>
           </div>
 
+          {/* Recommended Treatments */}
           <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
             <h2 className="text-xl font-semibold mb-4">Recommended Treatments</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -869,6 +857,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
             </div>
           </div>
 
+          {/* Action Buttons */}
           <div className="flex justify-center space-x-4 flex-wrap gap-4">
             <Button className="bg-purple-600 hover:bg-purple-700">
               <i className="fas fa-save mr-2"></i>Save Analysis
