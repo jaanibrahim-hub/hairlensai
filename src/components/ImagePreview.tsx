@@ -64,8 +64,8 @@ const ImagePreview = () => {
     const handleImageUpload = (event: CustomEvent<string>) => {
       setPreviewUrl(event.detail);
       toast({
-        title: "Image uploaded successfully",
-        description: "Your hair analysis will begin shortly.",
+        title: "Make sure You sclap is within the Dots",
+        description: "Make sure Image is not Blur.",
       });
     };
 
@@ -89,8 +89,8 @@ const ImagePreview = () => {
         const result = reader.result as string;
         setPreviewUrl(result);
         toast({
-          title: "Image uploaded successfully",
-          description: "Your hair analysis will begin shortly.",
+          title: "Make sure You sclap is within the Dots",
+          description: "Make sure Image is not Blur..",
         });
       };
       reader.readAsDataURL(file);
@@ -100,14 +100,14 @@ const ImagePreview = () => {
   const handleRotate = () => {
     toast({
       title: "Image rotated",
-      description: "Your image has been rotated 90 degrees.",
+      description: "Your image has been rotated 90 degrees.( Premium Feature )",
     });
   };
 
   const handleCrop = () => {
     toast({
       title: "Crop mode activated",
-      description: "Drag to select the area you want to analyze.",
+      description: "Drag to select the area you want to analyze.( Premium Feature )",
     });
   };
 
@@ -120,7 +120,7 @@ const ImagePreview = () => {
       <h2 className="text-xl font-semibold mb-4 text-white flex items-center justify-between">
         <div className="flex items-center">
           <i className="fas fa-image mr-2 text-purple-400"></i>
-          Preview
+          Preview 
         </div>
         <div className="flex gap-2">
           <input
@@ -192,7 +192,7 @@ const ImagePreview = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="absolute bottom-4 left-4 right-4">
               <p className="text-white text-sm">
-                Click expand to see more details or use the tools below to adjust the image
+                If the image covers the points well, you can upload the same image above.
               </p>
             </div>
           </div>
@@ -232,7 +232,7 @@ const ImagePreview = () => {
       <div className="mt-4 bg-gray-700/50 rounded-lg p-3">
         <div className="flex items-center text-sm text-gray-300">
           <i className="fas fa-info-circle text-purple-400 mr-2"></i>
-          <span>Hover over the highlighted points to see detailed analysis for each area</span>
+          <span>Should clearly show the scalp. Once you are satisfied, upload the same image above.</span>
         </div>
       </div>
     </div>
