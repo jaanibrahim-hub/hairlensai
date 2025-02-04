@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface PremiumAccessModalProps {
   onKeyValidated: (key: string) => void;
@@ -50,56 +51,111 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
           Access Premium AI Analysis
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px] bg-gray-900 text-white">
+      <DialogContent className="sm:max-w-[90vw] md:max-w-[700px] h-[90vh] bg-gradient-to-b from-gray-900 to-gray-800 text-white">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center mb-4">
+          <DialogTitle className="text-2xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             HairLens AI - Advanced Hair Analysis System
           </DialogTitle>
         </DialogHeader>
         
-        <div className="space-y-6">
-          <div className="text-center text-sm text-gray-300">
-            First-Ever Multi-Agent AI Hair Analysis Platform
-          </div>
-
-          <div className="space-y-4">
-            <div className="bg-gray-800 p-4 rounded-lg">
-              <h3 className="font-semibold mb-2">Transform Your Hair Analysis Experience:</h3>
-              <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
-                <li>Real-time AI-powered diagnostics</li>
-                <li>Multi-agent cloud processing</li>
-                <li>Advanced pattern recognition</li>
-                <li>Global case matching</li>
-                <li>Predictive treatment modeling</li>
+        <ScrollArea className="h-[calc(90vh-120px)] px-4">
+          <div className="space-y-6">
+            {/* White-labeling Information */}
+            <div className="bg-gradient-to-r from-purple-900 to-indigo-900 p-6 rounded-lg border border-purple-500/30">
+              <h3 className="text-xl font-bold mb-3 text-purple-300">🌟 White-Label Opportunity</h3>
+              <p className="text-gray-200 mb-4">
+                Transform HairLens AI into your own branded solution! We offer complete white-labeling services with:
+              </p>
+              <ul className="list-disc list-inside text-gray-300 space-y-2">
+                <li>Custom AI model training on your specific image dataset</li>
+                <li>Branded interface and customized features</li>
+                <li>Dedicated support and implementation assistance</li>
+                <li>Integration with your existing systems</li>
               </ul>
+              <p className="mt-4 text-purple-300 font-medium">
+                Interested in making HairLens AI your own? Contact us for white-labeling opportunities!
+              </p>
             </div>
 
-            <div className="bg-gray-800 p-4 rounded-lg">
-              <h3 className="font-semibold mb-2">Premium Features:</h3>
-              <div className="space-y-3 text-sm text-gray-300">
-                <div>
-                  <p className="font-medium">1. Comprehensive Analysis</p>
-                  <ul className="list-disc list-inside ml-4">
-                    <li>AI-powered microscopic examination</li>
-                    <li>Real-time density mapping</li>
-                    <li>Growth phase analysis</li>
-                    <li>Scalp condition assessment</li>
+            {/* Core Features */}
+            <div className="bg-gray-800/50 p-6 rounded-lg border border-gray-700">
+              <h3 className="text-xl font-bold mb-4 text-purple-300">Core Analysis Features</h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-purple-400">Diagnostic Tools</h4>
+                  <ul className="list-disc list-inside text-gray-300">
+                    <li>Real-time scalp analysis</li>
+                    <li>Hair density mapping</li>
+                    <li>Follicle health assessment</li>
+                    <li>Growth pattern analysis</li>
                   </ul>
                 </div>
-                <div>
-                  <p className="font-medium">2. Smart Recommendations</p>
-                  <ul className="list-disc list-inside ml-4">
-                    <li>Personalized treatment protocols</li>
-                    <li>Success rate predictions</li>
-                    <li>Timeline projections</li>
-                    <li>Cost-benefit analysis</li>
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-purple-400">AI Capabilities</h4>
+                  <ul className="list-disc list-inside text-gray-300">
+                    <li>Multi-angle image processing</li>
+                    <li>Comparative analysis</li>
+                    <li>Treatment progress tracking</li>
+                    <li>Predictive modeling</li>
                   </ul>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gray-800 p-4 rounded-lg">
-              <h3 className="font-semibold mb-2">Activate Your Access:</h3>
+            {/* Business Solutions */}
+            <div className="bg-gray-800/50 p-6 rounded-lg border border-gray-700">
+              <h3 className="text-xl font-bold mb-4 text-purple-300">Business Solutions</h3>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-purple-400">For Clinics</h4>
+                  <ul className="list-disc list-inside text-gray-300">
+                    <li>Patient progress tracking</li>
+                    <li>Treatment planning tools</li>
+                    <li>Automated reporting</li>
+                    <li>Integration with EMR systems</li>
+                    <li>ROI analytics</li>
+                  </ul>
+                </div>
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-purple-400">For Research</h4>
+                  <ul className="list-disc list-inside text-gray-300">
+                    <li>Clinical trial support</li>
+                    <li>Data aggregation</li>
+                    <li>Pattern recognition</li>
+                    <li>Research collaboration tools</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Professional Features */}
+            <div className="bg-gray-800/50 p-6 rounded-lg border border-gray-700">
+              <h3 className="text-xl font-bold mb-4 text-purple-300">Professional Features</h3>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-purple-400">Analysis Tools</h4>
+                  <ul className="list-disc list-inside text-gray-300">
+                    <li>Advanced metrics tracking</li>
+                    <li>Custom analysis parameters</li>
+                    <li>Comparative studies</li>
+                    <li>Treatment efficacy analysis</li>
+                  </ul>
+                </div>
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-purple-400">Integration</h4>
+                  <ul className="list-disc list-inside text-gray-300">
+                    <li>API access</li>
+                    <li>Custom workflows</li>
+                    <li>Data export options</li>
+                    <li>Third-party integrations</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Activation Section */}
+            <div className="bg-gradient-to-r from-purple-900 to-indigo-900 p-6 rounded-lg border border-purple-500/30">
+              <h3 className="font-semibold mb-4">Activate Premium Access</h3>
               <div className="space-y-4">
                 <div className="relative">
                   <Input
@@ -107,7 +163,7 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
                     placeholder="Enter your access key"
                     value={apiKey}
                     onChange={(e) => setApiKey(e.target.value)}
-                    className="w-full bg-gray-700 border-gray-600"
+                    className="w-full bg-gray-700/50 border-gray-600"
                   />
                   <button
                     type="button"
@@ -137,13 +193,18 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
                 </Button>
               </div>
             </div>
-          </div>
 
-          <div className="text-xs text-gray-400 text-center">
-            <p>For professional use only. Results based on clinical data analysis.</p>
-            <p>Contact Dr. Usman for support and access key renewal.</p>
+            {/* Contact Information */}
+            <div className="text-center space-y-2 py-4">
+              <p className="text-sm text-gray-400">
+                For enterprise solutions and custom implementations, contact our team
+              </p>
+              <p className="text-sm text-purple-400">
+                Email: enterprise@hairlens.ai | Phone: +1 (555) 123-4567
+              </p>
+            </div>
           </div>
-        </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );
