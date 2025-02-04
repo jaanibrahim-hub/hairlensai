@@ -197,7 +197,7 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
     console.log('Making API call with key:', apiKey.substring(0, 5) + '...');
     
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: {
