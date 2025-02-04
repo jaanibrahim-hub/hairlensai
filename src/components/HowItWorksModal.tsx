@@ -21,12 +21,19 @@ const HowItWorksModal = () => {
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">The Journey of HairLens AI</DialogTitle>
           <DialogDescription className="text-lg">
-            You're staring in the mirror
+            From Vision to Reality: A Story of Innovation in Hair Analysis
+          </DialogDescription>
+        </DialogHeader>
+        
         <div className="space-y-8 py-6">
           <section className="space-y-4">
-            <h3 className="text-xl font-semibold">Hair Health Navigator</h3>
+            <h3 className="text-xl font-semibold">The Genesis</h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Your hair tells a story. But for too long, only expensive specialists could read it. We're changing that. HairLens AI puts the power of professional hair analysis in your pocket, turning confusing hair care decisions into clear, data-driven choices.
+              HairLens AI emerged from a critical observation in the hair care industry: despite technological 
+              advancements in numerous healthcare sectors, hair analysis remained largely subjective and 
+              inaccessible. This gap in the market sparked an intensive six-month development journey 
+              that would transform raw clinical data into actionable intelligence.
+            </p>
           </section>
 
           <section className="space-y-4">
