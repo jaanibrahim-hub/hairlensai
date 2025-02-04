@@ -19,34 +19,52 @@ const HowItWorksModal = () => {
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">The Journey of HairLens AI</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">Your Hair's Story, Decoded</DialogTitle>
           <DialogDescription className="text-lg">
-            From Vision to Reality: A Story of Innovation in Hair Analysis
+            Professional hair analysis in your pocket
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-8 py-6">
           <section className="space-y-4">
-            <h3 className="text-xl font-semibold">The Genesis</h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              HairLens AI emerged from a critical observation in the hair care industry: despite technological 
-              advancements in numerous healthcare sectors, hair analysis remained largely subjective and 
-              inaccessible. This gap in the market sparked an intensive six-month development journey 
-              that would transform raw clinical data into actionable intelligence.
+            <p className="text-xl text-gray-800 dark:text-gray-200 italic">
+              "Your hair tells a story. But for too long, only expensive specialists could read it. 
+              We're changing that. HairLens AI puts the power of professional hair analysis in your pocket, 
+              turning confusing hair care decisions into clear, data-driven choices."
             </p>
           </section>
 
           <section className="space-y-4">
-            <h3 className="text-xl font-semibold">The Challenge</h3>
+            <h3 className="text-xl font-semibold">Revolutionizing Hair Care Through AI-Powered Analysis</h3>
+            <h4 className="text-lg font-medium">Your Personal Hair Health Navigator</h4>
             <p className="text-gray-600 dark:text-gray-300">
-            Traditional hair analysis methods faced several limitations:
+              In a world where we track everything from steps to sleep, why do we still guess about our hair health? 
+              HairLens AI bridges this gap, transforming how individuals, professionals, and businesses approach 
+              hair care through cutting-edge AI technology.
+            </p>
+          </section>
+
+          <section className="space-y-4">
+            <h3 className="text-xl font-semibold">The Genesis</h3>
+            <p className="text-gray-600 dark:text-gray-300">
+              What began as a mission to democratize hair health analysis has evolved into a groundbreaking 
+              platform serving multiple stakeholders in the hair care ecosystem. We noticed a critical gap: 
+              while people spent thousands on treatments, they lacked the tools to make informed decisions 
+              or track their progress scientifically.
+            </p>
+          </section>
+
+          <section className="space-y-4">
+            <h3 className="text-xl font-semibold">Our Vision</h3>
+            <p className="text-gray-600 dark:text-gray-300">
+              HairLens AI isn't just another analysis tool - it's a comprehensive ecosystem where:
             </p>
             <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
-              <li>Inconsistent results across different professionals</li>
-              <li>Limited accessibility to expert analysis</li>
-              <li>Time-consuming manual assessments</li>
-              <li>Lack of quantifiable metrics</li>
-              <li>High costs for professional consultations</li>
+              <li>Individuals get professional-grade analysis before expensive consultations</li>
+              <li>Clinics showcase their success stories with verified results</li>
+              <li>Product companies validate their effectiveness with real data</li>
+              <li>Researchers access valuable insights for groundbreaking treatments</li>
+              <li>Wellness centers integrate hair health into holistic care plans</li>
             </ul>
           </section>
 
