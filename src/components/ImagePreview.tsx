@@ -73,7 +73,7 @@ const ImagePreview = () => {
 
     // Fallback image if preview is not available
     if (previewUrl === "/placeholder.svg") {
-      setPreviewUrl("/lovable-uploads/a7cdb1d9-608f-4e95-8215-6f565f2808f8.png");
+      setPreviewUrl("/lovable-uploads/1.png");
     }
 
     return () => {
