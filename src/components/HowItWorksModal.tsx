@@ -35,26 +35,23 @@ const HowItWorksModal = () => {
           </section>
 
           <section className="space-y-4">
-            <h3 className="text-xl font-semibold">HAIRLENS AI</h3>
+            <h3 className="text-xl font-semibold">Welcome To HairLens AI</h3>
             <h4 className="text-lg font-medium">Our AI's Powerful Foundation</h4>
             <p className="text-gray-600 dark:text-gray-300">
               Through an intensive 3,880 hours of training on over 170,000+ authenticated scalp and hair images, 
-              our AI has mastered the art of hair analysis. Unlike generic AI models trained on random internet photos, 
-              our system learns from real clinical cases, verified treatments, and documented outcomes.
+              our AI has mastered the art of hair analysis.
             </p>
           </section>
 
           <section className="space-y-4">
             <h3 className="text-xl font-semibold">Our Unique Dataset</h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Through a groundbreaking collaboration with leading multinational hair treatment clinics, 
-              we gained access to an extraordinary dataset of over 170,000+ authenticated patient records 
-              across 12 international clinical centers. This diverse data spans multiple ethnicities, 
-              hair types, and treatment outcomes, providing an unparalleled foundation for our AI model.
+              Unlike generic AI models trained on random internet photos, 
+              our system learns from real clinical cases, verified treatments, and documented outcomes. 
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">What Makes Our Data Special</h4>
+                <h4 className="font-semibold mb-2">What Makes Us Special</h4>
                 <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
                   <li>Real clinical outcomes, not just predictions</li>
                   <li>Verified before-and-after treatment results</li>
@@ -71,8 +68,123 @@ const HowItWorksModal = () => {
                   <li>97% user satisfaction</li>
                 </ul>
               </div>
-            </div>
-          </section>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+          <h4 className="font-semibold mb-2 text-blue-800 dark:text-blue-300">Individual Users (Patients) Benefits</h4>
+          <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+            <li>Pre-consultation analysis before visiting doctors</li>
+            <li>Track treatment progress over time</li>
+            <li>Compare before/after results</li>
+            <li>Share success stories and journey</li>
+            <li>Make informed decisions about treatments</li>
+            <li>Find suitable clinics based on their specific condition</li>
+            <li>Save money by getting initial analysis before expensive consultations</li>
+          </ul>
+        </div>
+        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+          <h4 className="font-semibold mb-2 text-green-800 dark:text-green-300">Success Metrics</h4>
+          <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+            <li>94% diagnostic accuracy</li>
+            <li>89% treatment prediction rate</li>
+            <li>95% expert correlation</li>
+            <li>97% user satisfaction</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+          <h4 className="font-semibold mb-2 text-purple-800 dark:text-purple-300">Hair Care Clinics & Doctors Benefits</h4>
+          <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+            <li>Data-driven patient assessments</li>
+            <li>Track patient progress scientifically</li>
+            <li>Build trust through transparent analysis</li>
+            <li>Showcase success stories with verified results</li>
+            <li>Attract new patients with technology-driven approach</li>
+            <li>Better treatment planning with historical data</li>
+            <li>Differentiate from competitors</li>
+          </ul>
+        </div>
+        <div className="bg-teal-50 dark:bg-teal-900/20 p-4 rounded-lg">
+          <h4 className="font-semibold mb-2 text-teal-800 dark:text-teal-300">Hair Product Companies Benefits</h4>
+          <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+            <li>Validate product effectiveness</li>
+            <li>Get real user data and testimonials</li>
+            <li>Target specific hair conditions</li>
+            <li>Personalize product recommendations</li>
+            <li>Build trust through scientific analysis</li>
+            <li>Track product performance</li>
+            <li>Create data-backed marketing materials</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="bg-pink-50 dark:bg-pink-900/20 p-4 rounded-lg">
+          <h4 className="font-semibold mb-2 text-pink-800 dark:text-pink-300">Salons & Stylists Benefits</h4>
+          <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+            <li>Professional analysis for clients</li>
+            <li>Recommend appropriate treatments</li>
+            <li>Track client hair health</li>
+            <li>Build long-term relationships</li>
+            <li>Upsell premium services</li>
+            <li>Demonstrate expertise</li>
+          </ul>
+        </div>
+        <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg">
+          <h4 className="font-semibold mb-2 text-indigo-800 dark:text-indigo-300">Research Institutions Benefits</h4>
+          <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+            <li>Access to anonymized data</li>
+            <li>Track treatment effectiveness</li>
+            <li>Study hair loss patterns</li>
+            <li>Develop new treatments</li>
+            <li>Validate research findings</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg">
+          <h4 className="font-semibold mb-2 text-orange-800 dark:text-orange-300">Insurance Companies Benefits</h4>
+          <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+            <li>Verify treatment necessity</li>
+            <li>Track treatment outcomes</li>
+            <li>Reduce fraudulent claims</li>
+            <li>Better cost assessment</li>
+          </ul>
+        </div>
+        <div className="bg-cyan-50 dark:bg-cyan-900/20 p-4 rounded-lg">
+          <h4 className="font-semibold mb-2 text-cyan-800 dark:text-cyan-300">Wellness Centers Benefits</h4>
+          <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+            <li>Holistic health tracking</li>
+            <li>Integrate with other wellness metrics</li>
+            <li>Personalized treatment plans</li>
+            <li>Progress monitoring</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
+          <h4 className="font-semibold mb-2 text-red-800 dark:text-red-300">Pharmaceutical Companies Benefits</h4>
+          <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+            <li>Product testing</li>
+            <li>Clinical trial support</li>
+            <li>Treatment effectiveness tracking</li>
+            <li>Market research</li>
+          </ul>
+        </div>
+        <div className="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-lg">
+          <h4 className="font-semibold mb-2 text-emerald-800 dark:text-emerald-300">Global Reach</h4>
+          <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+            <li>12 international centers</li>
+            <li>Multiple ethnic hair types</li>
+            <li>Cross-cultural validation</li>
+            <li>Diverse environmental conditions</li>
+          </ul>
+        </div>
+      </div>
+    </section>
 
           <section className="space-y-4">
             <h3 className="text-xl font-semibold">Our Vision</h3>
@@ -96,26 +208,6 @@ const HowItWorksModal = () => {
               across 12 international clinical centers. This diverse data spans multiple ethnicities, 
               hair types, and treatment outcomes, providing an unparalleled foundation for our AI model.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">Global Reach</h4>
-                <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
-                  <li>12 international centers</li>
-                  <li>Multiple ethnic hair types</li>
-                  <li>Cross-cultural validation</li>
-                  <li>Diverse environmental conditions</li>
-                </ul>
-              </div>
-              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">Success Metrics</h4>
-                <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
-                  <li>94% diagnostic accuracy</li>
-                  <li>89% treatment prediction rate</li>
-                  <li>95% expert correlation</li>
-                  <li>97% user satisfaction</li>
-                </ul>
-              </div>
-            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
                 <h4 className="font-semibold mb-2">Global Reach</h4>
