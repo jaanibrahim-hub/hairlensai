@@ -25,6 +25,7 @@ import {
 } from 'chart.js';
 import { Line, Doughnut, PolarArea } from 'react-chartjs-2';
 import AdvancedAnalysis from "./AdvancedAnalysis";
+import { performSecondaryAnalysis } from "@/utils/geminiApi";
 
 ChartJS.register(
   ArcElement,
@@ -420,101 +421,14 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         description: "Processing your hair analysis data...",
       });
 
-      const geminiPrompt = `You are an expert AI Hair Doctor specializing in trichology and dermatology. 
-      Based on the following detailed hair analysis data:
-
-      HEALTH METRICS:
-      - Overall Health Score: ${analysisData.healthScore}
-      - Hair Type: ${analysisData.metrics.find(m => m.label === "Hair Type")?.value}
-      - Scalp Condition: ${analysisData.metrics.find(m => m.label === "Scalp Condition")?.value}
-      - Porosity: ${analysisData.metrics.find(m => m.label === "Porosity")?.value}
-      - Density: ${analysisData.metrics.find(m => m.label === "Density")?.value}
-
-      GROWTH ANALYSIS:
-      - Growth Phase Distribution: ${JSON.stringify(analysisData.growthPhaseData)}
-      - Breakage Rate: ${analysisData.metrics.find(m => m.label === "Breakage Rate")?.value}
-      - Follicle Density: ${analysisData.metrics.find(m => m.label === "Follicle Density")?.value}
-
-      STRUCTURAL ANALYSIS:
-      - Curl Pattern: ${JSON.stringify(analysisData.curlPatternData)}
-      - Hair Diameter: ${analysisData.metrics.find(m => m.label === "Hair Diameter")?.value}
-      - Elasticity: ${analysisData.metrics.find(m => m.label === "Elasticity")?.value}
-
-      Please provide a comprehensive analysis in the following format:
-
-      1. DIAGNOSTIC SUMMARY
-      2. DETAILED ANALYSIS
-      3. TREATMENT RECOMMENDATIONS
-      4. LIFESTYLE MODIFICATIONS
-      5. WARNING SIGNS
-      6. TIMELINE`;
-
-      console.log("Starting Gemini analysis with prompt:", geminiPrompt);
-
-      let lastError = null;
-      let success = false;
-
-      for (const apiKey of API_KEYS) {
-        try {
-          console.log('Attempting Gemini analysis with API key:', apiKey.substring(0, 5) + '...');
-          
-          const response = await fetch(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${apiKey}`,
-              },
-              body: JSON.stringify({
-                contents: [
-                  {
-                    parts: [{ text: geminiPrompt }],
-                  },
-                ],
-                generationConfig: {
-                  temperature: 0.2,
-                  topK: 40,
-                  topP: 0.8,
-                  maxOutputTokens: 8192,
-                },
-              }),
-            }
-          );
-
-          if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Gemini API Error:', {
-              status: response.status,
-              statusText: response.statusText,
-              errorData
-            });
-            lastError = new Error(`API request failed: ${response.statusText}`);
-            continue;
-          }
-
-          const data = await response.json();
-          console.log('Gemini API response:', data);
-
-          if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
-            console.warn('Invalid response format from Gemini API');
-            continue;
-          }
-
-          const analysisText = data.candidates[0].content.parts[0].text;
-          setGeminiAnalysis(analysisText);
-          success = true;
-          break;
-        } catch (error) {
-          console.error(`Error with API key ${apiKey.substring(0, 5)}...`, error);
-          lastError = error;
-          continue;
-        }
-      }
-
-      if (!success) {
-        throw lastError || new Error("All API attempts failed");
-      }
+      const secondaryAnalysis = await performSecondaryAnalysis(analysisData, API_KEYS[0]);
+      setGeminiAnalysis(
+        `# Diagnostic Summary\n${secondaryAnalysis.diagnostic_summary}\n\n` +
+        `# Detailed Analysis\n${secondaryAnalysis.detailed_analysis}\n\n` +
+        `# Treatment Plan\n${secondaryAnalysis.treatment_plan.map(plan => 
+          `## ${plan.category}\n${plan.recommendations.join('\n')}`
+        ).join('\n\n')}`
+      );
       
       toast({
         title: "Analysis Complete",

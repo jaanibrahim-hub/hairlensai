@@ -287,25 +287,96 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
   }
 }
 
-export const analyzeHairImage = async (imageBase64: string): Promise<HairAnalysisResponse> => {
-  let lastError: Error | null = null;
-
-  for (const apiKey of API_KEYS) {
-    try {
-      console.log('Attempting analysis with API key:', apiKey.substring(0, 5) + '...');
-      const result = await makeApiCall(imageBase64, apiKey);
-      if (result) {
-        console.log('Successfully analyzed image with API key:', apiKey.substring(0, 5) + '...');
-        return result;
-      }
-    } catch (error) {
-      console.warn(`Failed with API key ${apiKey.substring(0, 5)}...`, error);
-      lastError = error as Error;
-      continue;
+const SECOND_ANALYSIS_PROMPT = `As a trichology expert, analyze this hair health data and provide a comprehensive medical assessment. Format your response as structured JSON with the following schema:
+{
+  "diagnostic_summary": "Brief overview of key findings",
+  "detailed_analysis": "In-depth examination of all metrics",
+  "treatment_plan": [
+    {
+      "category": "treatment category",
+      "recommendations": ["specific recommendations"]
     }
+  ]
+}`;
+
+export const performSecondaryAnalysis = async (analysisData: any, apiKey: string) => {
+  // Validate required metrics
+  const requiredMetrics = ['Hair Type', 'Scalp Condition', 'Porosity'];
+  if (!requiredMetrics.every(m => analysisData.metrics.some(metric => metric.label === m))) {
+    throw new Error('Incomplete analysis data for secondary processing');
   }
 
-  // If all API keys fail
-  toast.error("Failed to analyze image. Please try again.");
-  throw lastError || new Error("All API attempts failed");
-};
+  // Prepare the prompt with the analysis data
+  const geminiPrompt = `
+    Analysis Data:
+    Health Score: ${analysisData.healthScore}
+    Metrics: ${JSON.stringify(analysisData.metrics)}
+    
+    ${SECOND_ANALYSIS_PROMPT}
+  `;
+
+  // Token count validation
+  const inputTokens = JSON.stringify(geminiPrompt).length / 4;
+  if (inputTokens > 1000000) {
+    throw new Error('Context window overflow');
+  }
+
+  const requestBody = {
+    contents: [{
+      role: "user",
+      parts: [{ text: geminiPrompt }]
+    }],
+    generationConfig: {
+      temperature: 0.2,
+      topK: 40,
+      topP: 0.8,
+      maxOutputTokens: 8192
+    }
+  };
+
+  try {
+    console.log('Making secondary analysis API call...');
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Secondary analysis API error:', errorData);
+      throw new Error(`API request failed: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log('Secondary analysis response:', data);
+
+    if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+      throw new Error('Malformed API response structure');
+    }
+
+    // Extract and parse JSON from the response
+    const responseText = data.candidates[0].content.parts[0].text;
+    let jsonResponse;
+    try {
+      // Handle potential markdown formatting
+      const jsonString = responseText.includes('```json') 
+        ? responseText.split('```json')[1].split('```')[0].trim()
+        : responseText;
+      jsonResponse = JSON.parse(jsonString);
+    } catch (parseError) {
+      console.error('JSON parsing error:', parseError);
+      throw new Error('Failed to parse API response');
+    }
+
+    return jsonResponse;
+  } catch (error) {
+    console.error('Secondary analysis error:', error);
+    throw error;
+  }
+}
