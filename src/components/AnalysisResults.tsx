@@ -335,9 +335,15 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     setIsLoadingAI(true);
 
     try {
-      console.log("Making Perplexity API call...");
+      console.log("Making Perplexity API call with data:", {
+        healthScore: analysisData.healthScore,
+        metrics: analysisData.metrics,
+      });
+
       const response = await fetch('https://api.perplexity.ai/chat/completions', {
         method: 'POST',
+        mode: 'cors',
+        credentials: 'omit',
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
@@ -361,19 +367,22 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
           ],
           temperature: 0.2,
           max_tokens: 2000,
-          search_domain_filter: [], // Search all domains
-          search_recency_filter: 'year'
         }),
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
-        console.error("Perplexity API error:", errorData);
-        throw new Error(errorData?.error?.message || 'Failed to get AI analysis');
+        console.error("Perplexity API error response:", {
+          status: response.status,
+          statusText: response.statusText,
+          errorData
+        });
+        throw new Error(errorData?.error?.message || `API request failed: ${response.statusText}`);
       }
 
       console.log("Perplexity API response received");
       const data = await response.json();
+      console.log("Perplexity API response data:", data);
       
       if (!data.choices?.[0]?.message?.content) {
         throw new Error('Invalid response format from API');
