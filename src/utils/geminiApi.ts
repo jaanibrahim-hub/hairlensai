@@ -1,60 +1,5 @@
 import { toast } from "sonner";
 
-interface HairAnalysisResponse {
-  structuralAnalysis: {
-    hairGrowthCycle: number[];
-    curlPatternDistribution: number[];
-    growthPhaseDistribution: number[];
-  };
-  quickSummary: string;
-  metrics: {
-    hairType: string;
-    healthStatus: string;
-    porosity: string;
-    density: string;
-    elasticity: string;
-    scalpCondition: string;
-    hairLength: string;
-    chemicalTreatment: string;
-    protectionLevel: string;
-    breakageRate: string;
-    strandThickness: string;
-    follicleDensity: string;
-    hairDiameter: {
-      root: string;
-      tip: string;
-    };
-    growthPhase: string;
-    damageAnalysis: string;
-  };
-  overallHealthScore: number;
-  hairInformation: {
-    diagnosticAnalysis: string;
-    careTips: string[];
-  };
-  recommendedTreatments: {
-    primary: {
-      name: string;
-      description: string;
-      match: number;
-    };
-    secondary: {
-      name: string;
-      description: string;
-      match: number;
-    };
-    supporting: {
-      name: string;
-      description: string;
-      match: number;
-    };
-    other: Array<{
-      name: string;
-      match: number;
-    }>;
-  };
-}
-
 export const API_KEYS = [
   'AIzaSyCbiokMrXsfZyXHi_OFwFwM5bG9QXazCPA',
   'AIzaSyBrUoI6e9BCAarqbXQf3NfTe3wyZ_4O-Mo',
@@ -165,6 +110,29 @@ Important guidelines for analysis:
 7. Note any distinct patterns or variations
 8. Include specific measurements where visible indicators allow estimation
 `;
+
+export const analyzeHairImage = async (imageBase64: string): Promise<any> => {
+  if (!validateImage(imageBase64)) {
+    throw new Error("Invalid image format or size");
+  }
+
+  // Try each API key until one works
+  for (const apiKey of API_KEYS) {
+    try {
+      console.log('Attempting analysis with API key:', apiKey.substring(0, 5) + '...');
+      const result = await makeApiCall(imageBase64, apiKey);
+      if (result) {
+        console.log('Analysis successful:', result);
+        return result;
+      }
+    } catch (error) {
+      console.error(`Error with API key ${apiKey.substring(0, 5)}...`, error);
+      continue; // Try next API key
+    }
+  }
+
+  throw new Error("All API keys failed. Please try again later.");
+};
 
 const validateImage = (imageBase64: string): boolean => {
   try {

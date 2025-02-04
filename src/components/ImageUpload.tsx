@@ -24,10 +24,11 @@ const ImageUpload = () => {
         
         try {
           const analysisResults = await analyzeHairImage(base64String);
-          // You can emit an event or use a state management solution to update AnalysisResults
+          // Emit event to update AnalysisResults
           window.dispatchEvent(new CustomEvent('hairAnalysisComplete', { detail: analysisResults }));
           toast.success("Analysis complete!");
         } catch (error) {
+          console.error('Analysis error:', error);
           toast.error("Failed to analyze. Please try again.");
         } finally {
           setIsAnalyzing(false);
@@ -35,6 +36,7 @@ const ImageUpload = () => {
       };
       reader.readAsDataURL(file);
     } catch (error) {
+      console.error('Upload error:', error);
       toast.error("Error processing. Please try again.");
       setIsAnalyzing(false);
     }
