@@ -273,7 +273,7 @@ interface AnalysisResultsProps {
 const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   const [analysisData, setAnalysisData] = useState<AnalysisResult>({
     metrics: defaultMetrics,
-    healthScore: 76,
+    healthScore: 80, // Default health score set to 80
     healthData: defaultHealthData,
     curlPatternData: {
       labels: ['Straight', 'Wavy', 'Curly'],
@@ -483,86 +483,34 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
             </Button>
           </div>
 
-          {/* AI Analysis Dialog */}
-          <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
-            <DialogContent className="sm:max-w-[600px] bg-gray-900 text-white">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-bold text-purple-400">
-                  AI Hair Doctor Analysis
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                {isLoadingAI ? (
-                  <div className="flex flex-col items-center justify-center p-8">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
-                    <p className="text-gray-300">AI Doctor is analyzing your hair data...</p>
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {aiAnalysis && (
-                      <div className="bg-gray-800 rounded-lg p-6">
-                        <div className="prose prose-invert max-w-none">
-                          <div className="whitespace-pre-wrap">{aiAnalysis}</div>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Key Metrics Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-gray-800 p-4 rounded-lg">
-                        <h3 className="text-lg font-semibold mb-2">Health Score</h3>
-                        <div className="flex items-center justify-between">
-                          <span className="text-2xl font-bold text-purple-400">
-                            {analysisData.healthScore}%
-                          </span>
-                          <Progress value={analysisData.healthScore} className="w-1/2" />
-                        </div>
-                      </div>
-                      
-                      <div className="bg-gray-800 p-4 rounded-lg">
-                        <h3 className="text-lg font-semibold mb-2">Treatment Match</h3>
-                        <div className="flex items-center justify-between">
-                          <span className="text-2xl font-bold text-green-400">
-                            95%
-                          </span>
-                          <Progress value={95} className="w-1/2" />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex justify-end space-x-4">
-                      <Button
-                        variant="outline"
-                        onClick={() => setShowAIDialog(false)}
-                        className="bg-gray-700 hover:bg-gray-600"
-                      >
-                        Close
-                      </Button>
-                      <Button
-                        onClick={() => {
-                          // Implement save functionality
-                          toast({
-                            title: "Analysis Saved",
-                            description: "Your AI analysis has been saved successfully.",
-                          });
-                        }}
-                        className="bg-purple-600 hover:bg-purple-700"
-                      >
-                        Save Analysis
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </DialogContent>
-          </Dialog>
-
+          {/* Quick Summary */}
           <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
             <h3 className="text-lg font-medium mb-2">Quick Summary</h3>
             <p className="text-gray-300">
               {analysisData.quickSummary || "Your scalp and hair analysis shows key metrics including sebum levels, pore condition, inflammation markers, and follicular activity."}
             </p>
+          </div>
+
+          {/* Overall Health Score */}
+          <div className="bg-gray-700/80 rounded-lg p-4 mb-6">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="text-lg font-medium">Overall Health Score</h3>
+              <span className="text-2xl font-bold text-purple-400">{analysisData.healthScore}%</span>
+            </div>
+            <Progress 
+              value={analysisData.healthScore} 
+              className="h-3 bg-gray-600"
+              indicatorClassName={`bg-gradient-to-r from-purple-500 to-purple-600 ${
+                analysisData.healthScore >= 80 ? 'from-green-500 to-green-600' :
+                analysisData.healthScore >= 60 ? 'from-yellow-500 to-yellow-600' :
+                'from-red-500 to-red-600'
+              }`}
+            />
+            <div className="flex justify-between mt-2 text-sm text-gray-400">
+              <span>Poor</span>
+              <span>Good</span>
+              <span>Excellent</span>
+            </div>
           </div>
 
           {/* Curl Pattern Distribution */}
