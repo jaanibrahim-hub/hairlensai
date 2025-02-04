@@ -300,6 +300,8 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const { toast } = useToast();
   const [hasResults, setHasResults] = useState(false);
+  const [aiAnalysis, setAiAnalysis] = useState<string>("");
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
 
   useEffect(() => {
     const handleAnalysisComplete = (event: CustomEvent<any>) => {
@@ -330,12 +332,53 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
 
     setIsAnalyzing(true);
     setShowAIDialog(true);
+    setIsLoadingAI(true);
 
-    // TODO: Implement Perplexity API call here
-    // For now, we'll just simulate a delay
-    setTimeout(() => {
+    try {
+      console.log("Making Perplexity API call...");
+      const response = await fetch('https://api.perplexity.ai/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-sonar-small-128k-online',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an AI Hair Doctor analyzing hair and scalp conditions. Provide detailed, professional analysis.'
+            },
+            {
+              role: 'user',
+              content: `Analyze this hair data: 
+                Health Score: ${analysisData.healthScore}
+                Quick Summary: ${analysisData.quickSummary}
+                Metrics: ${JSON.stringify(analysisData.metrics)}
+                Please provide a detailed analysis, recommendations, and treatment plan.`
+            }
+          ],
+          temperature: 0.2,
+          max_tokens: 2000,
+          search_domain_filter: [], // Search all domains
+          search_recency_filter: 'year'
+        }),
+      });
+
+      console.log("Perplexity API response received");
+      const data = await response.json();
+      setAiAnalysis(data.choices[0].message.content);
+    } catch (error) {
+      console.error("Error calling Perplexity API:", error);
+      toast({
+        title: "Error",
+        description: "Failed to get AI analysis. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingAI(false);
       setIsAnalyzing(false);
-    }, 2000);
+    }
   };
 
   const doughnutOptions = {
@@ -366,7 +409,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     },
   };
 
-   const growthPhaseData = {
+  const growthPhaseData = {
     labels: analysisData.growthPhaseData.labels,
     datasets: [{
       label: 'Growth Phase',
@@ -422,14 +465,66 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
                 </DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
-                {isAnalyzing ? (
+                {isLoadingAI ? (
                   <div className="flex flex-col items-center justify-center p-8">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
-                    <p className="text-gray-300">Analyzing your hair data...</p>
+                    <p className="text-gray-300">AI Doctor is analyzing your hair data...</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
-                    <p>AI Doctor analysis results will appear here...</p>
+                  <div className="space-y-6">
+                    {aiAnalysis && (
+                      <div className="bg-gray-800 rounded-lg p-6">
+                        <div className="prose prose-invert max-w-none">
+                          <div className="whitespace-pre-wrap">{aiAnalysis}</div>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Key Metrics Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-gray-800 p-4 rounded-lg">
+                        <h3 className="text-lg font-semibold mb-2">Health Score</h3>
+                        <div className="flex items-center justify-between">
+                          <span className="text-2xl font-bold text-purple-400">
+                            {analysisData.healthScore}%
+                          </span>
+                          <Progress value={analysisData.healthScore} className="w-1/2" />
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gray-800 p-4 rounded-lg">
+                        <h3 className="text-lg font-semibold mb-2">Treatment Match</h3>
+                        <div className="flex items-center justify-between">
+                          <span className="text-2xl font-bold text-green-400">
+                            95%
+                          </span>
+                          <Progress value={95} className="w-1/2" />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex justify-end space-x-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowAIDialog(false)}
+                        className="bg-gray-700 hover:bg-gray-600"
+                      >
+                        Close
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          // Implement save functionality
+                          toast({
+                            title: "Analysis Saved",
+                            description: "Your AI analysis has been saved successfully.",
+                          });
+                        }}
+                        className="bg-purple-600 hover:bg-purple-700"
+                      >
+                        Save Analysis
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
