@@ -164,8 +164,7 @@ Important guidelines for analysis:
 6. Assess multiple areas of the image for comprehensive analysis
 7. Note any distinct patterns or variations
 8. Include specific measurements where visible indicators allow estimation
-
-If a feature cannot be fully assessed, provide a best estimate based on visible indicators rather than marking as "Unable to assess".`;
+`;
 
 const validateImage = (imageBase64: string): boolean => {
   try {
@@ -195,8 +194,10 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
   }
 
   try {
+    console.log('Making API call with key:', apiKey.substring(0, 5) + '...');
+    
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.0-pro-vision-latest:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: {
@@ -246,8 +247,12 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.warn(`API error with key ${apiKey.substring(0, 5)}...`, errorData);
-      return null;
+      console.error('API Error:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorData
+      });
+      throw new Error(`API request failed: ${response.statusText}`);
     }
 
     const data = await response.json();
@@ -277,7 +282,7 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
       return null;
     }
   } catch (error) {
-    console.warn(`Error with API key ${apiKey.substring(0, 5)}...`, error);
+    console.error(`Error with API key ${apiKey.substring(0, 5)}...`, error);
     return null;
   }
 }
@@ -287,6 +292,7 @@ export const analyzeHairImage = async (imageBase64: string): Promise<HairAnalysi
 
   for (const apiKey of API_KEYS) {
     try {
+      console.log('Attempting analysis with API key:', apiKey.substring(0, 5) + '...');
       const result = await makeApiCall(imageBase64, apiKey);
       if (result) {
         console.log('Successfully analyzed image with API key:', apiKey.substring(0, 5) + '...');
