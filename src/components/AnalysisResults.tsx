@@ -2,6 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useEffect, useState } from "react";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { useToast } from "@/hooks/use-toast";
+import { Brain } from "lucide-react";
+import {
   Chart as ChartJS,
   ArcElement,
   CategoryScale,
@@ -288,6 +296,10 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
       }]
     }
   });
+  const [showAIDialog, setShowAIDialog] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const { toast } = useToast();
+  const [hasResults, setHasResults] = useState(false);
 
   useEffect(() => {
     const handleAnalysisComplete = (event: CustomEvent<any>) => {
@@ -295,6 +307,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
       if (event.detail) {
         const transformedData = transformApiResponse(event.detail);
         setAnalysisData(transformedData);
+        setHasResults(true);
       }
     };
 
@@ -304,6 +317,26 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
       window.removeEventListener('hairAnalysisComplete', handleAnalysisComplete as EventListener);
     };
   }, []);
+
+  const handleAIDoctorClick = async () => {
+    if (!apiKey) {
+      toast({
+        title: "Premium Feature",
+        description: "Please activate premium access to use the AI Doctor feature.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsAnalyzing(true);
+    setShowAIDialog(true);
+
+    // TODO: Implement Perplexity API call here
+    // For now, we'll just simulate a delay
+    setTimeout(() => {
+      setIsAnalyzing(false);
+    }, 2000);
+  };
 
   const doughnutOptions = {
     responsive: true,
@@ -366,6 +399,43 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-3 space-y-6">
         <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+          {/* AI Doctor Button */}
+          <div className="mb-6">
+            <Button
+              onClick={handleAIDoctorClick}
+              disabled={!hasResults || !apiKey || isAnalyzing}
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              <Brain className="w-5 h-5" />
+              {isAnalyzing ? "Analyzing..." : "Consult AI Hair Doctor"}
+              {!hasResults && <span className="text-xs">(Upload image first)</span>}
+              {!apiKey && <span className="text-xs">(Premium feature)</span>}
+            </Button>
+          </div>
+
+          {/* AI Analysis Dialog */}
+          <Dialog open={showAIDialog} onOpenChange={setShowAIDialog}>
+            <DialogContent className="sm:max-w-[600px] bg-gray-900 text-white">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold text-purple-400">
+                  AI Hair Doctor Analysis
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                {isAnalyzing ? (
+                  <div className="flex flex-col items-center justify-center p-8">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
+                    <p className="text-gray-300">Analyzing your hair data...</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <p>AI Doctor analysis results will appear here...</p>
+                  </div>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+
           <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
             <h3 className="text-lg font-medium mb-2">Quick Summary</h3>
             <p className="text-gray-300">
