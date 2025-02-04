@@ -15,10 +15,8 @@ const ImageUpload = () => {
 
     try {
       setIsAnalyzing(true);
-      toast.info("Running through 170,000 case studies...");
-      toast.info("Hair has cultural significance worldwide...");
-      toast.info("It's completely normal to lose 50-100 hairs a day...");
-      toast.info("Your hair grows about 4-6 inches each year");
+      toast.info("Started but remember Some Premium Features are Locked");
+
 
 
       // Convert image to base64
@@ -68,7 +66,7 @@ const ImageUpload = () => {
               onChange={handleImageUpload}
             />
             <i className="fas fa-camera text-4xl text-primary"></i>
-            <h3 className="text-xl font-medium text-white">Please upload a high-quality photo of your scalp or hair for assessment.</h3>
+            <h3 className="text-xl font-medium text-white">Please upload a high-quality image of your scalp or hair for assessment.</h3>
             <p className="text-gray-400">or</p>
             <Button 
               className="bg-primary hover:bg-primary/90"
@@ -78,7 +76,7 @@ const ImageUpload = () => {
               {isAnalyzing ? (
                 <>
                   <i className="fas fa-spinner fa-spin mr-2"></i>
-                  Analyzing...
+                  Analyzing...Running through 170,000+ case studies...
                 </>
               ) : (
                 <>
