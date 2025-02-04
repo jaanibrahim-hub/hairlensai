@@ -21,45 +21,12 @@ const HowItWorksModal = () => {
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">The Journey of HairLens AI</DialogTitle>
           <DialogDescription className="text-lg">
-            You're staring in the mirror, wondering about your hair's health. Should you visit that expensive clinic? Try that trending treatment? What if you could get professional-level insights right from your phone? That's not just a dream anymore - it's HairLens AI
-          </DialogDescription>
-        </DialogHeader>
-        
+            You're staring in the mirror
         <div className="space-y-8 py-6">
           <section className="space-y-4">
             <h3 className="text-xl font-semibold">Hair Health Navigator</h3>
             <p className="text-gray-600 dark:text-gray-300">
               Your hair tells a story. But for too long, only expensive specialists could read it. We're changing that. HairLens AI puts the power of professional hair analysis in your pocket, turning confusing hair care decisions into clear, data-driven choices.
-          </section>
-
-          <section className="space-y-4">
-            <h3 className="text-xl font-semibold">Our Unique Dataset</h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Through a groundbreaking collaboration with leading multinational hair treatment clinics, 
-              we gained access to an extraordinary dataset of over 170,000+ authenticated patient records 
-              across 12 international clinical centers. This diverse data spans multiple ethnicities, 
-              hair types, and treatment outcomes, providing an unparalleled foundation for our AI model.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">Global Reach</h4>
-                <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
-                  <li>12 international centers</li>
-                  <li>Multiple ethnic hair types</li>
-                  <li>Cross-cultural validation</li>
-                  <li>Diverse environmental conditions</li>
-                </ul>
-              </div>
-              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">Success Metrics</h4>
-                <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
-                  <li>94% diagnostic accuracy</li>
-                  <li>89% treatment prediction rate</li>
-                  <li>95% expert correlation</li>
-                  <li>97% user satisfaction</li>
-                </ul>
-              </div>
-            </div>
           </section>
 
           <section className="space-y-4">
