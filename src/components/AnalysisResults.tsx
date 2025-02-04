@@ -433,15 +433,28 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     },
     scales: {
       r: {
-        angleLines: {
-          color: 'rgba(255, 255, 255, 0.1)'
+        min: 0,
+        max: 100,
+        beginAtZero: true,
+        ticks: {
+          stepSize: 20,
+          backdropColor: 'transparent',
+          color: '#9b87f5',
+          font: {
+            size: 10
+          }
         },
         grid: {
           color: 'rgba(255, 255, 255, 0.1)'
         },
-        ticks: {
+        angleLines: {
+          color: 'rgba(255, 255, 255, 0.1)'
+        },
+        pointLabels: {
           color: '#9b87f5',
-          backdropColor: 'transparent'
+          font: {
+            size: 12
+          }
         }
       }
     }
@@ -451,7 +464,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     labels: ['Health Score'],
     datasets: [{
       label: 'Overall Health',
-      data: [analysisData.healthScore || 0],
+      data: [analysisData.healthScore],
       backgroundColor: ['rgba(155, 135, 245, 0.6)'],
       borderColor: ['#9b87f5'],
       borderWidth: 1,
@@ -459,10 +472,10 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   };
 
   const growthPhaseData = {
-    labels: ['Anagen', 'Catagen', 'Telogen'],
+    labels: analysisData.growthPhaseData.labels,
     datasets: [{
       label: 'Growth Phase Distribution',
-      data: [85, 5, 10], // Default values
+      data: analysisData.growthPhaseData.datasets[0].data,
       backgroundColor: [
         'rgba(155, 135, 245, 0.6)',
         'rgba(99, 102, 241, 0.6)',
@@ -472,14 +485,6 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
       borderWidth: 1,
     }]
   };
-
-  if (analysisData.structuralAnalysis?.growthPhaseDistribution) {
-    const distribution = analysisData.structuralAnalysis.growthPhaseDistribution;
-    growthPhaseData.datasets[0].data = distribution.map(phase => {
-      const [, value] = Object.entries(phase)[0];
-      return value;
-    });
-  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -611,7 +616,19 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
               <div className="h-64">
                 <PolarArea 
                   data={growthPhaseData}
-                  options={chartOptions}
+                  options={{
+                    ...chartOptions,
+                    scales: {
+                      r: {
+                        ...chartOptions.scales.r,
+                        ticks: {
+                          ...chartOptions.scales.r.ticks,
+                          display: true,
+                          count: 5
+                        }
+                      }
+                    }
+                  }}
                 />
               </div>
             </div>
