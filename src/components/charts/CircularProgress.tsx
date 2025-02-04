@@ -17,7 +17,7 @@ export const CircularProgress = ({ value, label, color = "#9b87f5" }: CircularPr
             value={value} 
             className={cn(
               "w-24 h-24",
-              color === "#9b87f5" ? "bg-purple-200" : "bg-gray-200"
+              color === "#9b87f5" ? "bg-purple-200/20" : "bg-gray-200/20"
             )}
           />
           <div 

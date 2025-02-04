@@ -9,6 +9,9 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Brain } from "lucide-react";
+import { CircularProgress } from "@/components/charts/CircularProgress";
+import { RadialGauge } from "@/components/charts/RadialGauge";
+import { HeatMap } from "@/components/charts/HeatMap";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -565,312 +568,350 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
             </p>
           </div>
 
-          {/* Curl Pattern Distribution */}
-          <div className="bg-gray-600/50 p-6 rounded mb-6">
-            <h4 className="font-medium mb-4 text-lg">Curl Pattern Distribution</h4>
-            <div className="aspect-w-16 aspect-h-9">
-              <Doughnut data={curlPatternData} options={doughnutOptions} />
-            </div>
-            <div className="mt-4 space-y-4">
-              <div className="bg-gray-700/50 p-4 rounded">
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  This chart shows how your different hair textures are distributed. It's perfectly normal to have a mix!
-                </p>
-                <ul className="mt-3 space-y-2 text-sm text-gray-300">
-                  <li><span className="text-purple-400">•</span> Straight: Smooth, no waves or curls</li>
-                  <li><span className="text-orange-400">•</span> Wavy: Gentle S-shaped waves</li>
-                  <li><span className="text-blue-400">•</span> Curly: Springy, defined curls</li>
-                  <li><span className="text-pink-400">•</span> Coily: Tight, compact curls</li>
-                </ul>
-                <p className="mt-3 text-sm text-gray-400">
-                  Reference: Most people have a mix of patterns. What matters most is understanding your dominant pattern 
-                  to choose the right hair care routine!
-                </p>
+          {/* New Analysis Components Section */}
+          <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+            <h2 className="text-xl font-semibold mb-4">Detailed Analysis</h2>
+            
+            {/* Regional Analysis */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-gray-700/80 rounded-lg p-4">
+                <h3 className="text-lg font-medium mb-3">Regional Health</h3>
+                <CircularProgress 
+                  value={analysisData.healthScore} 
+                  label="Overall Health"
+                  color="#9b87f5"
+                />
+              </div>
+              
+              <div className="bg-gray-700/80 rounded-lg p-4">
+                <h3 className="text-lg font-medium mb-3">Growth Distribution</h3>
+                <RadialGauge 
+                  value={analysisData.healthScore} 
+                  label="Growth Score"
+                  color="#9b87f5"
+                />
               </div>
             </div>
-          </div>
 
-          {/* Growth Phase Distribution */}
-          <div className="bg-gray-600/50 p-6 rounded mb-6">
-            <h4 className="font-medium mb-4 text-lg">Growth Phase Distribution</h4>
-            <div className="aspect-w-16 aspect-h-9">
-              <Doughnut data={growthPhaseData} options={doughnutOptions} />
+            {/* Scalp Health Map */}
+            <div className="bg-gray-700/80 rounded-lg p-4 mb-6">
+              <h3 className="text-lg font-medium mb-3">Scalp Health Map</h3>
+              <HeatMap 
+                data={{
+                  locations: ['Crown', 'Temples', 'Nape'],
+                  severity: analysisData.healthScore || 50
+                }}
+                maxValue={100}
+              />
             </div>
-            <div className="mt-4 space-y-4">
-              <div className="bg-gray-700/50 p-4 rounded">
-                <p className="text-gray-300 text-sm leading-relaxed">
-                  Your hair goes through different growth phases - think of it like a garden's growing cycle!
-                </p>
-                <ul className="mt-3 space-y-2 text-sm text-gray-300">
-                  <li><span className="text-blue-400">•</span> Anagen (Growing): The active growth phase. Ideally 80-90% of your hair should be here!</li>
-                  <li><span className="text-purple-400">•</span> Catagen (Transitioning): A short resting phase. Usually 1-2% is normal.</li>
-                  <li><span className="text-orange-400">•</span> Telogen (Resting/Shedding): The shedding phase. Typically 8-10% of hair is here.</li>
-                </ul>
-                <p className="mt-3 text-sm text-gray-400">
-                  Reference: A healthy scalp typically has:
-                  - 80-90% in Anagen
-                  - 1-2% in Catagen
-                  - 8-10% in Telogen
-                  Don't worry if yours is a bit different - many factors can influence these numbers!
-                </p>
+
+            {/* Curl Pattern Distribution */}
+            <div className="bg-gray-600/50 p-6 rounded mb-6">
+              <h4 className="font-medium mb-4 text-lg">Curl Pattern Distribution</h4>
+              <div className="aspect-w-16 aspect-h-9">
+                <Doughnut data={curlPatternData} options={doughnutOptions} />
               </div>
-            </div>
-          </div>
-
-          {/* Advanced Analysis Section */}
-          <AdvancedAnalysis data={analysisData} />
-
-          {/* Structural Analysis */}
-          <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
-            <h3 className="text-lg font-medium mb-3">Structural Analysis</h3>
-            <div className="space-y-6">
-              <div className="bg-gray-600/50 p-6 rounded">
-                <h4 className="font-medium mb-4 text-lg">Hair Growth Cycle Analysis</h4>
-                <div className="aspect-w-16 aspect-h-9">
-                  <Line data={analysisData.healthData} options={doughnutOptions} />
-                </div>
-                <div className="mt-4 bg-gray-700/50 p-4 rounded">
+              <div className="mt-4 space-y-4">
+                <div className="bg-gray-700/50 p-4 rounded">
                   <p className="text-gray-300 text-sm leading-relaxed">
-                    This graph shows your hair's growth journey over time. The higher the line goes, the better your hair is growing! 
-                    A healthy pattern usually shows steady growth or gentle ups and downs, which is totally normal.
+                    This chart shows how your different hair textures are distributed. It's perfectly normal to have a mix!
+                  </p>
+                  <ul className="mt-3 space-y-2 text-sm text-gray-300">
+                    <li><span className="text-purple-400">•</span> Straight: Smooth, no waves or curls</li>
+                    <li><span className="text-orange-400">•</span> Wavy: Gentle S-shaped waves</li>
+                    <li><span className="text-blue-400">•</span> Curly: Springy, defined curls</li>
+                    <li><span className="text-pink-400">•</span> Coily: Tight, compact curls</li>
+                  </ul>
+                  <p className="mt-3 text-sm text-gray-400">
+                    Reference: Most people have a mix of patterns. What matters most is understanding your dominant pattern 
+                    to choose the right hair care routine!
                   </p>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Enhanced Metrics Grid */}
-          <div className="space-y-4">
-            {analysisData.metrics.map((metric) => (
-              <div
-                key={metric.label}
-                className="bg-gray-700/80 rounded-lg p-6 hover:bg-gray-600/80 transition-all duration-300 transform hover:scale-102 relative overflow-hidden group"
-              >
-                <div className="absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 bg-purple-500/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
-                <div className="relative z-10">
-                  <div className="flex items-center mb-3">
-                    <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mr-3">
-                      <i className={`fas fa-${metric.icon} text-purple-400`}></i>
-                    </div>
-                    <span className="text-gray-300 font-medium">{metric.label}</span>
+            {/* Growth Phase Distribution */}
+            <div className="bg-gray-600/50 p-6 rounded mb-6">
+              <h4 className="font-medium mb-4 text-lg">Growth Phase Distribution</h4>
+              <div className="aspect-w-16 aspect-h-9">
+                <Doughnut data={growthPhaseData} options={doughnutOptions} />
+              </div>
+              <div className="mt-4 space-y-4">
+                <div className="bg-gray-700/50 p-4 rounded">
+                  <p className="text-gray-300 text-sm leading-relaxed">
+                    Your hair goes through different growth phases - think of it like a garden's growing cycle!
+                  </p>
+                  <ul className="mt-3 space-y-2 text-sm text-gray-300">
+                    <li><span className="text-blue-400">•</span> Anagen (Growing): The active growth phase. Ideally 80-90% of your hair should be here!</li>
+                    <li><span className="text-purple-400">•</span> Catagen (Transitioning): A short resting phase. Usually 1-2% is normal.</li>
+                    <li><span className="text-orange-400">•</span> Telogen (Resting/Shedding): The shedding phase. Typically 8-10% of hair is here.</li>
+                  </ul>
+                  <p className="mt-3 text-sm text-gray-400">
+                    Reference: A healthy scalp typically has:
+                    - 80-90% in Anagen
+                    - 1-2% in Catagen
+                    - 8-10% in Telogen
+                    Don't worry if yours is a bit different - many factors can influence these numbers!
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Advanced Analysis Section */}
+            <AdvancedAnalysis data={analysisData} />
+
+            {/* Structural Analysis */}
+            <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
+              <h3 className="text-lg font-medium mb-3">Structural Analysis</h3>
+              <div className="space-y-6">
+                <div className="bg-gray-600/50 p-6 rounded">
+                  <h4 className="font-medium mb-4 text-lg">Hair Growth Cycle Analysis</h4>
+                  <div className="aspect-w-16 aspect-h-9">
+                    <Line data={analysisData.healthData} options={doughnutOptions} />
                   </div>
-                  <div className="pl-13">
-                    <span className={`text-lg font-semibold ${metric.color || 'text-white'}`}>
-                      {metric.value}
-                    </span>
-                    {metric.label === "Health Status" && (
-                      <div className="mt-2 w-full bg-gray-600 rounded-full h-1.5">
-                        <div 
-                          className="bg-purple-500 h-1.5 rounded-full transition-all duration-500"
-                          style={{ width: `${analysisData.healthScore}%` }}
-                        ></div>
-                      </div>
-                    )}
-                    {metric.label === "Scalp Condition" && (
-                      <p className="mt-2 text-sm text-gray-400 leading-relaxed">
-                        {metric.value}
-                      </p>
-                    )}
+                  <div className="mt-4 bg-gray-700/50 p-4 rounded">
+                    <p className="text-gray-300 text-sm leading-relaxed">
+                      This graph shows your hair's growth journey over time. The higher the line goes, the better your hair is growing! 
+                      A healthy pattern usually shows steady growth or gentle ups and downs, which is totally normal.
+                    </p>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
 
-          {/* Hair Information */}
-          <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-            <h2 className="text-xl font-semibold mb-4">Hair Information</h2>
+            {/* Enhanced Metrics Grid */}
             <div className="space-y-4">
-              <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
-                <h3 className="text-lg font-medium mb-2">Diagnostic Analysis</h3>
-                <p className="text-gray-300">
-                  {analysisData.hairInformation?.diagnosticAnalysis || "Advanced microscopic analysis reveals signs of androgenetic alopecia..."}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
-                <div className="bg-gray-700/80 rounded-lg p-4">
-                  <Line data={analysisData.healthData} options={doughnutOptions} />
-                  <p className="text-center text-sm text-gray-400 mt-2">Hair Growth Progress</p>
+              {analysisData.metrics.map((metric) => (
+                <div
+                  key={metric.label}
+                  className="bg-gray-700/80 rounded-lg p-6 hover:bg-gray-600/80 transition-all duration-300 transform hover:scale-102 relative overflow-hidden group"
+                >
+                  <div className="absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 bg-purple-500/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+                  <div className="relative z-10">
+                    <div className="flex items-center mb-3">
+                      <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mr-3">
+                        <i className={`fas fa-${metric.icon} text-purple-400`}></i>
+                      </div>
+                      <span className="text-gray-300 font-medium">{metric.label}</span>
+                    </div>
+                    <div className="pl-13">
+                      <span className={`text-lg font-semibold ${metric.color || 'text-white'}`}>
+                        {metric.value}
+                      </span>
+                      {metric.label === "Health Status" && (
+                        <div className="mt-2 w-full bg-gray-600 rounded-full h-1.5">
+                          <div 
+                            className="bg-purple-500 h-1.5 rounded-full transition-all duration-500"
+                            style={{ width: `${analysisData.healthScore}%` }}
+                          ></div>
+                        </div>
+                      )}
+                      {metric.label === "Scalp Condition" && (
+                        <p className="mt-2 text-sm text-gray-400 leading-relaxed">
+                          {metric.value}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <div className="bg-gray-700/80 rounded-lg p-4">
-                  <Line data={analysisData.healthData} options={doughnutOptions} />
-                  <p className="text-center text-sm text-gray-400 mt-2">Optimal vs Current Conditions</p>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="text-sm text-gray-400">Care Tips</h3>
-                <ul className="list-disc list-inside text-gray-300 space-y-2">
-                  {analysisData.hairInformation?.careTips?.map((tip, index) => (
-                    <li key={index}>{tip}</li>
-                  )) || (
-                    <>
-                      <li>Use DHT-blocking shampoo</li>
-                      <li>Supplement with Biotin & Iron</li>
-                      <li>Scalp massage 2x daily</li>
-                      <li>Minimize heat styling</li>
-                      <li>Practice stress management</li>
-                      <li>Monthly scalp detox</li>
-                      <li>Use microneeding treatment</li>
-                      <li>Apply growth serums</li>
-                    </>
-                  )}
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* Recommended Treatments */}
-          <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-            <h2 className="text-xl font-semibold mb-4">Recommended Treatments</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {analysisData.recommendedTreatments ? (
-                <>
-                  <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
-                    <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
-                    <div className="flex items-center mb-3">
-                      <i className="fas fa-check-circle text-green-500 mr-2"></i>
-                      <span className="font-medium">{analysisData.recommendedTreatments.primary.name}</span>
-                    </div>
-                    <p className="text-sm text-gray-300">
-                      {analysisData.recommendedTreatments.primary.description}
-                    </p>
-                    <div className="mt-3">
-                      <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">
-                        {analysisData.recommendedTreatments.primary.match}% Match
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
-                    <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
-                    <div className="flex items-center mb-3">
-                      <i className="fas fa-check-circle text-blue-500 mr-2"></i>
-                      <span className="font-medium">{analysisData.recommendedTreatments.secondary.name}</span>
-                    </div>
-                    <p className="text-sm text-gray-300">
-                      {analysisData.recommendedTreatments.secondary.description}
-                    </p>
-                    <div className="mt-3">
-                      <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
-                        {analysisData.recommendedTreatments.secondary.match}% Match
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
-                    <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
-                    <div className="flex items-center mb-3">
-                      <i className="fas fa-check-circle text-purple-500 mr-2"></i>
-                      <span className="font-medium">{analysisData.recommendedTreatments.supporting.name}</span>
-                    </div>
-                    <p className="text-sm text-gray-300">
-                      {analysisData.recommendedTreatments.supporting.description}
-                    </p>
-                    <div className="mt-3">
-                      <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">
-                        {analysisData.recommendedTreatments.supporting.match}% Match
-                      </span>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
-                    <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
-                    <div className="flex items-center mb-3">
-                      <i className="fas fa-check-circle text-green-500 mr-2"></i>
-                      <span className="font-medium">FUE (Follicular Unit Extraction)</span>
-                    </div>
-                    <p className="text-sm text-gray-300">
-                      Best suited for your pattern of hair loss and scalp condition. 
-                      Minimally invasive with natural-looking results.
-                    </p>
-                    <div className="mt-3">
-                      <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">98% Match</span>
-                    </div>
-                  </div>
-
-                  <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
-                    <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
-                    <div className="flex items-center mb-3">
-                      <i className="fas fa-check-circle text-blue-500 mr-2"></i>
-                      <span className="font-medium">PRP Treatment</span>
-                    </div>
-                    <p className="text-sm text-gray-300">
-                      Recommended for strengthening existing hair and promoting new growth.
-                      Can be combined with FUE.
-                    </p>
-                    <div className="mt-3">
-                      <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">85% Match</span>
-                    </div>
-                  </div>
-
-                  <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
-                    <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
-                    <div className="flex items-center mb-3">
-                      <i className="fas fa-check-circle text-purple-500 mr-2"></i>
-                      <span className="font-medium">Exosomes Therapy</span>
-                    </div>
-                    <p className="text-sm text-gray-300">
-                      Excellent for scalp health and strengthening follicles.
-                      Complementary to main treatments.
-                    </p>
-                    <div className="mt-3">
-                      <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">75% Match</span>
-                    </div>
-                  </div>
-                </>
-              )}
+              ))}
             </div>
 
-            <div className="mt-6">
-              <h3 className="text-lg font-medium mb-3">Other Available Treatments</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {analysisData.recommendedTreatments?.other.map((treatment, index) => (
-                  <div key={index} className="bg-gray-700/80 p-3 rounded-lg text-center">
-                    <span className="text-sm">{treatment.name}</span>
-                    <div className="text-xs text-gray-400 mt-1">{treatment.match}% Match</div>
+            {/* Hair Information */}
+            <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h2 className="text-xl font-semibold mb-4">Hair Information</h2>
+              <div className="space-y-4">
+                <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
+                  <h3 className="text-lg font-medium mb-2">Diagnostic Analysis</h3>
+                  <p className="text-gray-300">
+                    {analysisData.hairInformation?.diagnosticAnalysis || "Advanced microscopic analysis reveals signs of androgenetic alopecia..."}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+                  <div className="bg-gray-700/80 rounded-lg p-4">
+                    <Line data={analysisData.healthData} options={doughnutOptions} />
+                    <p className="text-center text-sm text-gray-400 mt-2">Hair Growth Progress</p>
                   </div>
-                )) || (
+                  <div className="bg-gray-700/80 rounded-lg p-4">
+                    <Line data={analysisData.healthData} options={doughnutOptions} />
+                    <p className="text-center text-sm text-gray-400 mt-2">Optimal vs Current Conditions</p>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="text-sm text-gray-400">Care Tips</h3>
+                  <ul className="list-disc list-inside text-gray-300 space-y-2">
+                    {analysisData.hairInformation?.careTips?.map((tip, index) => (
+                      <li key={index}>{tip}</li>
+                    )) || (
+                      <>
+                        <li>Use DHT-blocking shampoo</li>
+                        <li>Supplement with Biotin & Iron</li>
+                        <li>Scalp massage 2x daily</li>
+                        <li>Minimize heat styling</li>
+                        <li>Practice stress management</li>
+                        <li>Monthly scalp detox</li>
+                        <li>Use microneeding treatment</li>
+                        <li>Apply growth serums</li>
+                      </>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Recommended Treatments */}
+            <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+              <h2 className="text-xl font-semibold mb-4">Recommended Treatments</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {analysisData.recommendedTreatments ? (
                   <>
-                    <div className="bg-gray-700/80 p-3 rounded-lg text-center">
-                      <span className="text-sm">Hair Transplant</span>
-                      <div className="text-xs text-gray-400 mt-1">65% Match</div>
+                    <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
+                      <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
+                      <div className="flex items-center mb-3">
+                        <i className="fas fa-check-circle text-green-500 mr-2"></i>
+                        <span className="font-medium">{analysisData.recommendedTreatments.primary.name}</span>
+                      </div>
+                      <p className="text-sm text-gray-300">
+                        {analysisData.recommendedTreatments.primary.description}
+                      </p>
+                      <div className="mt-3">
+                        <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">
+                          {analysisData.recommendedTreatments.primary.match}% Match
+                        </span>
+                      </div>
                     </div>
-                    <div className="bg-gray-700/80 p-3 rounded-lg text-center">
-                      <span className="text-sm">FUT</span>
-                      <div className="text-xs text-gray-400 mt-1">45% Match</div>
+
+                    <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
+                      <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
+                      <div className="flex items-center mb-3">
+                        <i className="fas fa-check-circle text-blue-500 mr-2"></i>
+                        <span className="font-medium">{analysisData.recommendedTreatments.secondary.name}</span>
+                      </div>
+                      <p className="text-sm text-gray-300">
+                        {analysisData.recommendedTreatments.secondary.description}
+                      </p>
+                      <div className="mt-3">
+                        <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
+                          {analysisData.recommendedTreatments.secondary.match}% Match
+                        </span>
+                      </div>
                     </div>
-                    <div className="bg-gray-700/80 p-3 rounded-lg text-center">
-                      <span className="text-sm">SMP</span>
-                      <div className="text-xs text-gray-400 mt-1">40% Match</div>
+
+                    <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
+                      <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
+                      <div className="flex items-center mb-3">
+                        <i className="fas fa-check-circle text-purple-500 mr-2"></i>
+                        <span className="font-medium">{analysisData.recommendedTreatments.supporting.name}</span>
+                      </div>
+                      <p className="text-sm text-gray-300">
+                        {analysisData.recommendedTreatments.supporting.description}
+                      </p>
+                      <div className="mt-3">
+                        <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">
+                          {analysisData.recommendedTreatments.supporting.match}% Match
+                        </span>
+                      </div>
                     </div>
-                    <div className="bg-gray-700/80 p-3 rounded-lg text-center">
-                      <span className="text-sm">Micro FUE</span>
-                      <div className="text-xs text-gray-400 mt-1">55% Match</div>
+                  </>
+                ) : (
+                  <>
+                    <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
+                      <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
+                      <div className="flex items-center mb-3">
+                        <i className="fas fa-check-circle text-green-500 mr-2"></i>
+                        <span className="font-medium">FUE (Follicular Unit Extraction)</span>
+                      </div>
+                      <p className="text-sm text-gray-300">
+                        Best suited for your pattern of hair loss and scalp condition. 
+                        Minimally invasive with natural-looking results.
+                      </p>
+                      <div className="mt-3">
+                        <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">98% Match</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
+                      <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
+                      <div className="flex items-center mb-3">
+                        <i className="fas fa-check-circle text-blue-500 mr-2"></i>
+                        <span className="font-medium">PRP Treatment</span>
+                      </div>
+                      <p className="text-sm text-gray-300">
+                        Recommended for strengthening existing hair and promoting new growth.
+                        Can be combined with FUE.
+                      </p>
+                      <div className="mt-3">
+                        <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">85% Match</span>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
+                      <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
+                      <div className="flex items-center mb-3">
+                        <i className="fas fa-check-circle text-purple-500 mr-2"></i>
+                        <span className="font-medium">Exosomes Therapy</span>
+                      </div>
+                      <p className="text-sm text-gray-300">
+                        Excellent for scalp health and strengthening follicles.
+                        Complementary to main treatments.
+                      </p>
+                      <div className="mt-3">
+                        <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">75% Match</span>
+                      </div>
                     </div>
                   </>
                 )}
               </div>
-            </div>
-          </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-center space-x-4 flex-wrap gap-4">
-            <Button className="bg-purple-600 hover:bg-purple-700">
-              <i className="fas fa-save mr-2"></i>Save Analysis
-            </Button>
-            <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
-              <i className="fas fa-share-alt mr-2"></i>Share Results
-            </Button>
-            <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
-              <i className="fas fa-download mr-2"></i>Download Report
-            </Button>
-            <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
-              <i className="fas fa-redo mr-2"></i>New Scan
-            </Button>
+              <div className="mt-6">
+                <h3 className="text-lg font-medium mb-3">Other Available Treatments</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {analysisData.recommendedTreatments?.other.map((treatment, index) => (
+                    <div key={index} className="bg-gray-700/80 p-3 rounded-lg text-center">
+                      <span className="text-sm">{treatment.name}</span>
+                      <div className="text-xs text-gray-400 mt-1">{treatment.match}% Match</div>
+                    </div>
+                  )) || (
+                    <>
+                      <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                        <span className="text-sm">Hair Transplant</span>
+                        <div className="text-xs text-gray-400 mt-1">65% Match</div>
+                      </div>
+                      <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                        <span className="text-sm">FUT</span>
+                        <div className="text-xs text-gray-400 mt-1">45% Match</div>
+                      </div>
+                      <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                        <span className="text-sm">SMP</span>
+                        <div className="text-xs text-gray-400 mt-1">40% Match</div>
+                      </div>
+                      <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                        <span className="text-sm">Micro FUE</span>
+                        <div className="text-xs text-gray-400 mt-1">55% Match</div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex justify-center space-x-4 flex-wrap gap-4">
+              <Button className="bg-purple-600 hover:bg-purple-700">
+                <i className="fas fa-save mr-2"></i>Save Analysis
+              </Button>
+              <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+                <i className="fas fa-share-alt mr-2"></i>Share Results
+              </Button>
+              <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+                <i className="fas fa-download mr-2"></i>Download Report
+              </Button>
+              <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+                <i className="fas fa-redo mr-2"></i>New Scan
+              </Button>
+            </div>
           </div>
         </div>
       </div>

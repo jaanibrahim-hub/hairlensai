@@ -1,5 +1,8 @@
 import { Card } from "@/components/ui/card";
+import { Chart as ChartJS, ArcElement, RadialLinearScale } from 'chart.js';
 import { PolarArea } from 'react-chartjs-2';
+
+ChartJS.register(RadialLinearScale, ArcElement);
 
 interface RadialGaugeProps {
   value: number;
@@ -32,6 +35,12 @@ export const RadialGauge = ({ value, label, color = "#9b87f5" }: RadialGaugeProp
         min: 0,
         ticks: {
           display: false,
+        },
+        grid: {
+          color: 'rgba(255, 255, 255, 0.1)',
+        },
+        angleLines: {
+          color: 'rgba(255, 255, 255, 0.1)',
         },
       },
     },
