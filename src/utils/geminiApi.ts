@@ -286,77 +286,127 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
     throw new Error(`Incomplete analysis data. Missing metrics: ${missingMetrics.join(', ')}`);
   }
 
-  // Prepare the prompt with the analysis data
-  const geminiPrompt = `
-    Analysis Data:
-    Health Score: ${analysisData.healthScore}
-    Metrics: ${JSON.stringify(analysisData.metrics)}
-    
-    ${SECOND_ANALYSIS_PROMPT}
-  `;
+  const prompt = `
+You are a professional hair analysis expert. Based on the following hair analysis data, provide a detailed analysis without using any markdown formatting or code blocks. Format your response in clear sections that can be easily displayed in colorful cards.
 
-  // Token count validation
-  const inputTokens = JSON.stringify(geminiPrompt).length / 4;
-  if (inputTokens > 1000000) {
-    throw new Error('Context window overflow');
-  }
+Analysis Data:
+Health Score: ${analysisData.healthScore}
+${JSON.stringify(analysisData.metrics, null, 2)}
 
-  const requestBody = {
-    contents: [{
-      role: "user",
-      parts: [{ text: geminiPrompt }]
-    }],
-    generationConfig: {
-      temperature: 0.2,
-      topK: 40,
-      topP: 0.8,
-      maxOutputTokens: 8192
-    }
-  };
+Please provide a comprehensive analysis with the following sections:
+
+DIAGNOSTIC_SUMMARY:
+Provide a clear, engaging summary of the overall hair health status in simple language.
+
+DETAILED_ANALYSIS:
+Break down the key findings into bullet points, focusing on strengths and areas of concern.
+
+TREATMENT_PLAN:
+Organize recommendations into these categories:
+- Immediate Actions (daily/weekly care)
+- Professional Treatments
+- Lifestyle Changes
+- Product Recommendations
+
+Format each section without any markdown symbols or technical formatting. Use natural language and clear structure that can be displayed in visually appealing cards.`;
 
   try {
-    console.log('Making secondary analysis API call...');
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    console.log('Sending prompt to Gemini API:', prompt);
+    
+    const result = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: prompt
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 2048,
         },
-        body: JSON.stringify(requestBody)
-      }
-    );
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        ]
+      })
+    });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Secondary analysis API error:', errorData);
-      throw new Error(`API request failed: ${response.statusText}`);
+    if (!result.ok) {
+      throw new Error(`API request failed: ${result.statusText}`);
     }
 
-    const data = await response.json();
-    console.log('Secondary analysis response:', data);
+    const data = await result.json();
+    console.log('Gemini API response:', data);
 
     if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
-      throw new Error('Malformed API response structure');
+      throw new Error('Invalid response format from API');
     }
 
-    // Extract and parse JSON from the response
-    const responseText = data.candidates[0].content.parts[0].text;
-    let jsonResponse;
-    try {
-      // Handle potential markdown formatting
-      const jsonString = responseText.includes('```json') 
-        ? responseText.split('```json')[1].split('```')[0].trim()
-        : responseText;
-      jsonResponse = JSON.parse(jsonString);
-    } catch (parseError) {
-      console.error('JSON parsing error:', parseError);
-      throw new Error('Failed to parse API response');
-    }
+    const analysisText = data.candidates[0].content.parts[0].text;
+    
+    // Parse the response into sections
+    const sections = {
+      diagnostic_summary: '',
+      detailed_analysis: '',
+      treatment_plan: {
+        immediate_actions: [],
+        professional_treatments: [],
+        lifestyle_changes: [],
+        product_recommendations: []
+      }
+    };
 
-    return jsonResponse;
+    // Extract sections from the response
+    const parts = analysisText.split('\n\n');
+    parts.forEach(part => {
+      if (part.includes('DIAGNOSTIC_SUMMARY:')) {
+        sections.diagnostic_summary = part.replace('DIAGNOSTIC_SUMMARY:', '').trim();
+      } else if (part.includes('DETAILED_ANALYSIS:')) {
+        sections.detailed_analysis = part.replace('DETAILED_ANALYSIS:', '').trim();
+      } else if (part.includes('TREATMENT_PLAN:')) {
+        const treatmentLines = part.replace('TREATMENT_PLAN:', '').trim().split('\n');
+        let currentCategory = '';
+        
+        treatmentLines.forEach(line => {
+          if (line.includes('Immediate Actions')) {
+            currentCategory = 'immediate_actions';
+          } else if (line.includes('Professional Treatments')) {
+            currentCategory = 'professional_treatments';
+          } else if (line.includes('Lifestyle Changes')) {
+            currentCategory = 'lifestyle_changes';
+          } else if (line.includes('Product Recommendations')) {
+            currentCategory = 'product_recommendations';
+          } else if (line.trim() && currentCategory) {
+            sections.treatment_plan[currentCategory].push(line.trim().replace('- ', ''));
+          }
+        });
+      }
+    });
+
+    return sections;
   } catch (error) {
     console.error('Secondary analysis error:', error);
     throw error;
   }
-}
+};
