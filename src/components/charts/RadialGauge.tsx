@@ -1,9 +1,5 @@
 import { Card } from "@/components/ui/card";
-import {
-  PolarArea,
-  PolarAreaChart,
-  PolarAreaElement,
-} from "recharts";
+import { PolarArea } from 'react-chartjs-2';
 
 interface RadialGaugeProps {
   value: number;
@@ -12,24 +8,39 @@ interface RadialGaugeProps {
 }
 
 export const RadialGauge = ({ value, label, color = "#9b87f5" }: RadialGaugeProps) => {
-  const data = [
-    {
-      name: label,
-      value: value,
+  const data = {
+    labels: [label],
+    datasets: [
+      {
+        data: [value],
+        backgroundColor: [color],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
     },
-  ];
+    scales: {
+      r: {
+        max: 100,
+        min: 0,
+        ticks: {
+          display: false,
+        },
+      },
+    },
+  };
 
   return (
     <Card className="p-4">
       <div className="h-40">
-        <PolarArea
-          data={data}
-          cx="50%"
-          cy="50%"
-          innerRadius={0}
-          outerRadius={80}
-          fill={color}
-        />
+        <PolarArea data={data} options={options} />
       </div>
       <div className="text-center mt-2">
         <p className="text-sm text-gray-400">{label}</p>
