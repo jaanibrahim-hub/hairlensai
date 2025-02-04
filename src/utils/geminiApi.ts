@@ -55,7 +55,7 @@ interface HairAnalysisResponse {
   };
 }
 
-const API_KEYS = [
+export const API_KEYS = [
   'AIzaSyCbiokMrXsfZyXHi_OFwFwM5bG9QXazCPA',
   'AIzaSyBrUoI6e9BCAarqbXQf3NfTe3wyZ_4O-Mo',
   'AIzaSyDP-5zEsfl0SkNAdfB2Hx70MOgC3j6QvHk',

@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Brain } from "lucide-react";
+import { API_KEYS } from "@/utils/geminiApi";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -273,7 +274,7 @@ interface AnalysisResultsProps {
 const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   const [analysisData, setAnalysisData] = useState<AnalysisResult>({
     metrics: defaultMetrics,
-    healthScore: 80, // Default health score set to 80
+    healthScore: 80,
     healthData: defaultHealthData,
     curlPatternData: {
       labels: ['Straight', 'Wavy', 'Curly'],
@@ -343,7 +344,6 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         metrics: analysisData.metrics,
       });
 
-      // Create the request body
       const requestBody = {
         model: 'llama-3.1-sonar-small-128k-online',
         messages: [
@@ -364,7 +364,6 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         max_tokens: 2000,
       };
 
-      // Make the API call with proper CORS settings
       const response = await fetch('https://api.perplexity.ai/chat/completions', {
         method: 'POST',
         mode: 'cors',
@@ -412,15 +411,6 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   };
 
   const handleGeminiAnalysis = async () => {
-    if (!apiKey) {
-      toast({
-        title: "Premium Feature",
-        description: "Please activate premium access to use the AI analysis feature.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsGeminiLoading(true);
     setShowGeminiDialog(true);
 
@@ -459,45 +449,72 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
       5. WARNING SIGNS
       6. TIMELINE`;
 
-      console.log("Making Gemini API call with prompt:", geminiPrompt);
+      console.log("Starting Gemini analysis with prompt:", geminiPrompt);
 
-      const response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                parts: [{ text: geminiPrompt }],
+      let lastError = null;
+      let success = false;
+
+      for (const apiKey of API_KEYS) {
+        try {
+          console.log('Attempting Gemini analysis with API key:', apiKey.substring(0, 5) + '...');
+          
+          const response = await fetch(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${apiKey}`,
               },
-            ],
-            generationConfig: {
-              temperature: 0.2,
-              topK: 40,
-              topP: 0.8,
-              maxOutputTokens: 8192,
-            },
-          }),
+              body: JSON.stringify({
+                contents: [
+                  {
+                    parts: [{ text: geminiPrompt }],
+                  },
+                ],
+                generationConfig: {
+                  temperature: 0.2,
+                  topK: 40,
+                  topP: 0.8,
+                  maxOutputTokens: 8192,
+                },
+              }),
+            }
+          );
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Gemini API Error:', {
+              status: response.status,
+              statusText: response.statusText,
+              errorData
+            });
+            lastError = new Error(`API request failed: ${response.statusText}`);
+            continue;
+          }
+
+          const data = await response.json();
+          console.log('Gemini API response:', data);
+
+          if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+            console.warn('Invalid response format from Gemini API');
+            continue;
+          }
+
+          const analysisText = data.candidates[0].content.parts[0].text;
+          setGeminiAnalysis(analysisText);
+          success = true;
+          break;
+        } catch (error) {
+          console.error(`Error with API key ${apiKey.substring(0, 5)}...`, error);
+          lastError = error;
+          continue;
         }
-      );
-
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.statusText}`);
       }
 
-      const data = await response.json();
-      console.log("Gemini API response:", data);
-
-      if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
-        throw new Error("Invalid response format from API");
+      if (!success) {
+        throw lastError || new Error("All API attempts failed");
       }
-
-      const analysisText = data.candidates[0].content.parts[0].text;
-      setGeminiAnalysis(analysisText);
       
       toast({
         title: "Analysis Complete",
@@ -580,13 +597,12 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
           <div className="mb-6">
             <Button
               onClick={handleGeminiAnalysis}
-              disabled={!hasResults || !apiKey || isGeminiLoading}
+              disabled={!hasResults || isGeminiLoading}
               className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
             >
               <Brain className="w-5 h-5" />
               {isGeminiLoading ? "Analyzing..." : "Get AI Hair Analysis"}
               {!hasResults && <span className="text-xs">(Upload image first)</span>}
-              {!apiKey && <span className="text-xs">(Premium feature)</span>}
             </Button>
           </div>
 
