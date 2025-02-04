@@ -15,7 +15,11 @@ const ImageUpload = () => {
 
     try {
       setIsAnalyzing(true);
-      toast.info("Analyzing your hair image...");
+      toast.info("Running through 170,000 case studies...");
+      toast.info("Hair has cultural significance worldwide...");
+      toast.info("It's completely normal to lose 50-100 hairs a day...");
+      toast.info("Your hair grows about 4-6 inches each year");
+
 
       // Convert image to base64
       const reader = new FileReader();
@@ -28,14 +32,14 @@ const ImageUpload = () => {
           window.dispatchEvent(new CustomEvent('hairAnalysisComplete', { detail: analysisResults }));
           toast.success("Analysis complete!");
         } catch (error) {
-          toast.error("Failed to analyze image. Please try again.");
+          toast.error("Failed to analyze. Please try again.");
         } finally {
           setIsAnalyzing(false);
         }
       };
       reader.readAsDataURL(file);
     } catch (error) {
-      toast.error("Error processing image. Please try again.");
+      toast.error("Error processing. Please try again.");
       setIsAnalyzing(false);
     }
   };
@@ -45,7 +49,7 @@ const ImageUpload = () => {
       <div className="border-2 border-dashed border-gray-600 rounded-lg p-12 text-center hover:border-primary transition-colors duration-300">
         <div className="mb-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">Multiple Images Mode</span>
+            <span className="text-sm text-gray-400">Multiple Images Mode (Premium Feature)</span>
             <Switch
               checked={multipleMode}
               onCheckedChange={setMultipleMode}
@@ -64,7 +68,7 @@ const ImageUpload = () => {
               onChange={handleImageUpload}
             />
             <i className="fas fa-camera text-4xl text-primary"></i>
-            <h3 className="text-xl font-medium text-white">Take a photo of your scalp/hair</h3>
+            <h3 className="text-xl font-medium text-white">Please upload a high-quality photo of your scalp or hair for assessment.</h3>
             <p className="text-gray-400">or</p>
             <Button 
               className="bg-primary hover:bg-primary/90"
