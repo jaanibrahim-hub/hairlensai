@@ -76,6 +76,22 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
               </ul>
             </div>
 
+            {/* File Revisit Option */}
+            <div className="bg-gradient-to-r from-purple-900 to-indigo-900 p-6 rounded-lg border border-purple-500/30">
+              <div className="flex flex-col items-center space-y-4">
+                <h3 className="text-xl font-bold text-purple-300">💾 Store & Revisit Your Analysis</h3>
+                <p className="text-gray-200 text-center">Keep track of your progress with our file storage option!</p>
+                <Button 
+                  variant="outline"
+                  className="bg-white text-purple-900 hover:bg-gray-100 font-semibold"
+                  onClick={() => toast.success("Coming soon! We'll notify you when file storage is available.")}
+                >
+                  Store Files - $50/month
+                </Button>
+                <p className="text-sm text-gray-400">Access and review your analysis anytime</p>
+              </div>
+            </div>
+
             {/* Personal Plan */}
             <div className="bg-gradient-to-r from-purple-900 to-indigo-900 p-6 rounded-lg border border-purple-500/30">
               <h3 className="text-xl font-bold mb-4 text-purple-300">🎯 Ready to Track Your Progress? Go Personal:</h3>
