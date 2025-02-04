@@ -341,6 +341,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
         body: JSON.stringify({
           model: 'llama-3.1-sonar-small-128k-online',
@@ -365,14 +366,25 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         }),
       });
 
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        console.error("Perplexity API error:", errorData);
+        throw new Error(errorData?.error?.message || 'Failed to get AI analysis');
+      }
+
       console.log("Perplexity API response received");
       const data = await response.json();
+      
+      if (!data.choices?.[0]?.message?.content) {
+        throw new Error('Invalid response format from API');
+      }
+      
       setAiAnalysis(data.choices[0].message.content);
     } catch (error) {
       console.error("Error calling Perplexity API:", error);
       toast({
         title: "Error",
-        description: "Failed to get AI analysis. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to get AI analysis. Please try again.",
         variant: "destructive",
       });
     } finally {
