@@ -27,12 +27,9 @@ const HowItWorksModal = () => {
         
         <div className="space-y-8 py-6">
           <section className="space-y-4">
-            <h3 className="text-xl font-semibold">The Genesis</h3>
+            <h3 className="text-xl font-semibold">Your Personal Hair Health Navigator</h3>
             <p className="text-gray-600 dark:text-gray-300">
-              HairLens AI emerged from a critical observation in the hair care industry: despite technological 
-              advancements in numerous healthcare sectors, hair analysis remained largely subjective and 
-              inaccessible. This gap in the market sparked an intensive six-month development journey 
-              that would transform raw clinical data into actionable intelligence.
+              In a world where we track everything from steps to sleep, why do we still guess about our hair health? HairLens AI bridges this gap, transforming how individuals, professionals, and businesses approach hair care through cutting-edge AI technology
             </p>
           </section>
 
