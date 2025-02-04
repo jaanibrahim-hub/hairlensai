@@ -21,7 +21,7 @@ const HowItWorksModal = () => {
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold">Your Hair's Story, Decoded</DialogTitle>
           <DialogDescription className="text-lg">
-            Professional hair analysis in your pocket
+            Professional Hair Analysis In Your Pocket
           </DialogDescription>
         </DialogHeader>
         
@@ -29,28 +29,18 @@ const HowItWorksModal = () => {
           <section className="space-y-4">
             <p className="text-xl text-gray-800 dark:text-gray-200 italic">
               "Your hair tells a story. But for too long, only expensive specialists could read it. 
-              We're changing that. HairLens AI puts the power of professional hair analysis in your pocket, 
+              We're changing that. We puts the power of professional hair analysis in your pocket, 
               turning confusing hair care decisions into clear, data-driven choices."
             </p>
           </section>
 
           <section className="space-y-4">
-            <h3 className="text-xl font-semibold">Revolutionizing Hair Care Through AI-Powered Analysis</h3>
-            <h4 className="text-lg font-medium">Your Personal Hair Health Navigator</h4>
+            <h3 className="text-xl font-semibold">HAIRLENS AI</h3>
+            <h4 className="text-lg font-medium">Our AI's Powerful Foundation</h4>
             <p className="text-gray-600 dark:text-gray-300">
-              In a world where we track everything from steps to sleep, why do we still guess about our hair health? 
-              HairLens AI bridges this gap, transforming how individuals, professionals, and businesses approach 
-              hair care through cutting-edge AI technology.
-            </p>
-          </section>
-
-          <section className="space-y-4">
-            <h3 className="text-xl font-semibold">The Genesis</h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              What began as a mission to democratize hair health analysis has evolved into a groundbreaking 
-              platform serving multiple stakeholders in the hair care ecosystem. We noticed a critical gap: 
-              while people spent thousands on treatments, they lacked the tools to make informed decisions 
-              or track their progress scientifically.
+              Through an intensive 3,880 hours of training on over 170,000+ authenticated scalp and hair images, 
+              our AI has mastered the art of hair analysis. Unlike generic AI models trained on random internet photos, 
+              our system learns from real clinical cases, verified treatments, and documented outcomes.
             </p>
           </section>
 
@@ -64,12 +54,12 @@ const HowItWorksModal = () => {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-                <h4 className="font-semibold mb-2">Global Reach</h4>
+                <h4 className="font-semibold mb-2">What Makes Our Data Special</h4>
                 <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
-                  <li>12 international centers</li>
-                  <li>Multiple ethnic hair types</li>
-                  <li>Cross-cultural validation</li>
-                  <li>Diverse environmental conditions</li>
+                  <li>Real clinical outcomes, not just predictions</li>
+                  <li>Verified before-and-after treatment results</li>
+                  <li>Multiple ethnicities and hair types</li>
+                  <li>Different age groups and genders</li>
                 </ul>
               </div>
               <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
@@ -106,6 +96,26 @@ const HowItWorksModal = () => {
               across 12 international clinical centers. This diverse data spans multiple ethnicities, 
               hair types, and treatment outcomes, providing an unparalleled foundation for our AI model.
             </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                <h4 className="font-semibold mb-2">Global Reach</h4>
+                <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+                  <li>12 international centers</li>
+                  <li>Multiple ethnic hair types</li>
+                  <li>Cross-cultural validation</li>
+                  <li>Diverse environmental conditions</li>
+                </ul>
+              </div>
+              <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
+                <h4 className="font-semibold mb-2">Success Metrics</h4>
+                <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
+                  <li>94% diagnostic accuracy</li>
+                  <li>89% treatment prediction rate</li>
+                  <li>95% expert correlation</li>
+                  <li>97% user satisfaction</li>
+                </ul>
+              </div>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
               <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
                 <h4 className="font-semibold mb-2">Global Reach</h4>
