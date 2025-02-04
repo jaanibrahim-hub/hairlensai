@@ -5,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -53,6 +54,9 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
           <DialogTitle className="text-2xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
             🌟 Ready to Transform Your Hair Journey?
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Premium access modal for hair analysis features
+          </DialogDescription>
         </DialogHeader>
         
         <ScrollArea className="h-[calc(90vh-120px)] px-4">
@@ -152,16 +156,6 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
               </div>
             </div>
 
-            <ScrollArea className="h-[calc(90vh-120px)] px-4">
-          <div className="space-y-6">
-            {/* Introduction */}
-            <div className="bg-gradient-to-r from-purple-900 to-indigo-900 p-6 rounded-lg border border-purple-500/30">
-              <p className="text-lg text-gray-200 mb-4">
-                💡 Did you know? Our technology is being used by leading brands worldwide to transform their hair care services. 
-                Whether you're on a personal hair health journey or looking to revolutionize your business, we're here to help!
-              </p>
-            </div>
-
             {/* Professional Features */}
             <div className="bg-gradient-to-r from-purple-900 to-indigo-900 p-6 rounded-lg border border-purple-500/30">
               <h3 className="text-xl font-bold mb-4 text-purple-300">💎 Professional Features That Wow:</h3>
@@ -198,11 +192,7 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
                     onClick={() => setShowKey(!showKey)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-300"
                   >
-                    {showKey ? (
-                      <i className="fas fa-eye-slash" />
-                    ) : (
-                      <i className="fas fa-eye" />
-                    )}
+                    {showKey ? "Hide" : "Show"}
                   </button>
                 </div>
                 <Button 
@@ -210,14 +200,7 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
                   disabled={isValidating}
                   className="w-full bg-purple-600 hover:bg-purple-700"
                 >
-                  {isValidating ? (
-                    <>
-                      <i className="fas fa-spinner fa-spin mr-2" />
-                      Validating...
-                    </>
-                  ) : (
-                    "Activate Premium Access"
-                  )}
+                  {isValidating ? "Validating..." : "Activate Premium Access"}
                 </Button>
               </div>
             </div>
