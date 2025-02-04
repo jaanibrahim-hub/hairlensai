@@ -522,9 +522,9 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
 
           {/* Gemini Analysis Dialog */}
           <Dialog open={showGeminiDialog} onOpenChange={setShowGeminiDialog}>
-            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gradient-to-br from-gray-900 to-gray-800">
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-bold text-white mb-4">Your Personalized Hair Analysis Report</DialogTitle>
+                <DialogTitle>AI Hair Analysis Report</DialogTitle>
               </DialogHeader>
               {isGeminiLoading ? (
                 <div className="flex flex-col items-center justify-center p-8 space-y-4">
@@ -532,157 +532,8 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
                   <p className="text-gray-400">Analyzing your hair data...</p>
                 </div>
               ) : (
-                <div className="space-y-6 p-4">
-                  {/* Diagnostic Summary Card */}
-                  <div className="bg-gradient-to-r from-purple-600/20 to-indigo-600/20 rounded-lg p-6 backdrop-blur-sm border border-purple-500/20">
-                    <h3 className="text-xl font-semibold text-purple-400 mb-3">Diagnostic Summary</h3>
-                    <p className="text-gray-200 leading-relaxed">
-                      {geminiAnalysis.split('DIAGNOSTIC_SUMMARY:')[1]?.split('DETAILED_ANALYSIS:')[0]?.trim()}
-                    </p>
-                  </div>
-
-                  {/* Health Score Visualization */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-lg p-6 backdrop-blur-sm border border-blue-500/20">
-                      <h3 className="text-xl font-semibold text-blue-400 mb-4">Health Score</h3>
-                      <div className="relative pt-1">
-                        <div className="flex mb-2 items-center justify-between">
-                          <div>
-                            <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-blue-400 bg-blue-200/10">
-                              Current Status
-                            </span>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-xs font-semibold inline-block text-blue-400">
-                              {analysisData.healthScore}%
-                            </span>
-                          </div>
-                        </div>
-                        <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-blue-200/10">
-                          <div
-                            style={{ width: `${analysisData.healthScore}%` }}
-                            className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Growth Phase Distribution */}
-                    <div className="bg-gradient-to-r from-green-600/20 to-teal-600/20 rounded-lg p-6 backdrop-blur-sm border border-green-500/20">
-                      <h3 className="text-xl font-semibold text-green-400 mb-4">Growth Phase Distribution</h3>
-                      <div className="h-48">
-                        <PolarArea 
-                          data={analysisData.growthPhaseData}
-                          options={{
-                            plugins: {
-                              legend: {
-                                position: 'right',
-                                labels: { color: '#9b87f5' }
-                              }
-                            }
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Detailed Analysis Card */}
-                  <div className="bg-gradient-to-r from-orange-600/20 to-red-600/20 rounded-lg p-6 backdrop-blur-sm border border-orange-500/20">
-                    <h3 className="text-xl font-semibold text-orange-400 mb-3">Detailed Analysis</h3>
-                    <div className="text-gray-200 space-y-2">
-                      {geminiAnalysis.split('DETAILED_ANALYSIS:')[1]?.split('TREATMENT_PLAN:')[0]?.trim().split('\n').map((point, index) => (
-                        <div key={index} className="flex items-start space-x-2">
-                          <span className="text-orange-400">•</span>
-                          <p>{point.trim()}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Treatment Plan Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Immediate Actions */}
-                    <div className="bg-gradient-to-r from-pink-600/20 to-rose-600/20 rounded-lg p-6 backdrop-blur-sm border border-pink-500/20">
-                      <h3 className="text-xl font-semibold text-pink-400 mb-3">Immediate Actions</h3>
-                      <ul className="space-y-2">
-                        {geminiAnalysis.includes('Immediate Actions') && 
-                          geminiAnalysis
-                            .split('Immediate Actions')[1]
-                            .split('Professional Treatments')[0]
-                            .split('\n')
-                            .filter(item => item.trim())
-                            .map((item, index) => (
-                              <li key={index} className="flex items-start space-x-2 text-gray-200">
-                                <span className="text-pink-400">→</span>
-                                <span>{item.replace('-', '').trim()}</span>
-                              </li>
-                            ))
-                        }
-                      </ul>
-                    </div>
-
-                    {/* Professional Treatments */}
-                    <div className="bg-gradient-to-r from-violet-600/20 to-purple-600/20 rounded-lg p-6 backdrop-blur-sm border border-violet-500/20">
-                      <h3 className="text-xl font-semibold text-violet-400 mb-3">Professional Treatments</h3>
-                      <ul className="space-y-2">
-                        {geminiAnalysis.includes('Professional Treatments') && 
-                          geminiAnalysis
-                            .split('Professional Treatments')[1]
-                            .split('Lifestyle Changes')[0]
-                            .split('\n')
-                            .filter(item => item.trim())
-                            .map((item, index) => (
-                              <li key={index} className="flex items-start space-x-2 text-gray-200">
-                                <span className="text-violet-400">→</span>
-                                <span>{item.replace('-', '').trim()}</span>
-                              </li>
-                            ))
-                        }
-                      </ul>
-                    </div>
-                  </div>
-
-                  {/* Additional Recommendations */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Lifestyle Changes */}
-                    <div className="bg-gradient-to-r from-teal-600/20 to-emerald-600/20 rounded-lg p-6 backdrop-blur-sm border border-teal-500/20">
-                      <h3 className="text-xl font-semibold text-teal-400 mb-3">Lifestyle Changes</h3>
-                      <ul className="space-y-2">
-                        {geminiAnalysis.includes('Lifestyle Changes') && 
-                          geminiAnalysis
-                            .split('Lifestyle Changes')[1]
-                            .split('Product Recommendations')[0]
-                            .split('\n')
-                            .filter(item => item.trim())
-                            .map((item, index) => (
-                              <li key={index} className="flex items-start space-x-2 text-gray-200">
-                                <span className="text-teal-400">→</span>
-                                <span>{item.replace('-', '').trim()}</span>
-                              </li>
-                            ))
-                        }
-                      </ul>
-                    </div>
-
-                    {/* Product Recommendations */}
-                    <div className="bg-gradient-to-r from-cyan-600/20 to-blue-600/20 rounded-lg p-6 backdrop-blur-sm border border-cyan-500/20">
-                      <h3 className="text-xl font-semibold text-cyan-400 mb-3">Product Recommendations</h3>
-                      <ul className="space-y-2">
-                        {geminiAnalysis.includes('Product Recommendations') && 
-                          geminiAnalysis
-                            .split('Product Recommendations')[1]
-                            .split('\n')
-                            .filter(item => item.trim())
-                            .map((item, index) => (
-                              <li key={index} className="flex items-start space-x-2 text-gray-200">
-                                <span className="text-cyan-400">→</span>
-                                <span>{item.replace('-', '').trim()}</span>
-                              </li>
-                            ))
-                        }
-                      </ul>
-                    </div>
-                  </div>
+                <div className="prose prose-invert max-w-none">
+                  <div className="whitespace-pre-wrap">{geminiAnalysis}</div>
                 </div>
               )}
             </DialogContent>
