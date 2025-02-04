@@ -17,8 +17,6 @@ const ImageUpload = () => {
       setIsAnalyzing(true);
       toast.info("Started but remember Some Premium Features are Locked");
 
-
-
       // Convert image to base64
       const reader = new FileReader();
       reader.onloadend = async () => {
@@ -43,11 +41,11 @@ const ImageUpload = () => {
   };
 
   return (
-    <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-      <div className="border-2 border-dashed border-gray-600 rounded-lg p-12 text-center hover:border-primary transition-colors duration-300">
+    <div className="bg-gray-800/80 rounded-lg p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+      <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 sm:p-8 lg:p-12 text-center hover:border-primary transition-colors duration-300">
         <div className="mb-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-400">Multiple Images Mode (Premium Feature)</span>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
+            <span className="text-sm sm:text-base text-gray-400">Multiple Images Mode (Premium Feature)</span>
             <Switch
               checked={multipleMode}
               onCheckedChange={setMultipleMode}
@@ -65,39 +63,39 @@ const ImageUpload = () => {
               accept="image/*"
               onChange={handleImageUpload}
             />
-            <i className="fas fa-camera text-4xl text-primary"></i>
-            <h3 className="text-xl font-medium text-white">Please upload a high-quality image of your scalp or hair for assessment.</h3>
+            <i className="fas fa-camera text-3xl sm:text-4xl text-primary"></i>
+            <h3 className="text-lg sm:text-xl font-medium text-white">Please upload a high-quality image of your scalp or hair for assessment.</h3>
             <p className="text-gray-400">or</p>
             <Button 
-              className="bg-primary hover:bg-primary/90"
+              className="w-full sm:w-auto bg-primary hover:bg-primary/90 px-6 py-2 text-sm sm:text-base"
               onClick={() => document.getElementById('imageInput')?.click()}
               disabled={isAnalyzing}
             >
               {isAnalyzing ? (
                 <>
                   <i className="fas fa-spinner fa-spin mr-2"></i>
-                  Analyzing...Running through 170,000+ case studies...
+                  <span className="text-sm sm:text-base">Analyzing...Running through 170,000+ case studies...</span>
                 </>
               ) : (
                 <>
                   <i className="fas fa-upload mr-2"></i>
-                  Upload Image
+                  <span className="text-sm sm:text-base">Upload Image</span>
                 </>
               )}
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {["Front View", "Side View", "Back View"].map((view) => (
-              <div key={view} className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-primary transition-colors duration-300">
+              <div key={view} className="border-2 border-dashed border-gray-600 rounded-lg p-4 sm:p-6 text-center hover:border-primary transition-colors duration-300">
                 <input 
                   type="file" 
                   className="hidden" 
                   accept="image/*"
                   onChange={handleImageUpload}
                 />
-                <i className="fas fa-plus text-2xl text-primary mb-2"></i>
-                <p className="text-sm text-white">{view}</p>
+                <i className="fas fa-plus text-xl sm:text-2xl text-primary mb-2"></i>
+                <p className="text-sm sm:text-base text-white">{view}</p>
               </div>
             ))}
           </div>
