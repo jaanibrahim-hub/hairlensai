@@ -499,11 +499,10 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
             </div>
             <Progress 
               value={analysisData.healthScore} 
-              className="h-3 bg-gray-600"
-              indicatorClassName={`bg-gradient-to-r from-purple-500 to-purple-600 ${
-                analysisData.healthScore >= 80 ? 'from-green-500 to-green-600' :
-                analysisData.healthScore >= 60 ? 'from-yellow-500 to-yellow-600' :
-                'from-red-500 to-red-600'
+              className={`h-3 bg-gray-600 ${
+                analysisData.healthScore >= 80 ? 'bg-green-500' :
+                analysisData.healthScore >= 60 ? 'bg-yellow-500' :
+                'bg-red-500'
               }`}
             />
             <div className="flex justify-between mt-2 text-sm text-gray-400">
