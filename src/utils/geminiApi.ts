@@ -268,10 +268,22 @@ const SECOND_ANALYSIS_PROMPT = `As a trichology expert, analyze this hair health
 }`;
 
 export const performSecondaryAnalysis = async (analysisData: any, apiKey: string) => {
-  // Validate required metrics
-  const requiredMetrics = ['Hair Type', 'Scalp Condition', 'Porosity'];
-  if (!requiredMetrics.every(m => analysisData.metrics.some(metric => metric.label === m))) {
-    throw new Error('Incomplete analysis data for secondary processing');
+  console.log('Starting secondary analysis with data:', analysisData);
+  
+  // Normalize metric labels for case-insensitive comparison
+  const requiredMetrics = ['hair type', 'scalp condition', 'porosity'];
+  const availableMetrics = analysisData.metrics.map((metric: any) => metric.label.toLowerCase());
+  
+  console.log('Available metrics:', availableMetrics);
+  console.log('Required metrics:', requiredMetrics);
+  
+  const missingMetrics = requiredMetrics.filter(
+    required => !availableMetrics.includes(required)
+  );
+
+  if (missingMetrics.length > 0) {
+    console.error('Missing required metrics:', missingMetrics);
+    throw new Error(`Incomplete analysis data. Missing metrics: ${missingMetrics.join(', ')}`);
   }
 
   // Prepare the prompt with the analysis data
