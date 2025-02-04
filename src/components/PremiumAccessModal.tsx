@@ -97,27 +97,28 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
               <h3 className="text-xl font-bold mb-4 text-purple-300">🎯 Ready to Track Your Progress? Go Personal:</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2">
                 <li>Store up to 10 analyses</li>
+                <li>Unlimited Runs</li>
+                <li>Compare your journey with 170,000 Case Studies</li>
                 <li>Perfect for tracking treatment results</li>
                 <li>Download beautiful PDF reports</li>
                 <li>Build your hair health timeline</li>
                 <li>Get Personalized After Surgery Recommendations</li>
-                <li>Compare your journey with 170,000 Case Studies</li>
                 <li>Share with consultations directly</li>
-                <li></li>
+                <li>Unlimited Runs</li>
               </ul>
             </div>
 
             {/* File Revisit Option */}
             <div className="bg-gradient-to-r from-purple-900 to-indigo-900 p-6 rounded-lg border border-purple-500/30">
               <div className="flex flex-col items-center space-y-4">
-                <h3 className="text-xl font-bold text-purple-300">💾 Store & Revisit Your Analysis</h3>
-                <p className="text-gray-200 text-center">Keep track of your progress with our file storage option!</p>
+                <h3 className="text-xl font-bold text-purple-300">💾 Store Your Patient Records</h3>
+                <p className="text-gray-200 text-center">Keep track of your patients and generate Unlimited reports</p>
                 <Button 
                   variant="outline"
                   className="bg-white text-purple-900 hover:bg-gray-100 font-semibold"
                   onClick={() => toast.success("Coming soon! We'll notify you when file storage is available.")}
                 >
-                  Go Personal - $50
+                  Own a Business - Custom Pricing
                 </Button>
                 <p className="text-sm text-gray-400">Access and review your analysis anytime</p>
               </div>
@@ -140,7 +141,7 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
                 <div>
                   <h4 className="font-semibold text-purple-400 mb-2">What You Get:</h4>
                   <ul className="list-disc list-inside text-gray-300 space-y-2">
-                    <li>Brand it as your own solution</li>
+                    <li>Your Brand Logo with Custom Domain</li>
                     <li>Train AI on your specific cases</li>
                     <li>Custom-branded dashboard</li>
                     <li>Generate leads through online analysis</li>
@@ -216,7 +217,7 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
                 Ready to revolutionize your business? Let's chat about your vision!
               </p>
               <p className="text-sm text-purple-400">
-                Email: enterprise@hairlens.ai | Phone: +1 (555) 123-4567
+                Email: carelessinbar@icloud.com | Whatsapp: +971 (52) 577-8897 Dubai, U.A.E
               </p>
             </div>
           </div>
