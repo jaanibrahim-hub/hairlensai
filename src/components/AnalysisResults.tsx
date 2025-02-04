@@ -302,6 +302,9 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   const [hasResults, setHasResults] = useState(false);
   const [aiAnalysis, setAiAnalysis] = useState<string>("");
   const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [isGeminiLoading, setIsGeminiLoading] = useState(false);
+  const [geminiAnalysis, setGeminiAnalysis] = useState<string>("");
+  const [showGeminiDialog, setShowGeminiDialog] = useState(false);
 
   useEffect(() => {
     const handleAnalysisComplete = (event: CustomEvent<any>) => {
@@ -408,6 +411,110 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     }
   };
 
+  const handleGeminiAnalysis = async () => {
+    if (!apiKey) {
+      toast({
+        title: "Premium Feature",
+        description: "Please activate premium access to use the AI analysis feature.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsGeminiLoading(true);
+    setShowGeminiDialog(true);
+
+    try {
+      toast({
+        title: "Analysis Started",
+        description: "Processing your hair analysis data...",
+      });
+
+      const geminiPrompt = `You are an expert AI Hair Doctor specializing in trichology and dermatology. 
+      Based on the following detailed hair analysis data:
+
+      HEALTH METRICS:
+      - Overall Health Score: ${analysisData.healthScore}
+      - Hair Type: ${analysisData.metrics.find(m => m.label === "Hair Type")?.value}
+      - Scalp Condition: ${analysisData.metrics.find(m => m.label === "Scalp Condition")?.value}
+      - Porosity: ${analysisData.metrics.find(m => m.label === "Porosity")?.value}
+      - Density: ${analysisData.metrics.find(m => m.label === "Density")?.value}
+
+      GROWTH ANALYSIS:
+      - Growth Phase Distribution: ${JSON.stringify(analysisData.growthPhaseData)}
+      - Breakage Rate: ${analysisData.metrics.find(m => m.label === "Breakage Rate")?.value}
+      - Follicle Density: ${analysisData.metrics.find(m => m.label === "Follicle Density")?.value}
+
+      STRUCTURAL ANALYSIS:
+      - Curl Pattern: ${JSON.stringify(analysisData.curlPatternData)}
+      - Hair Diameter: ${analysisData.metrics.find(m => m.label === "Hair Diameter")?.value}
+      - Elasticity: ${analysisData.metrics.find(m => m.label === "Elasticity")?.value}
+
+      Please provide a comprehensive analysis in the following format:
+
+      1. DIAGNOSTIC SUMMARY
+      2. DETAILED ANALYSIS
+      3. TREATMENT RECOMMENDATIONS
+      4. LIFESTYLE MODIFICATIONS
+      5. WARNING SIGNS
+      6. TIMELINE`;
+
+      console.log("Making Gemini API call with prompt:", geminiPrompt);
+
+      const response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [{ text: geminiPrompt }],
+              },
+            ],
+            generationConfig: {
+              temperature: 0.2,
+              topK: 40,
+              topP: 0.8,
+              maxOutputTokens: 8192,
+            },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Gemini API response:", data);
+
+      if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+        throw new Error("Invalid response format from API");
+      }
+
+      const analysisText = data.candidates[0].content.parts[0].text;
+      setGeminiAnalysis(analysisText);
+      
+      toast({
+        title: "Analysis Complete",
+        description: "Your detailed hair analysis is ready!",
+      });
+    } catch (error) {
+      console.error("Error calling Gemini API:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to get AI analysis",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeminiLoading(false);
+    }
+  };
+
   const doughnutOptions = {
     responsive: true,
     plugins: {
@@ -469,19 +576,38 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-3 space-y-6">
         <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
-          {/* AI Doctor Button */}
+          {/* AI Analysis Button */}
           <div className="mb-6">
             <Button
-              onClick={handleAIDoctorClick}
-              disabled={!hasResults || !apiKey || isAnalyzing}
+              onClick={handleGeminiAnalysis}
+              disabled={!hasResults || !apiKey || isGeminiLoading}
               className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
             >
               <Brain className="w-5 h-5" />
-              {isAnalyzing ? "Analyzing..." : "Consult AI Hair Doctor"}
+              {isGeminiLoading ? "Analyzing..." : "Get AI Hair Analysis"}
               {!hasResults && <span className="text-xs">(Upload image first)</span>}
               {!apiKey && <span className="text-xs">(Premium feature)</span>}
             </Button>
           </div>
+
+          {/* Gemini Analysis Dialog */}
+          <Dialog open={showGeminiDialog} onOpenChange={setShowGeminiDialog}>
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>AI Hair Analysis Report</DialogTitle>
+              </DialogHeader>
+              {isGeminiLoading ? (
+                <div className="flex flex-col items-center justify-center p-8 space-y-4">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+                  <p className="text-gray-400">Analyzing your hair data...</p>
+                </div>
+              ) : (
+                <div className="prose prose-invert max-w-none">
+                  <div className="whitespace-pre-wrap">{geminiAnalysis}</div>
+                </div>
+              )}
+            </DialogContent>
+          </Dialog>
 
           {/* Quick Summary */}
           <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
