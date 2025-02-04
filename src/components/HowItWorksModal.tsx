@@ -19,16 +19,18 @@ const HowItWorksModal = () => {
           How It Works
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-gradient-to-br from-gray-50 to-purple-50 dark:from-gray-900 dark:to-purple-900/20">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Your Hair's Story, Decoded</DialogTitle>
-          <DialogDescription className="text-lg">
+          <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-600">
+            Your Hair's Story, Decoded
+          </DialogTitle>
+          <DialogDescription className="text-lg text-gray-600 dark:text-gray-300">
             Professional Hair Analysis In Your Pocket
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-8 py-6">
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-6 rounded-xl">
             <p className="text-xl text-gray-800 dark:text-gray-200 italic">
               "Your hair tells a story. But for too long, only expensive specialists could read it. 
               We're changing that. We puts the power of professional hair analysis in your pocket, 
@@ -36,7 +38,7 @@ const HowItWorksModal = () => {
             </p>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-green-50 to-yellow-50 dark:from-green-900/20 dark:to-yellow-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Welcome To HairLens AI</h3>
             <h4 className="text-lg font-medium">Our AI's Powerful Foundation</h4>
             <p className="text-gray-600 dark:text-gray-300">
@@ -45,7 +47,7 @@ const HowItWorksModal = () => {
             </p>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Our Unique Dataset</h3>
             <p className="text-gray-600 dark:text-gray-300">
               Unlike generic AI models trained on random internet photos, 
@@ -73,7 +75,7 @@ const HowItWorksModal = () => {
             </div>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-yellow-50 to-red-50 dark:from-yellow-900/20 dark:to-red-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Individual Users (Patients) Benefits</h3>
             <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
               <li>Pre-consultation analysis before visiting doctors</li>
@@ -86,7 +88,7 @@ const HowItWorksModal = () => {
             </ul>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Hair Care Clinics & Doctors Benefits</h3>
             <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
               <li>Data-driven patient assessments</li>
@@ -99,7 +101,7 @@ const HowItWorksModal = () => {
             </ul>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Hair Product Companies Benefits</h3>
             <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
               <li>Validate product effectiveness</li>
@@ -112,7 +114,7 @@ const HowItWorksModal = () => {
             </ul>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Salons & Stylists Benefits</h3>
             <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
               <li>Professional analysis for clients</li>
@@ -124,7 +126,7 @@ const HowItWorksModal = () => {
             </ul>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Research Institutions Benefits</h3>
             <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
               <li>Access to anonymized data</li>
@@ -135,7 +137,7 @@ const HowItWorksModal = () => {
             </ul>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-green-50 to-yellow-50 dark:from-green-900/20 dark:to-yellow-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Insurance Companies Benefits</h3>
             <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
               <li>Verify treatment necessity</li>
@@ -145,7 +147,7 @@ const HowItWorksModal = () => {
             </ul>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-yellow-50 to-red-50 dark:from-yellow-900/20 dark:to-red-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Wellness Centers Benefits</h3>
             <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
               <li>Holistic health tracking</li>
@@ -155,7 +157,7 @@ const HowItWorksModal = () => {
             </ul>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Pharmaceutical Companies Benefits</h3>
             <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
               <li>Product testing</li>
@@ -165,7 +167,7 @@ const HowItWorksModal = () => {
             </ul>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Global Reach</h3>
             <ul className="list-disc list-inside space-y-1 text-gray-600 dark:text-gray-300">
               <li>12 international centers</li>
@@ -175,7 +177,7 @@ const HowItWorksModal = () => {
             </ul>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Our Vision</h3>
             <p className="text-gray-600 dark:text-gray-300">
               HairLens AI isn't just another analysis tool - it's a comprehensive ecosystem where:
@@ -189,7 +191,7 @@ const HowItWorksModal = () => {
             </ul>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Our Unique Dataset</h3>
             <p className="text-gray-600 dark:text-gray-300">
               Through a groundbreaking collaboration with leading multinational hair treatment clinics, 
@@ -219,7 +221,7 @@ const HowItWorksModal = () => {
             </div>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-green-50 to-yellow-50 dark:from-green-900/20 dark:to-yellow-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Development Journey</h3>
             <p className="text-gray-600 dark:text-gray-300">
               Our Six-month intensive development process transformed this vast dataset into an 
@@ -251,7 +253,7 @@ const HowItWorksModal = () => {
             </div>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-blue-50 to-green-50 dark:from-blue-900/20 dark:to-green-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">Looking Forward</h3>
             <p className="text-gray-600 dark:text-gray-300">
               As we continue to evolve, our focus remains on expanding our capabilities through:
@@ -265,7 +267,7 @@ const HowItWorksModal = () => {
             </ul>
           </section>
 
-          <section className="space-y-4">
+          <section className="space-y-4 bg-gradient-to-r from-green-50 to-yellow-50 dark:from-green-900/20 dark:to-yellow-900/20 p-6 rounded-xl">
             <h3 className="text-xl font-semibold">What sets HairLensAI apart is our foundation in real clinical data</h3>
             <p className="text-gray-600 dark:text-gray-300">
             While competitors rely on generic AI models, our system is trained on verified clinical outcomes:
