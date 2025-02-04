@@ -97,7 +97,7 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
               <h3 className="text-xl font-bold mb-4 text-purple-300">🎯 Ready to Track Your Progress? Go Personal:</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2">
                 <li>Store up to 10 analyses</li>
-                <li>Unlimited Runs</li>
+                <li>Unlock all premium services</li>
                 <li>Compare your journey with 170,000 Case Studies</li>
                 <li>Perfect for tracking treatment results</li>
                 <li>Download beautiful PDF reports</li>
@@ -139,16 +139,27 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-purple-400 mb-2">What You Get:</h4>
+                  <h4 className="font-semibold text-purple-400 mb-2">What Can You Get:</h4>
                   <ul className="list-disc list-inside text-gray-300 space-y-2">
-                    <li>Your Brand Logo with Custom Domain</li>
-                    <li>Train AI on your specific cases</li>
-                    <li>Custom-branded dashboard</li>
-                    <li>Generate leads through online analysis</li>
-                    <li>Build trust with AI-powered insights</li>
+                    <li>Unlimited Runs</li>
+                    <li>Unlimited Storage Option</li>
+                    <li>Before and after / Multi angel Image upload</li>
+                    <li>Access to All Premium Features</li>
+                    <li>Store Customer information</li>
+                    <li>Custom reporting</li>
                   </ul>
                 </div>
               </div>
+            </div>
+
+            <ScrollArea className="h-[calc(90vh-120px)] px-4">
+          <div className="space-y-6">
+            {/* Introduction */}
+            <div className="bg-gradient-to-r from-purple-900 to-indigo-900 p-6 rounded-lg border border-purple-500/30">
+              <p className="text-lg text-gray-200 mb-4">
+                💡 Did you know? Our technology is being used by leading brands worldwide to transform their hair care services. 
+                Whether you're on a personal hair health journey or looking to revolutionize your business, we're here to help!
+              </p>
             </div>
 
             {/* Professional Features */}
@@ -156,15 +167,15 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
               <h3 className="text-xl font-bold mb-4 text-purple-300">💎 Professional Features That Wow:</h3>
               <div className="grid grid-cols-2 gap-4">
                 <ul className="list-disc list-inside text-gray-300 space-y-2">
-                  <li>Unlimited analysis storage</li>
-                  <li>Advanced tracking metrics</li>
-                  <li>Priority support</li>
-                  <li>Custom reporting</li>
+                  <li>Let clients try before visiting</li>
+                  <li>Generate leads through online analysis</li>
+                  <li>Share success stories under your brand</li>
+                  <li>Integration with your systems</li>
                 </ul>
                 <ul className="list-disc list-inside text-gray-300 space-y-2">
-                  <li>Client management tools</li>
-                  <li>Lead generation tools</li>
-                  <li>Mobile-friendly interface</li>
+                  <li>Brand it as your own solution</li>
+                  <li>Train AI on your specific cases</li>
+                  <li>Full white-labeling options</li>
                   <li>Build your brand authority</li>
                 </ul>
               </div>
