@@ -86,7 +86,7 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
                   className="bg-white text-purple-900 hover:bg-gray-100 font-semibold"
                   onClick={() => toast.success("Coming soon! We'll notify you when file storage is available.")}
                 >
-                  Store Files - $50/month
+                  Go Personal - $50
                 </Button>
                 <p className="text-sm text-gray-400">Access and review your analysis anytime</p>
               </div>
@@ -97,12 +97,30 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
               <h3 className="text-xl font-bold mb-4 text-purple-300">🎯 Ready to Track Your Progress? Go Personal:</h3>
               <ul className="list-disc list-inside text-gray-300 space-y-2">
                 <li>Store up to 10 analyses</li>
+                <li>Perfect for tracking treatment results</li>
                 <li>Download beautiful PDF reports</li>
                 <li>Build your hair health timeline</li>
-                <li>Get personalized recommendations</li>
-                <li>Perfect for tracking treatment results</li>
-                <li>Book expert consultations directly</li>
+                <li>Get Personalized After Surgery Recommendations</li>
+                <li>Compare your journey with 170,000 Case Studies</li>
+                <li>Share with consultations directly</li>
+                <li></li>
               </ul>
+            </div>
+
+            {/* File Revisit Option */}
+            <div className="bg-gradient-to-r from-purple-900 to-indigo-900 p-6 rounded-lg border border-purple-500/30">
+              <div className="flex flex-col items-center space-y-4">
+                <h3 className="text-xl font-bold text-purple-300">💾 Store & Revisit Your Analysis</h3>
+                <p className="text-gray-200 text-center">Keep track of your progress with our file storage option!</p>
+                <Button 
+                  variant="outline"
+                  className="bg-white text-purple-900 hover:bg-gray-100 font-semibold"
+                  onClick={() => toast.success("Coming soon! We'll notify you when file storage is available.")}
+                >
+                  Go Personal - $50
+                </Button>
+                <p className="text-sm text-gray-400">Access and review your analysis anytime</p>
+              </div>
             </div>
 
             {/* Business Solutions */}
