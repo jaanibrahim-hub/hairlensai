@@ -340,6 +340,28 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         metrics: analysisData.metrics,
       });
 
+      // Create the request body
+      const requestBody = {
+        model: 'llama-3.1-sonar-small-128k-online',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an AI Hair Doctor analyzing hair and scalp conditions. Provide detailed, professional analysis.'
+          },
+          {
+            role: 'user',
+            content: `Analyze this hair data: 
+              Health Score: ${analysisData.healthScore}
+              Quick Summary: ${analysisData.quickSummary}
+              Metrics: ${JSON.stringify(analysisData.metrics)}
+              Please provide a detailed analysis, recommendations, and treatment plan.`
+          }
+        ],
+        temperature: 0.2,
+        max_tokens: 2000,
+      };
+
+      // Make the API call with proper CORS settings
       const response = await fetch('https://api.perplexity.ai/chat/completions', {
         method: 'POST',
         mode: 'cors',
@@ -349,26 +371,10 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({
-          model: 'llama-3.1-sonar-small-128k-online',
-          messages: [
-            {
-              role: 'system',
-              content: 'You are an AI Hair Doctor analyzing hair and scalp conditions. Provide detailed, professional analysis.'
-            },
-            {
-              role: 'user',
-              content: `Analyze this hair data: 
-                Health Score: ${analysisData.healthScore}
-                Quick Summary: ${analysisData.quickSummary}
-                Metrics: ${JSON.stringify(analysisData.metrics)}
-                Please provide a detailed analysis, recommendations, and treatment plan.`
-            }
-          ],
-          temperature: 0.2,
-          max_tokens: 2000,
-        }),
+        body: JSON.stringify(requestBody),
       });
+
+      console.log("API Response status:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
