@@ -258,7 +258,11 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
   };
 };
 
-const AnalysisResults = () => {
+interface AnalysisResultsProps {
+  apiKey: string | null;
+}
+
+const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   const [analysisData, setAnalysisData] = useState<AnalysisResult>({
     metrics: defaultMetrics,
     healthScore: 76,

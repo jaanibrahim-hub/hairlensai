@@ -3,8 +3,18 @@ import ImageUpload from "@/components/ImageUpload";
 import ImagePreview from "@/components/ImagePreview";
 import AnalysisResults from "@/components/AnalysisResults";
 import HowItWorksModal from "@/components/HowItWorksModal";
+import PremiumAccessModal from "@/components/PremiumAccessModal";
+import { useState } from "react";
 
 const Index = () => {
+  const [apiKey, setApiKey] = useState<string | null>(
+    localStorage.getItem("hairlens_api_key")
+  );
+
+  const handleKeyValidated = (key: string) => {
+    setApiKey(key);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-900 to-indigo-800">
       <Header />
@@ -12,7 +22,10 @@ const Index = () => {
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-white">Hair Analysis Dashboard</h1>
-          <HowItWorksModal />
+          <div className="space-x-4">
+            <HowItWorksModal />
+            <PremiumAccessModal onKeyValidated={handleKeyValidated} />
+          </div>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -20,7 +33,7 @@ const Index = () => {
             <ImageUpload />
             <ImagePreview />
           </div>
-          <AnalysisResults />
+          <AnalysisResults apiKey={apiKey} />
         </div>
       </main>
       
