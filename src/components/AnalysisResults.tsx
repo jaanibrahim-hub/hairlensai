@@ -579,7 +579,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
                 <div className="mt-4 bg-gray-700/50 p-4 rounded">
                   <p className="text-gray-300 text-sm leading-relaxed">
                     This graph shows your hair's growth journey over time. The higher the line goes, the better your hair is growing! 
-                    A healthy pattern usually shows steady growth or gentle ups and downs, which is totally normal.
+                    A healthy pattern usually shows steady growth or gentle ups and downs, which is totally normal. ( Premium Feature )
                   </p>
                 </div>
               </div>
@@ -638,11 +638,11 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
               <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
                 <div className="bg-gray-700/80 rounded-lg p-4">
                   <Line data={analysisData.healthData} options={doughnutOptions} />
-                  <p className="text-center text-sm text-gray-400 mt-2">Hair Growth Progress</p>
+                  <p className="text-center text-sm text-gray-400 mt-2">Hair Growth Progress ( Premium Feature )</p>
                 </div>
                 <div className="bg-gray-700/80 rounded-lg p-4">
                   <Line data={analysisData.healthData} options={doughnutOptions} />
-                  <p className="text-center text-sm text-gray-400 mt-2">Optimal vs Current Conditions</p>
+                  <p className="text-center text-sm text-gray-400 mt-2">Optimal vs Current Conditions ( Premium Feature )</p>
                 </div>
               </div>
 
