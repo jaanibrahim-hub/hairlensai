@@ -192,7 +192,7 @@ const ImagePreview = () => {
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="absolute bottom-4 left-4 right-4">
               <p className="text-white text-sm">
-                Effectively covers the key points. We are using advanced AI vision technology.
+               You can try in any angle: front, back, face, or head.
               </p>
             </div>
           </div>
@@ -232,7 +232,9 @@ const ImagePreview = () => {
       <div className="mt-4 bg-gray-700/50 rounded-lg p-3">
         <div className="flex items-center text-sm text-gray-300">
           <i className="fas fa-info-circle text-purple-400 mr-2"></i>
-          <span>Should clearly show the scalp. Once you are satisfied, upload the same image above.</span>
+          <span>The image should be of high quality and clearly visible. 
+            Free users are allowed to upload a maximum of 10 images per day.
+          </span>
         </div>
       </div>
     </div>
