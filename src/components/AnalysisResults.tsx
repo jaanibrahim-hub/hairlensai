@@ -88,6 +88,23 @@ interface AnalysisResult {
     curlPatternDistribution: Array<Record<string, number>>;
     growthPhaseDistribution: Array<Record<string, number>>;
   };
+  microscopicAnalysis?: {
+    cuticleLayerScore: number;
+    shaftStructure: {
+      integrity: number;
+      pattern: string;
+    };
+    medullaAnalysis: {
+      continuity: number;
+    };
+    crossSection: {
+      uniformity: number;
+    };
+    surfaceMapping: {
+      texture: string;
+      damage: string;
+    };
+  };
   quickSummary?: string;
   hairInformation?: {
     diagnosticAnalysis: string;
