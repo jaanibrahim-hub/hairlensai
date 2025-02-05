@@ -4,18 +4,57 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { analyzeHairImage } from "@/utils/geminiApi";
 import { toast } from "sonner";
+import PremiumAccessModal from "./PremiumAccessModal";
+
+// File validation constants
+const FILE_LIMITS = {
+  MAX_SIZE: 5 * 1024 * 1024, // 5MB
+  ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic']
+};
 
 const ImageUpload = () => {
   const [multipleMode, setMultipleMode] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+
+  const validateImage = (file: File) => {
+    console.log('Validating image:', file.name, file.size, file.type);
+    
+    if (!FILE_LIMITS.ALLOWED_TYPES.includes(file.type)) {
+      toast.error("Please upload a valid image file (JPEG, PNG, WEBP)");
+      return false;
+    }
+
+    if (file.size > FILE_LIMITS.MAX_SIZE) {
+      toast.error("File size too large. Maximum size is 5MB");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleMultipleModeToggle = () => {
+    const apiKey = localStorage.getItem("hairlens_api_key");
+    if (!apiKey) {
+      toast.error("Multiple image mode is a premium feature");
+      setShowPremiumModal(true);
+      return;
+    }
+    setMultipleMode(!multipleMode);
+  };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    if (!validateImage(file)) {
+      return;
+    }
+
     try {
+      console.log('Starting image analysis');
       setIsAnalyzing(true);
-      toast.info("Started but remember Some Premium Features are Locked");
+      toast.info("Started analyzing your image");
 
       // Convert image to base64
       const reader = new FileReader();
@@ -23,8 +62,8 @@ const ImageUpload = () => {
         const base64String = (reader.result as string).split(',')[1];
         
         try {
+          console.log('Sending image for analysis');
           const analysisResults = await analyzeHairImage(base64String);
-          // Emit event to update AnalysisResults
           window.dispatchEvent(new CustomEvent('hairAnalysisComplete', { detail: analysisResults }));
           toast.success("Analysis complete!");
         } catch (error) {
@@ -34,10 +73,17 @@ const ImageUpload = () => {
           setIsAnalyzing(false);
         }
       };
+
+      reader.onerror = () => {
+        console.error('FileReader error');
+        toast.error("Error reading file. Please try again.");
+        setIsAnalyzing(false);
+      };
+
       reader.readAsDataURL(file);
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error("Error processing. Please try again.");
+      toast.error("Error processing image. Please try again.");
       setIsAnalyzing(false);
     }
   };
@@ -50,7 +96,7 @@ const ImageUpload = () => {
             <span className="text-sm sm:text-base text-gray-400">Multiple Images Mode (Premium Feature)</span>
             <Switch
               checked={multipleMode}
-              onCheckedChange={setMultipleMode}
+              onCheckedChange={handleMultipleModeToggle}
               className="bg-gray-600 data-[state=checked]:bg-primary"
             />
           </div>
@@ -66,7 +112,11 @@ const ImageUpload = () => {
               onChange={handleImageUpload}
             />
             <i className="fas fa-camera text-3xl sm:text-4xl text-primary"></i>
-            <h3 className="text-lg sm:text-xl font-medium text-white">Please upload a high-quality image of your scalp or hair for assessment.</h3>
+            <h3 className="text-lg sm:text-xl font-medium text-white">
+              Please upload a high-quality image of your scalp or hair for assessment
+              <br />
+              <span className="text-sm text-gray-400">(Max size: 5MB, Formats: JPEG, PNG, WEBP)</span>
+            </h3>
             <p className="text-gray-400">or</p>
             <Button 
               className="w-full sm:w-auto bg-primary hover:bg-primary/90 px-6 py-2 text-sm sm:text-base"
