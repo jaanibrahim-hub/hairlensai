@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Brain, Activity, Heart, Droplet, Wind, Microscope, Ruler, Leaf, ShieldCheck } from "lucide-react";
+import { Brain, Activity, Heart, Droplet, Wind, Microscope, Ruler, Leaf, ShieldCheck, Sparkles } from "lucide-react";
 import { API_KEYS } from "@/utils/geminiApi";
 import {
   Chart as ChartJS,
@@ -26,6 +26,7 @@ import {
 import { Line, Doughnut } from 'react-chartjs-2';
 import AdvancedAnalysis from "./AdvancedAnalysis";
 import { performSecondaryAnalysis } from "@/utils/geminiApi";
+import PremiumAccessModal from "./PremiumAccessModal";
 
 ChartJS.register(
   ArcElement,
@@ -531,7 +532,6 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   // Health Score Card Section
   const renderHealthScoreCard = () => {
     const hydrationScore = analysisData.microscopicAnalysis?.cuticleLayerScore || 0;
-    // Fix the growth score calculation to properly access the Anagen value
     const growthScore = analysisData.structuralAnalysis?.growthPhaseDistribution?.find(
       phase => 'Anagen' in phase
     )?.['Anagen'] || 0;
@@ -541,7 +541,22 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     const protectionScore = analysisData.recommendedTreatments?.primary?.match || 0;
 
     return (
-      <div className="bg-gray-800/80 rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+      <div className="bg-gray-800/80 rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 relative">
+        {!apiKey && (
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-xl z-10 flex items-center justify-center">
+            <div className="text-center p-6">
+              <Sparkles className="w-8 h-8 text-purple-400 mx-auto mb-3" />
+              <h3 className="text-xl font-semibold text-white mb-2">Premium Feature</h3>
+              <p className="text-gray-300 mb-4">Unlock detailed hair analysis with premium access</p>
+              <PremiumAccessModal onKeyValidated={(key) => {
+                if (typeof onKeyValidated === 'function') {
+                  onKeyValidated(key);
+                }
+              }} />
+            </div>
+          </div>
+        )}
+        
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-semibold text-white flex items-center gap-2">
             <Heart className="w-5 h-5 text-purple-400" />
