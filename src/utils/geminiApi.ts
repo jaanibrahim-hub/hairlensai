@@ -4,11 +4,6 @@ export const API_KEYS = [
   'AIzaSyCbiokMrXsfZyXHi_OFwFwM5bG9QXazCPA',
   'AIzaSyBrUoI6e9BCAarqbXQf3NfTe3wyZ_4O-Mo',
   'AIzaSyDP-5zEsfl0SkNAdfB2Hx70MOgC3j6QvHk',
-  'AIzaSyBZJ7jynPsUbw8310LtVgx9dhB_sQK6hx4',
-  'AIzaSyC6G-t916odkj3tkx4lO0S9FMK3NhwpuUo',
-  'AIzaSyA3DkGlAi-vRDUq0af-zFywV9K6e8TwFG4',
-  'AIzaSyAaL_-PTwt5TDjt5QnNQ31kZWCapKJRrmU',
-  'AIzaSyCKmqEfpww0HcbgBKjVCOQwZIONmsWZHGQ',
   'AIzaSyBcyEA5uAB0RXlLy1LKvREzlymz-DVk9SI'
 ];
 
