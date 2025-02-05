@@ -120,7 +120,7 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
                 <Button 
                   variant="outline"
                   className="bg-white text-purple-900 hover:bg-gray-100 font-semibold"
-                  onClick={() => toast.success("Book a call! We are ready to serve you.")}
+                  onClick={() => toast.success("Coming soon! We'll notify you when file storage is available.")}
                 >
                   Own a Business - Custom Pricing
                 </Button>
@@ -211,7 +211,7 @@ const PremiumAccessModal = ({ onKeyValidated }: PremiumAccessModalProps) => {
                 Ready to revolutionize your business? Let's chat about your vision!
               </p>
               <p className="text-sm text-purple-400">
-                Email: carelessinbar@icloud.com | Book a call: topmate.io/deepdive Dubai, U.A.E
+                Email: carelessinbar@icloud.com | Whatsapp: +971 (52) 577-8897 Dubai, U.A.E
               </p>
             </div>
           </div>
