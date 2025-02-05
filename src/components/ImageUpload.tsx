@@ -5,32 +5,79 @@ import { Label } from "@/components/ui/label";
 import { analyzeHairImage } from "@/utils/geminiApi";
 import { toast } from "sonner";
 import PremiumAccessModal from "./PremiumAccessModal";
+import { Progress } from "@/components/ui/progress";
 
-// File validation constants
+// File validation constants with updated limits
 const FILE_LIMITS = {
-  MAX_SIZE: 5 * 1024 * 1024, // 5MB
-  ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/webp', 'image/heic']
+  MIN_SIZE: 100 * 1024, // 100KB
+  MAX_SIZE: 20 * 1024 * 1024, // 20MB
+  ALLOWED_FORMATS: {
+    'image/png': {
+      recommended: true,
+      note: "Recommended for detailed analysis"
+    },
+    'image/jpeg': {
+      recommended: true,
+      note: "Good for general use"
+    },
+    'image/webp': {
+      recommended: true,
+      note: "Efficient format"
+    }
+  },
+  MAX_RESOLUTION: 3072,
+  COMPRESSION_THRESHOLD: 10 * 1024 * 1024 // 10MB
 };
 
 const ImageUpload = () => {
   const [multipleMode, setMultipleMode] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
-  const validateImage = (file: File) => {
+  const validateImage = async (file: File): Promise<boolean> => {
     console.log('Validating image:', file.name, file.size, file.type);
     
-    if (!FILE_LIMITS.ALLOWED_TYPES.includes(file.type)) {
-      toast.error("Please upload a valid image file (JPEG, PNG, WEBP)");
+    // Check file format
+    if (!FILE_LIMITS.ALLOWED_FORMATS[file.type as keyof typeof FILE_LIMITS.ALLOWED_FORMATS]) {
+      toast.error("Please upload a valid image file (PNG, JPEG, or WebP)");
+      return false;
+    }
+
+    // Check file size
+    if (file.size < FILE_LIMITS.MIN_SIZE) {
+      toast.error("File size too small. Minimum size is 100KB for quality analysis");
       return false;
     }
 
     if (file.size > FILE_LIMITS.MAX_SIZE) {
-      toast.error("File size too large. Maximum size is 5MB");
+      toast.error("File size too large. Maximum size is 20MB");
       return false;
     }
 
+    // Check image dimensions
+    const dimensions = await getImageDimensions(file);
+    if (dimensions.width > FILE_LIMITS.MAX_RESOLUTION || dimensions.height > FILE_LIMITS.MAX_RESOLUTION) {
+      toast.warning("Image will be automatically scaled to maintain quality");
+    }
+
+    // Warning for large files
+    if (file.size > FILE_LIMITS.COMPRESSION_THRESHOLD) {
+      toast.warning("Large file detected. Processing may take longer");
+    }
+
     return true;
+  };
+
+  const getImageDimensions = (file: File): Promise<{ width: number; height: number }> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(img.src);
+        resolve({ width: img.width, height: img.height });
+      };
+      img.src = URL.createObjectURL(file);
+    });
   };
 
   const handleMultipleModeToggle = () => {
@@ -47,14 +94,25 @@ const ImageUpload = () => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (!validateImage(file)) {
-      return;
-    }
-
     try {
+      setUploadProgress(0);
+      const isValid = await validateImage(file);
+      if (!isValid) return;
+
       console.log('Starting image analysis');
       setIsAnalyzing(true);
       toast.info("Started analyzing your image");
+
+      // Simulated upload progress
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return prev;
+          }
+          return prev + 10;
+        });
+      }, 500);
 
       // Convert image to base64
       const reader = new FileReader();
@@ -65,12 +123,15 @@ const ImageUpload = () => {
           console.log('Sending image for analysis');
           const analysisResults = await analyzeHairImage(base64String);
           window.dispatchEvent(new CustomEvent('hairAnalysisComplete', { detail: analysisResults }));
+          setUploadProgress(100);
           toast.success("Analysis complete!");
         } catch (error) {
           console.error('Analysis error:', error);
           toast.error("Failed to analyze. Please try again.");
         } finally {
+          clearInterval(progressInterval);
           setIsAnalyzing(false);
+          setUploadProgress(0);
         }
       };
 
@@ -78,6 +139,7 @@ const ImageUpload = () => {
         console.error('FileReader error');
         toast.error("Error reading file. Please try again.");
         setIsAnalyzing(false);
+        setUploadProgress(0);
       };
 
       reader.readAsDataURL(file);
@@ -85,6 +147,7 @@ const ImageUpload = () => {
       console.error('Upload error:', error);
       toast.error("Error processing image. Please try again.");
       setIsAnalyzing(false);
+      setUploadProgress(0);
     }
   };
 
@@ -108,16 +171,28 @@ const ImageUpload = () => {
               type="file" 
               className="hidden" 
               id="imageInput" 
-              accept="image/*"
+              accept=".png,.jpg,.jpeg,.webp"
               onChange={handleImageUpload}
             />
             <i className="fas fa-camera text-3xl sm:text-4xl text-primary"></i>
-            <h3 className="text-lg sm:text-xl font-medium text-white">
-              Please upload a high-quality image of your scalp or hair for assessment
-              <br />
-              <span className="text-sm text-gray-400">(Max size: 5MB, Formats: JPEG, PNG, WEBP)</span>
-            </h3>
-            <p className="text-gray-400">or</p>
+            <div className="space-y-2">
+              <h3 className="text-lg sm:text-xl font-medium text-white">
+                Upload a high-quality image of your scalp or hair
+              </h3>
+              <div className="text-sm text-gray-400 space-y-1">
+                <p>Supported formats: PNG (recommended), JPEG, WebP</p>
+                <p>Size limits: 100KB - 20MB</p>
+                <p>Optimal resolution: Up to 3072x3072 pixels</p>
+              </div>
+            </div>
+
+            {uploadProgress > 0 && (
+              <div className="w-full space-y-2">
+                <Progress value={uploadProgress} className="h-2" />
+                <p className="text-sm text-gray-400">{uploadProgress}% complete</p>
+              </div>
+            )}
+
             <Button 
               className="w-full sm:w-auto bg-primary hover:bg-primary/90 px-6 py-2 text-sm sm:text-base"
               onClick={() => document.getElementById('imageInput')?.click()}
@@ -126,7 +201,7 @@ const ImageUpload = () => {
               {isAnalyzing ? (
                 <>
                   <i className="fas fa-spinner fa-spin mr-2"></i>
-                  <span className="text-sm sm:text-base">Analyzing...Running through 170,000+ case studies...</span>
+                  <span className="text-sm sm:text-base">Analyzing...</span>
                 </>
               ) : (
                 <>
@@ -143,7 +218,7 @@ const ImageUpload = () => {
                 <input 
                   type="file" 
                   className="hidden" 
-                  accept="image/*"
+                  accept=".png,.jpg,.jpeg,.webp"
                   onChange={handleImageUpload}
                 />
                 <i className="fas fa-plus text-xl sm:text-2xl text-primary mb-2"></i>
@@ -152,6 +227,10 @@ const ImageUpload = () => {
             ))}
           </div>
         )}
+
+        <div className="mt-4 text-xs text-gray-500">
+          <p>Premium users can upload up to 3,000 images in batch mode</p>
+        </div>
       </div>
     </div>
   );
