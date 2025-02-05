@@ -530,11 +530,11 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
 
   // Health Score Card Section
   const renderHealthScoreCard = () => {
-    // Get values directly from microscopicAnalysis
     const hydrationScore = analysisData.microscopicAnalysis?.cuticleLayerScore || 0;
+    // Fix the growth score calculation to properly access the Anagen value
     const growthScore = analysisData.structuralAnalysis?.growthPhaseDistribution?.find(
-      phase => Object.keys(phase)[0] === 'Anagen'
-    )?.[0]?.Anagen || 0;
+      phase => 'Anagen' in phase
+    )?.['Anagen'] || 0;
     const shaftIntegrityScore = analysisData.microscopicAnalysis?.shaftStructure?.integrity || 0;
     const medullaScore = analysisData.microscopicAnalysis?.medullaAnalysis?.continuity || 0;
     const surfaceScore = analysisData.microscopicAnalysis?.surfaceMapping?.texture ? 85 : 0;
