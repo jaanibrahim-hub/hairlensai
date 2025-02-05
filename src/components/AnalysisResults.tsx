@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Brain, Activity, Heart, Droplet, Wind } from "lucide-react";
+import { Brain, Activity, Heart, Droplet, Wind, Microscope, Ruler, Leaf, ShieldCheck } from "lucide-react";
 import { API_KEYS } from "@/utils/geminiApi";
 import {
   Chart as ChartJS,
@@ -513,9 +513,15 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
 
   // Health Score Card Section
   const renderHealthScoreCard = () => {
-    const hydrationScore = getMetricValue('hydration');
-    const elasticityScore = getMetricValue('elasticity');
-    const growthScore = getMetricValue('growth rate');
+    // Get values directly from microscopicAnalysis
+    const hydrationScore = analysisData.microscopicAnalysis?.cuticleLayerScore || 0;
+    const growthScore = analysisData.structuralAnalysis?.growthPhaseDistribution?.find(
+      phase => Object.keys(phase)[0] === 'Anagen'
+    )?.[0]?.Anagen || 0;
+    const shaftIntegrityScore = analysisData.microscopicAnalysis?.shaftStructure?.integrity || 0;
+    const medullaScore = analysisData.microscopicAnalysis?.medullaAnalysis?.continuity || 0;
+    const surfaceScore = analysisData.microscopicAnalysis?.surfaceMapping?.texture ? 85 : 0;
+    const protectionScore = analysisData.recommendedTreatments?.primary?.match || 0;
 
     return (
       <div className="bg-gray-800/80 rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
@@ -543,17 +549,38 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
             </div>
           </div>
           <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
-            <Wind className="w-5 h-5 text-green-400" />
-            <div>
-              <div className="text-sm text-gray-300">Elasticity</div>
-              <div className="text-lg font-semibold text-white">{elasticityScore}%</div>
-            </div>
-          </div>
-          <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
-            <Activity className="w-5 h-5 text-yellow-400" />
+            <Activity className="w-5 h-5 text-green-400" />
             <div>
               <div className="text-sm text-gray-300">Growth Rate</div>
               <div className="text-lg font-semibold text-white">{growthScore}%</div>
+            </div>
+          </div>
+          <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+            <Microscope className="w-5 h-5 text-yellow-400" />
+            <div>
+              <div className="text-sm text-gray-300">Shaft Integrity</div>
+              <div className="text-lg font-semibold text-white">{shaftIntegrityScore}%</div>
+            </div>
+          </div>
+          <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+            <Ruler className="w-5 h-5 text-pink-400" />
+            <div>
+              <div className="text-sm text-gray-300">Medulla Score</div>
+              <div className="text-lg font-semibold text-white">{medullaScore}%</div>
+            </div>
+          </div>
+          <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+            <Leaf className="w-5 h-5 text-emerald-400" />
+            <div>
+              <div className="text-sm text-gray-300">Surface Quality</div>
+              <div className="text-lg font-semibold text-white">{surfaceScore}%</div>
+            </div>
+          </div>
+          <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+            <ShieldCheck className="w-5 h-5 text-indigo-400" />
+            <div>
+              <div className="text-sm text-gray-300">Protection Level</div>
+              <div className="text-lg font-semibold text-white">{protectionScore}%</div>
             </div>
           </div>
         </div>
