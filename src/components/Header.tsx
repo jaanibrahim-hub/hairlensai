@@ -10,7 +10,7 @@ const Header = () => {
             <span className="ml-2 text-xl font-semibold text-white">HairLens AI</span>
           </div>
           <div className="flex items-center space-x-4">
-            <Button className="bg-primary hover:bg-primary/90">95% Accuracy</Button>
+            <Button className="bg-primary hover:bg-primary/90">10runs perday</Button>
           </div>
         </div>
       </nav>
