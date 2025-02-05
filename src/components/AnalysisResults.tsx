@@ -503,6 +503,64 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     }]
   };
 
+  // Extract metrics from API response
+  const getMetricValue = (label: string): string => {
+    const metric = analysisData.metrics.find(
+      (m) => m.label.toLowerCase() === label.toLowerCase()
+    );
+    return metric ? metric.value.toString().replace('%', '') : '0';
+  };
+
+  // Health Score Card Section
+  const renderHealthScoreCard = () => {
+    const hydrationScore = getMetricValue('hydration');
+    const elasticityScore = getMetricValue('elasticity');
+    const growthScore = getMetricValue('growth rate');
+
+    return (
+      <div className="bg-gray-800/80 rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-semibold text-white flex items-center gap-2">
+            <Heart className="w-5 h-5 text-purple-400" />
+            Overall Health Score
+          </h3>
+          <div className="text-3xl font-bold text-purple-400">
+            {analysisData.healthScore}%
+          </div>
+        </div>
+        
+        <Progress 
+          value={analysisData.healthScore} 
+          className="h-3 mb-4"
+        />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+          <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+            <Droplet className="w-5 h-5 text-blue-400" />
+            <div>
+              <div className="text-sm text-gray-300">Hydration</div>
+              <div className="text-lg font-semibold text-white">{hydrationScore}%</div>
+            </div>
+          </div>
+          <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+            <Wind className="w-5 h-5 text-green-400" />
+            <div>
+              <div className="text-sm text-gray-300">Elasticity</div>
+              <div className="text-lg font-semibold text-white">{elasticityScore}%</div>
+            </div>
+          </div>
+          <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+            <Activity className="w-5 h-5 text-yellow-400" />
+            <div>
+              <div className="text-sm text-gray-300">Growth Rate</div>
+              <div className="text-lg font-semibold text-white">{growthScore}%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-3 space-y-6">
@@ -539,49 +597,9 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         </div>
 
         {/* Overall Health Score Card */}
-        <div className="bg-gray-800/80 rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-xl font-semibold text-white flex items-center gap-2">
-              <Heart className="w-5 h-5 text-purple-400" />
-              Overall Health Score
-            </h3>
-            <div className="text-3xl font-bold text-purple-400">
-              {analysisData.healthScore}%
-            </div>
-          </div>
-          
-          <Progress 
-            value={analysisData.healthScore} 
-            className="h-3 mb-4"
-          />
+        {renderHealthScoreCard()}
 
-          {/* Sub-metrics Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-            <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
-              <Droplet className="w-5 h-5 text-blue-400" />
-              <div>
-                <div className="text-sm text-gray-300">Hydration</div>
-                <div className="text-lg font-semibold text-white">92%</div>
-              </div>
-            </div>
-            <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
-              <Wind className="w-5 h-5 text-green-400" />
-              <div>
-                <div className="text-sm text-gray-300">Elasticity</div>
-                <div className="text-lg font-semibold text-white">85%</div>
-              </div>
-            </div>
-            <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
-              <Activity className="w-5 h-5 text-yellow-400" />
-              <div>
-                <div className="text-sm text-gray-300">Growth Rate</div>
-                <div className="text-lg font-semibold text-white">78%</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Gemini Analysis Dialog */}
+        {/* Rest of the component */}
         <Dialog open={showGeminiDialog} onOpenChange={setShowGeminiDialog}>
           <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
