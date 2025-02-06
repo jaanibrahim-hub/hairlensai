@@ -12,10 +12,9 @@ export const API_KEYS = [
   'AIzaSyBcyEA5uAB0RXlLy1LKvREzlymz-DVk9SI'
 ];
 
-const ANALYSIS_PROMPT = `Analyze this hair/scalp image and first determine if it's a scalp view or face-forward view. Then provide a detailed assessment based on the view type. Return the analysis in this JSON format:
+const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a detailed assessment. Focus on visible features and provide specific values where possible. Return the analysis in this JSON format:
 
 {
-  "imageType": "scalp-view" or "face-forward",
   "metrics": {
     "hairType": "Describe the hair type (e.g., 1A-4C)",
     "healthStatus": "Overall health assessment",
@@ -37,118 +36,85 @@ const ANALYSIS_PROMPT = `Analyze this hair/scalp image and first determine if it
     "damageAnalysis": "Visible damage assessment"
   },
   "overallHealthScore": "Numerical score 0-100",
-  "regionalDensity": {
-    "imageType": "scalp-view" or "face-forward",
-    "analyzableRegions": {
-      "crown": {
-        "density": "Density in hairs/cm²",
-        "status": "optimal/normal/thinning",
-        "comparison": "Percentage comparison with average"
-      },
-      "temples": {
-        "left": {
-          "density": "Density in hairs/cm²",
-          "status": "optimal/normal/thinning",
-          "comparison": "Percentage comparison with average"
-        },
-        "right": {
-          "density": "Density in hairs/cm²",
-          "status": "optimal/normal/thinning",
-          "comparison": "Percentage comparison with average"
-        }
-      },
-      "hairline": {
-        "density": "Density in hairs/cm²",
-        "status": "optimal/normal/thinning",
-        "comparison": "Percentage comparison with average"
-      },
-      "vertex": {
-        "density": "Density in hairs/cm²",
-        "status": "optimal/normal/thinning",
-        "comparison": "Percentage comparison with average"
-      }
-    },
-    "nonVisibleRegions": ["List of regions not visible in image"],
-    "recommendedViews": ["List of recommended additional views needed"]
-  },
   "structuralAnalysis": {
-    "hairGrowthCycle": [Array of 6 monthly growth values],
+    "hairGrowthCycle": [65, 70, 75, 80, 85, 90],
     "curlPatternDistribution": [
-      {"Straight": percentage},
-      {"Wavy": percentage},
-      {"Curly": percentage},
-      {"Coily": percentage}
+      {"Straight": 30},
+      {"Wavy": 40},
+      {"Curly": 20},
+      {"Coily": 10}
     ],
     "growthPhaseDistribution": [
-      {"Anagen": percentage},
-      {"Catagen": percentage},
-      {"Telogen": percentage}
+      {"Anagen": 85},
+      {"Catagen": 5},
+      {"Telogen": 10}
     ]
   },
   "microscopicAnalysis": {
-    "cuticleLayerScore": "0-100",
+    "cuticleLayerScore": 75,
     "shaftStructure": {
-      "integrity": "0-100",
-      "pattern": "Description"
+      "integrity": 80,
+      "pattern": "Regular/Irregular pattern description"
     },
     "medullaAnalysis": {
-      "continuity": "0-100"
+      "continuity": 85
     },
     "crossSection": {
-      "uniformity": "0-100"
+      "uniformity": 90
     },
     "surfaceMapping": {
-      "texture": "Description",
-      "damage": "Description"
+      "texture": "Detailed texture description",
+      "damage": "Specific damage patterns"
     }
   },
   "quickSummary": "Brief analysis summary highlighting key findings",
   "hairInformation": {
     "diagnosticAnalysis": "Detailed diagnostic findings",
-    "careTips": ["Array of care recommendations"]
+    "careTips": [
+      "Specific care recommendation 1",
+      "Specific care recommendation 2",
+      "Specific care recommendation 3"
+    ]
   },
   "recommendedTreatments": {
     "primary": {
       "name": "Primary treatment name",
       "description": "Treatment description",
-      "match": "0-100"
+      "match": 95
     },
     "secondary": {
       "name": "Secondary treatment name",
       "description": "Treatment description",
-      "match": "0-100"
+      "match": 85
     },
     "supporting": {
       "name": "Supporting treatment name",
       "description": "Treatment description",
-      "match": "0-100"
+      "match": 75
     },
     "other": [
       {
-        "name": "Alternative treatment name",
-        "match": "0-100"
+        "name": "Alternative treatment 1",
+        "match": 65
+      },
+      {
+        "name": "Alternative treatment 2",
+        "match": 55
       }
     ]
   }
 }
 
 Important guidelines for analysis:
-1. First determine if the image is a scalp view or face-forward view
-2. For face-forward views:
-   - Only analyze visible regions (hairline, temples)
-   - Mark non-visible regions in nonVisibleRegions array
-   - Provide specific recommendations for additional views needed
-3. For scalp views:
-   - Analyze all visible regions
-   - Provide detailed density measurements
-4. Provide specific numerical values whenever possible
-5. Focus on visible characteristics in the image
-6. Make reasonable estimates based on visible features
-7. Use comparative analysis with standard hair types
-8. Consider both close-up details and overall appearance
-9. Assess multiple areas of the image for comprehensive analysis
-10. Note any distinct patterns or variations
-11. Include specific measurements where visible indicators allow estimation`;
+1. Provide specific numerical values whenever possible
+2. Focus on visible characteristics in the image
+3. Make reasonable estimates based on visible features
+4. Use comparative analysis with standard hair types
+5. Consider both close-up details and overall appearance
+6. Assess multiple areas of the image for comprehensive analysis
+7. Note any distinct patterns or variations
+8. Include specific measurements where visible indicators allow estimation
+`;
 
 export const analyzeHairImage = async (imageBase64: string): Promise<any> => {
   if (!validateImage(imageBase64)) {
@@ -399,4 +365,3 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
     throw error;
   }
 }
-
