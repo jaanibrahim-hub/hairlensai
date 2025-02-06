@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Brain, Activity, Heart, Droplet, Wind, Microscope, Ruler, Leaf, ShieldCheck, MapPin } from "lucide-react";
+import { Brain, Activity, Heart, Droplet, Wind, Microscope, Ruler, Leaf, ShieldCheck, MapPin, Clipboard, Pill } from "lucide-react";
 import { API_KEYS } from "@/utils/geminiApi";
 import {
   Chart as ChartJS,
@@ -736,6 +736,53 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     );
   };
 
+  const renderAnalysisCard = (
+    title: string, 
+    content: string | Record<string, string> | Array<{category: string, recommendations: string[]}>,
+    icon: React.ReactNode,
+    gradientClasses: string
+  ) => {
+    const renderContent = () => {
+      if (typeof content === 'string') {
+        return (
+          <div className="prose prose-invert max-w-none">
+            <p className="text-gray-200 leading-relaxed">{content}</p>
+          </div>
+        );
+      } else if (Array.isArray(content)) {
+        return content.map((item, index) => (
+          <div key={index} className="mt-4">
+            <h4 className="text-lg font-medium text-white mb-2">{item.category}</h4>
+            <ul className="list-disc list-inside space-y-2">
+              {item.recommendations.map((rec, recIndex) => (
+                <li key={recIndex} className="text-gray-200">{rec}</li>
+              ))}
+            </ul>
+          </div>
+        ));
+      } else {
+        return Object.entries(content).map(([key, value], index) => (
+          <div key={index} className="mt-4">
+            <h4 className="text-lg font-medium text-white mb-2">
+              {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+            </h4>
+            <p className="text-gray-200 leading-relaxed">{value}</p>
+          </div>
+        ));
+      }
+    };
+
+    return (
+      <div className={`${gradientClasses} rounded-xl p-6 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 mb-6`}>
+        <div className="flex items-center gap-3 mb-4">
+          {icon}
+          <h2 className="text-xl font-semibold text-white">{title}</h2>
+        </div>
+        {renderContent()}
+      </div>
+    );
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-3 space-y-6">
@@ -776,9 +823,9 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
 
         {/* Rest of the component */}
         <Dialog open={showGeminiDialog} onOpenChange={setShowGeminiDialog}>
-          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gray-900/95 backdrop-blur-lg">
             <DialogHeader>
-              <DialogTitle>AI Hair Analysis Report</DialogTitle>
+              <DialogTitle className="text-2xl font-bold text-white">AI Hair Analysis Report</DialogTitle>
             </DialogHeader>
             {isGeminiLoading ? (
               <div className="flex flex-col items-center justify-center p-8 space-y-4">
@@ -786,8 +833,31 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
                 <p className="text-gray-400">Analyzing your hair data...</p>
               </div>
             ) : (
-              <div className="prose prose-invert max-w-none">
-                <div className="whitespace-pre-wrap">{geminiAnalysis}</div>
+              <div className="space-y-6 p-4">
+                {geminiAnalysis && (
+                  <>
+                    {renderAnalysisCard(
+                      "Diagnostic Summary",
+                      geminiAnalysis.split('# Diagnostic Summary\n')[1]?.split('#')[0]?.trim() || "No diagnostic summary available",
+                      <Clipboard className="w-6 h-6 text-purple-400" />,
+                      "bg-gradient-to-br from-purple-600/20 to-indigo-600/20"
+                    )}
+                    
+                    {renderAnalysisCard(
+                      "Detailed Analysis",
+                      geminiAnalysis.split('# Detailed Analysis\n')[1]?.split('#')[0]?.trim() || "No detailed analysis available",
+                      <Microscope className="w-6 h-6 text-blue-400" />,
+                      "bg-gradient-to-br from-blue-600/20 to-cyan-600/20"
+                    )}
+                    
+                    {renderAnalysisCard(
+                      "Treatment Plan",
+                      geminiAnalysis.split('# Treatment Plan\n')[1]?.trim() || "No treatment plan available",
+                      <Pill className="w-6 h-6 text-emerald-400" />,
+                      "bg-gradient-to-br from-emerald-600/20 to-teal-600/20"
+                    )}
+                  </>
+                )}
               </div>
             )}
           </DialogContent>
