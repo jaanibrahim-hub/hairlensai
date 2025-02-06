@@ -262,14 +262,101 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
 
 const SECOND_ANALYSIS_PROMPT = `As a trichology expert, analyze this hair health data and provide a comprehensive medical assessment. Format your response as structured JSON with the following schema:
 {
-  "diagnostic_summary": "Brief overview of key findings",
-  "detailed_analysis": "In-depth examination of all metrics",
-  "treatment_plan": [
-    {
-      "category": "treatment category",
-      "recommendations": ["specific recommendations"]
+  "diagnostic_summary": {
+    "overview": "Brief overview of key findings",
+    "key_metrics": [
+      {
+        "name": "Hair Density",
+        "value": "0-100",
+        "trend": "improving/declining/stable",
+        "severity": "low/medium/high"
+      }
+    ],
+    "vital_stats": {
+      "strength_score": "0-100",
+      "health_index": "0-100",
+      "growth_rate": "mm/month",
+      "density_score": "0-100"
+    },
+    "immediate_concerns": [
+      {
+        "issue": "Issue description",
+        "priority": "1-5",
+        "impact": "Impact description"
+      }
+    ]
+  },
+  "detailed_analysis": {
+    "scalp_health": {
+      "ph_level": "4.5-5.5",
+      "hydration": "0-100",
+      "sebum_production": "low/normal/high",
+      "concerns": ["List of concerns"],
+      "recommendations": ["Specific recommendations"]
+    },
+    "growth_patterns": {
+      "anagen_percentage": "0-100",
+      "telogen_percentage": "0-100",
+      "growth_rate": "mm/month",
+      "density_distribution": {
+        "crown": "0-100",
+        "temples": "0-100",
+        "hairline": "0-100"
+      }
+    },
+    "structural_health": {
+      "protein_content": "0-100",
+      "moisture_balance": "0-100",
+      "cuticle_integrity": "0-100",
+      "elasticity": "0-100"
+    },
+    "environmental_factors": {
+      "uv_damage": "0-100",
+      "chemical_stress": "0-100",
+      "mechanical_stress": "0-100",
+      "protective_measures": ["List of measures"]
     }
-  ]
+  },
+  "treatment_plan": {
+    "immediate_phase": {
+      "duration": "0-3 months",
+      "primary_goals": ["List of goals"],
+      "treatments": [
+        {
+          "name": "Treatment name",
+          "frequency": "How often",
+          "priority": "high/medium/low",
+          "expected_results": "What to expect"
+        }
+      ],
+      "lifestyle_changes": ["Required changes"],
+      "progress_markers": ["How to track progress"]
+    },
+    "maintenance_phase": {
+      "duration": "3-6 months",
+      "goals": ["List of goals"],
+      "treatments": [
+        {
+          "name": "Treatment name",
+          "frequency": "How often",
+          "priority": "high/medium/low",
+          "expected_results": "What to expect"
+        }
+      ]
+    },
+    "long_term_phase": {
+      "duration": "6+ months",
+      "goals": ["List of goals"],
+      "treatments": [
+        {
+          "name": "Treatment name",
+          "frequency": "How often",
+          "priority": "high/medium/low",
+          "expected_results": "What to expect"
+        }
+      ]
+    }
+  }
 }`;
 
 export const performSecondaryAnalysis = async (analysisData: any, apiKey: string) => {

@@ -738,38 +738,163 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
 
   const renderAnalysisCard = (
     title: string, 
-    content: string | Record<string, string> | Array<{category: string, recommendations: string[]}>,
+    content: any,
     icon: React.ReactNode,
     gradientClasses: string
   ) => {
-    const renderContent = () => {
-      if (typeof content === 'string') {
-        return (
-          <div className="prose prose-invert max-w-none">
-            <p className="text-gray-200 leading-relaxed">{content}</p>
+    const renderDiagnosticSummary = (data: any) => {
+      return (
+        <div className="space-y-6">
+          <div className="bg-white/10 rounded-lg p-4">
+            <p className="text-gray-200 leading-relaxed">{data.overview}</p>
           </div>
-        );
-      } else if (Array.isArray(content)) {
-        return content.map((item, index) => (
-          <div key={index} className="mt-4">
-            <h4 className="text-lg font-medium text-white mb-2">{item.category}</h4>
-            <ul className="list-disc list-inside space-y-2">
-              {item.recommendations.map((rec, recIndex) => (
-                <li key={recIndex} className="text-gray-200">{rec}</li>
+          
+          <div className="grid grid-cols-2 gap-4">
+            {data.key_metrics.map((metric: any, index: number) => (
+              <div key={index} className="bg-white/10 rounded-lg p-4">
+                <h5 className="font-medium text-white mb-2">{metric.name}</h5>
+                <div className="flex justify-between items-center">
+                  <span className="text-2xl font-bold text-purple-400">{metric.value}</span>
+                  <span className={`text-sm ${
+                    metric.trend === 'improving' ? 'text-green-400' : 
+                    metric.trend === 'declining' ? 'text-red-400' : 
+                    'text-yellow-400'
+                  }`}>
+                    {metric.trend}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-white/10 rounded-lg p-4">
+            <h5 className="font-medium text-white mb-4">Vital Statistics</h5>
+            <div className="grid grid-cols-2 gap-4">
+              {Object.entries(data.vital_stats).map(([key, value]: [string, any]) => (
+                <div key={key} className="flex items-center space-x-2">
+                  <span className="text-gray-400">{key.replace('_', ' ')}:</span>
+                  <span className="text-white font-medium">{value}</span>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
-        ));
-      } else {
-        return Object.entries(content).map(([key, value], index) => (
-          <div key={index} className="mt-4">
-            <h4 className="text-lg font-medium text-white mb-2">
-              {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-            </h4>
-            <p className="text-gray-200 leading-relaxed">{value}</p>
-          </div>
-        ));
+        </div>
+      );
+    };
+
+    const renderDetailedAnalysis = (data: any) => {
+      return (
+        <div className="space-y-6">
+          {Object.entries(data).map(([section, details]: [string, any]) => (
+            <div key={section} className="bg-white/10 rounded-lg p-4">
+              <h5 className="font-medium text-white mb-4 capitalize">
+                {section.replace('_', ' ')}
+              </h5>
+              {typeof details === 'object' && !Array.isArray(details) ? (
+                <div className="space-y-4">
+                  {Object.entries(details).map(([key, value]: [string, any]) => (
+                    <div key={key}>
+                      {Array.isArray(value) ? (
+                        <div>
+                          <h6 className="text-sm text-gray-400 mb-2 capitalize">
+                            {key.replace('_', ' ')}
+                          </h6>
+                          <ul className="list-disc list-inside space-y-1">
+                            {value.map((item: string, index: number) => (
+                              <li key={index} className="text-gray-200">{item}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between items-center">
+                          <span className="text-gray-400 capitalize">{key.replace('_', ' ')}</span>
+                          <span className="text-white">{value}</span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-gray-200">{details}</div>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    };
+
+    const renderTreatmentPlan = (data: any) => {
+      return (
+        <div className="space-y-6">
+          {Object.entries(data).map(([phase, details]: [string, any]) => (
+            <div key={phase} className="bg-white/10 rounded-lg p-4">
+              <h5 className="font-medium text-white mb-4 capitalize flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
+                {phase.replace('_', ' ')} ({details.duration})
+              </h5>
+              
+              <div className="space-y-4">
+                <div>
+                  <h6 className="text-sm text-gray-400 mb-2">Goals</h6>
+                  <ul className="list-disc list-inside space-y-1">
+                    {details.goals?.map((goal: string, index: number) => (
+                      <li key={index} className="text-gray-200">{goal}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <h6 className="text-sm text-gray-400 mb-2">Treatments</h6>
+                  <div className="space-y-3">
+                    {details.treatments?.map((treatment: any, index: number) => (
+                      <div key={index} className="bg-white/5 rounded p-3">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="font-medium text-white">{treatment.name}</span>
+                          <span className={`text-xs px-2 py-1 rounded ${
+                            treatment.priority === 'high' ? 'bg-red-500/20 text-red-400' :
+                            treatment.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                            'bg-green-500/20 text-green-400'
+                          }`}>
+                            {treatment.priority}
+                          </span>
+                        </div>
+                        <div className="text-sm text-gray-400">
+                          Frequency: {treatment.frequency}
+                        </div>
+                        <div className="text-sm text-gray-300 mt-1">
+                          {treatment.expected_results}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {details.lifestyle_changes && (
+                  <div>
+                    <h6 className="text-sm text-gray-400 mb-2">Lifestyle Changes</h6>
+                    <ul className="list-disc list-inside space-y-1">
+                      {details.lifestyle_changes.map((change: string, index: number) => (
+                        <li key={index} className="text-gray-200">{change}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    };
+
+    const renderContent = () => {
+      if (title === "Diagnostic Summary") {
+        return renderDiagnosticSummary(content);
+      } else if (title === "Detailed Analysis") {
+        return renderDetailedAnalysis(content);
+      } else if (title === "Treatment Plan") {
+        return renderTreatmentPlan(content);
       }
+      return null;
     };
 
     return (
@@ -838,21 +963,21 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
                   <>
                     {renderAnalysisCard(
                       "Diagnostic Summary",
-                      geminiAnalysis.split('# Diagnostic Summary\n')[1]?.split('#')[0]?.trim() || "No diagnostic summary available",
+                      JSON.parse(geminiAnalysis.split('# Diagnostic Summary\n')[1]?.split('#')[0]?.trim() || "{}"),
                       <Clipboard className="w-6 h-6 text-purple-400" />,
                       "bg-gradient-to-br from-purple-600/20 to-indigo-600/20"
                     )}
                     
                     {renderAnalysisCard(
                       "Detailed Analysis",
-                      geminiAnalysis.split('# Detailed Analysis\n')[1]?.split('#')[0]?.trim() || "No detailed analysis available",
+                      JSON.parse(geminiAnalysis.split('# Detailed Analysis\n')[1]?.split('#')[0]?.trim() || "{}"),
                       <Microscope className="w-6 h-6 text-blue-400" />,
                       "bg-gradient-to-br from-blue-600/20 to-cyan-600/20"
                     )}
                     
                     {renderAnalysisCard(
                       "Treatment Plan",
-                      geminiAnalysis.split('# Treatment Plan\n')[1]?.trim() || "No treatment plan available",
+                      JSON.parse(geminiAnalysis.split('# Treatment Plan\n')[1]?.trim() || "{}"),
                       <Pill className="w-6 h-6 text-emerald-400" />,
                       "bg-gradient-to-br from-emerald-600/20 to-teal-600/20"
                     )}
