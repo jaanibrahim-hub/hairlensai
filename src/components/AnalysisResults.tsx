@@ -742,143 +742,43 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     icon: React.ReactNode,
     gradientClasses: string
   ) => {
-    const renderDiagnosticSummary = (data: any) => {
+    const renderDiagnosticSummary = (data: string) => {
       return (
         <div className="space-y-6">
           <div className="bg-white/10 rounded-lg p-4">
-            <p className="text-gray-200 leading-relaxed">{data.overview}</p>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            {data.key_metrics.map((metric: any, index: number) => (
-              <div key={index} className="bg-white/10 rounded-lg p-4">
-                <h5 className="font-medium text-white mb-2">{metric.name}</h5>
-                <div className="flex justify-between items-center">
-                  <span className="text-2xl font-bold text-purple-400">{metric.value}</span>
-                  <span className={`text-sm ${
-                    metric.trend === 'improving' ? 'text-green-400' : 
-                    metric.trend === 'declining' ? 'text-red-400' : 
-                    'text-yellow-400'
-                  }`}>
-                    {metric.trend}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="bg-white/10 rounded-lg p-4">
-            <h5 className="font-medium text-white mb-4">Vital Statistics</h5>
-            <div className="grid grid-cols-2 gap-4">
-              {Object.entries(data.vital_stats).map(([key, value]: [string, any]) => (
-                <div key={key} className="flex items-center space-x-2">
-                  <span className="text-gray-400">{key.replace('_', ' ')}:</span>
-                  <span className="text-white font-medium">{value}</span>
-                </div>
-              ))}
-            </div>
+            <p className="text-gray-200 leading-relaxed">{data}</p>
           </div>
         </div>
       );
     };
 
-    const renderDetailedAnalysis = (data: any) => {
+    const renderDetailedAnalysis = (data: string) => {
       return (
-        <div className="space-y-6">
-          {Object.entries(data).map(([section, details]: [string, any]) => (
-            <div key={section} className="bg-white/10 rounded-lg p-4">
-              <h5 className="font-medium text-white mb-4 capitalize">
-                {section.replace('_', ' ')}
-              </h5>
-              {typeof details === 'object' && !Array.isArray(details) ? (
-                <div className="space-y-4">
-                  {Object.entries(details).map(([key, value]: [string, any]) => (
-                    <div key={key}>
-                      {Array.isArray(value) ? (
-                        <div>
-                          <h6 className="text-sm text-gray-400 mb-2 capitalize">
-                            {key.replace('_', ' ')}
-                          </h6>
-                          <ul className="list-disc list-inside space-y-1">
-                            {value.map((item: string, index: number) => (
-                              <li key={index} className="text-gray-200">{item}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      ) : (
-                        <div className="flex justify-between items-center">
-                          <span className="text-gray-400 capitalize">{key.replace('_', ' ')}</span>
-                          <span className="text-white">{value}</span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-gray-200">{details}</div>
-              )}
-            </div>
-          ))}
+        <div className="bg-white/10 rounded-lg p-4">
+          <p className="text-gray-200 leading-relaxed">{data}</p>
         </div>
       );
     };
 
-    const renderTreatmentPlan = (data: any) => {
+    const renderTreatmentPlan = (data: Array<{category: string, recommendations: string[]}>) => {
       return (
         <div className="space-y-6">
-          {Object.entries(data).map(([phase, details]: [string, any]) => (
-            <div key={phase} className="bg-white/10 rounded-lg p-4">
+          {Array.isArray(data) && data.map((phase, index) => (
+            <div key={index} className="bg-white/10 rounded-lg p-4">
               <h5 className="font-medium text-white mb-4 capitalize flex items-center gap-2">
                 <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
-                {phase.replace('_', ' ')} ({details.duration})
+                {phase.category}
               </h5>
               
               <div className="space-y-4">
                 <div>
-                  <h6 className="text-sm text-gray-400 mb-2">Goals</h6>
+                  <h6 className="text-sm text-gray-400 mb-2">Recommendations</h6>
                   <ul className="list-disc list-inside space-y-1">
-                    {details.goals?.map((goal: string, index: number) => (
-                      <li key={index} className="text-gray-200">{goal}</li>
+                    {phase.recommendations.map((recommendation, recIndex) => (
+                      <li key={recIndex} className="text-gray-200">{recommendation}</li>
                     ))}
                   </ul>
                 </div>
-
-                <div>
-                  <h6 className="text-sm text-gray-400 mb-2">Treatments</h6>
-                  <div className="space-y-3">
-                    {details.treatments?.map((treatment: any, index: number) => (
-                      <div key={index} className="bg-white/5 rounded p-3">
-                        <div className="flex justify-between items-center mb-2">
-                          <span className="font-medium text-white">{treatment.name}</span>
-                          <span className={`text-xs px-2 py-1 rounded ${
-                            treatment.priority === 'high' ? 'bg-red-500/20 text-red-400' :
-                            treatment.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                            'bg-green-500/20 text-green-400'
-                          }`}>
-                            {treatment.priority}
-                          </span>
-                        </div>
-                        <div className="text-sm text-gray-400">
-                          Frequency: {treatment.frequency}
-                        </div>
-                        <div className="text-sm text-gray-300 mt-1">
-                          {treatment.expected_results}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {details.lifestyle_changes && (
-                  <div>
-                    <h6 className="text-sm text-gray-400 mb-2">Lifestyle Changes</h6>
-                    <ul className="list-disc list-inside space-y-1">
-                      {details.lifestyle_changes.map((change: string, index: number) => (
-                        <li key={index} className="text-gray-200">{change}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
               </div>
             </div>
           ))}
