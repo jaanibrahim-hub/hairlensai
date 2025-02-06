@@ -738,63 +738,38 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
 
   const renderAnalysisCard = (
     title: string, 
-    content: any,
+    content: string | Record<string, string> | Array<{category: string, recommendations: string[]}>,
     icon: React.ReactNode,
     gradientClasses: string
   ) => {
-    const renderDiagnosticSummary = (data: string) => {
-      return (
-        <div className="space-y-6">
-          <div className="bg-white/10 rounded-lg p-4">
-            <p className="text-gray-200 leading-relaxed">{data}</p>
-          </div>
-        </div>
-      );
-    };
-
-    const renderDetailedAnalysis = (data: string) => {
-      return (
-        <div className="bg-white/10 rounded-lg p-4">
-          <p className="text-gray-200 leading-relaxed">{data}</p>
-        </div>
-      );
-    };
-
-    const renderTreatmentPlan = (data: Array<{category: string, recommendations: string[]}>) => {
-      return (
-        <div className="space-y-6">
-          {Array.isArray(data) && data.map((phase, index) => (
-            <div key={index} className="bg-white/10 rounded-lg p-4">
-              <h5 className="font-medium text-white mb-4 capitalize flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-emerald-400"></span>
-                {phase.category}
-              </h5>
-              
-              <div className="space-y-4">
-                <div>
-                  <h6 className="text-sm text-gray-400 mb-2">Recommendations</h6>
-                  <ul className="list-disc list-inside space-y-1">
-                    {phase.recommendations.map((recommendation, recIndex) => (
-                      <li key={recIndex} className="text-gray-200">{recommendation}</li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      );
-    };
-
     const renderContent = () => {
-      if (title === "Diagnostic Summary") {
-        return renderDiagnosticSummary(content);
-      } else if (title === "Detailed Analysis") {
-        return renderDetailedAnalysis(content);
-      } else if (title === "Treatment Plan") {
-        return renderTreatmentPlan(content);
+      if (typeof content === 'string') {
+        return (
+          <div className="prose prose-invert max-w-none">
+            <p className="text-gray-200 leading-relaxed">{content}</p>
+          </div>
+        );
+      } else if (Array.isArray(content)) {
+        return content.map((item, index) => (
+          <div key={index} className="mt-4">
+            <h4 className="text-lg font-medium text-white mb-2">{item.category}</h4>
+            <ul className="list-disc list-inside space-y-2">
+              {item.recommendations.map((rec, recIndex) => (
+                <li key={recIndex} className="text-gray-200">{rec}</li>
+              ))}
+            </ul>
+          </div>
+        ));
+      } else {
+        return Object.entries(content).map(([key, value], index) => (
+          <div key={index} className="mt-4">
+            <h4 className="text-lg font-medium text-white mb-2">
+              {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+            </h4>
+            <p className="text-gray-200 leading-relaxed">{value}</p>
+          </div>
+        ));
       }
-      return null;
     };
 
     return (
@@ -863,21 +838,21 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
                   <>
                     {renderAnalysisCard(
                       "Diagnostic Summary",
-                      JSON.parse(geminiAnalysis.split('# Diagnostic Summary\n')[1]?.split('#')[0]?.trim() || "{}"),
+                      geminiAnalysis.split('# Diagnostic Summary\n')[1]?.split('#')[0]?.trim() || "No diagnostic summary available",
                       <Clipboard className="w-6 h-6 text-purple-400" />,
                       "bg-gradient-to-br from-purple-600/20 to-indigo-600/20"
                     )}
                     
                     {renderAnalysisCard(
                       "Detailed Analysis",
-                      JSON.parse(geminiAnalysis.split('# Detailed Analysis\n')[1]?.split('#')[0]?.trim() || "{}"),
+                      geminiAnalysis.split('# Detailed Analysis\n')[1]?.split('#')[0]?.trim() || "No detailed analysis available",
                       <Microscope className="w-6 h-6 text-blue-400" />,
                       "bg-gradient-to-br from-blue-600/20 to-cyan-600/20"
                     )}
                     
                     {renderAnalysisCard(
                       "Treatment Plan",
-                      JSON.parse(geminiAnalysis.split('# Treatment Plan\n')[1]?.trim() || "{}"),
+                      geminiAnalysis.split('# Treatment Plan\n')[1]?.trim() || "No treatment plan available",
                       <Pill className="w-6 h-6 text-emerald-400" />,
                       "bg-gradient-to-br from-emerald-600/20 to-teal-600/20"
                     )}
