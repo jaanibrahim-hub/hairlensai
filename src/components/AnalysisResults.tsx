@@ -40,6 +40,15 @@ ChartJS.register(
   RadialLinearScale
 );
 
+interface GeminiAnalysis {
+  diagnostic_summary: string;
+  detailed_analysis: string;
+  treatment_plan: Array<{
+    category: string;
+    recommendations: string[];
+  }>;
+}
+
 interface HairDiameter {
   root: string;
   tip: string;
