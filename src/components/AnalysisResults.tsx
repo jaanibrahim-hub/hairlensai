@@ -205,6 +205,30 @@ const defaultRawMetrics = {
   damageAnalysis: "Minimal"
 };
 
+const defaultRecommendedTreatments = {
+  primary: {
+    name: "FUE Treatment",
+    description: "Follicular Unit Extraction for natural-looking results",
+    match: 98
+  },
+  secondary: {
+    name: "PRP Treatment",
+    description: "Platelet-Rich Plasma therapy for enhanced growth",
+    match: 85
+  },
+  supporting: {
+    name: "Scalp Treatment",
+    description: "Deep conditioning and scalp therapy",
+    match: 75
+  },
+  other: [
+    { name: "Hair Transplant", match: 65 },
+    { name: "FUT", match: 45 },
+    { name: "SMP", match: 40 },
+    { name: "Micro FUE", match: 55 }
+  ]
+};
+
 const transformApiResponse = (apiResponse: any): AnalysisResult => {
   const rawMetrics = apiResponse.metrics || {};
 
@@ -358,7 +382,8 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         backgroundColor: 'rgba(155, 135, 245, 0.1)',
         fill: true,
       }]
-    }
+    },
+    recommendedTreatments: defaultRecommendedTreatments
   });
   const [showAIDialog, setShowAIDialog] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
