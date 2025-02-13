@@ -840,7 +840,7 @@ const AnalysisResults = ({
           <h2 className="text-xl font-semibold mb-4">Recommended Treatments</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {analysisData.recommendedTreatments ? <>
-                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500 px-[6px] py-px">
                   <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
                   <div className="flex items-center mb-3">
                     <i className="fas fa-check-circle text-green-500 mr-2"></i>
