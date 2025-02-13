@@ -367,7 +367,7 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
       label: 'Growth Phase',
       data: [],
       borderColor: '#9b87f5',
-      backgroundColor: 'rgba(153, 102, 255, 0.1)',
+      backgroundColor: 'rgba(155, 135, 245, 0.1)',
       fill: true
     }]
   };
@@ -876,7 +876,34 @@ const AnalysisResults = ({
         {renderContent()}
       </div>;
   };
-  return <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-3 space-y-6">
         <div className="mb-6">
-          <Button onClick={handleGeminiAnalysis
+          <Button onClick={handleGeminiAnalysis}>
+            Get Advanced Analysis
+          </Button>
+        </div>
+        {renderHealthScoreCard()}
+      </div>
+
+      <Dialog open={showGeminiDialog} onOpenChange={setShowGeminiDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Advanced Hair Analysis</DialogTitle>
+          </DialogHeader>
+          {isGeminiLoading ? (
+            <div className="flex flex-col items-center justify-center p-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
+              <p className="text-gray-500">Analyzing your hair data...</p>
+            </div>
+          ) : (
+            <AdvancedAnalysis analysis={geminiAnalysis} />
+          )}
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
+
+export default AnalysisResults;
