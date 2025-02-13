@@ -10,47 +10,11 @@ import { Line, Doughnut } from 'react-chartjs-2';
 import AdvancedAnalysis from "./AdvancedAnalysis";
 import { performSecondaryAnalysis } from "@/utils/geminiApi";
 import { SecondaryAnalysisResponse } from "@/types/analysis";
-
 ChartJS.register(ArcElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler, RadialLinearScale);
-
 interface HairDiameter {
   root: string;
   tip: string;
 }
-
-interface RegionalDensity {
-  overall: string;
-  regions: {
-    crown: {
-      density: string;
-      status: string;
-      comparison: string;
-    };
-    temples: {
-      left: {
-        density: string;
-        status: string;
-        comparison: string;
-      };
-      right: {
-        density: string;
-        status: string;
-        comparison: string;
-      };
-    };
-    hairline: {
-      density: string;
-      status: string;
-      comparison: string;
-    };
-    vertex: {
-      density: string;
-      status: string;
-      comparison: string;
-    };
-  };
-}
-
 interface AnalysisResult {
   metrics: {
     icon: string;
@@ -71,7 +35,10 @@ interface AnalysisResult {
     breakageRate?: string;
     strandThickness?: string;
     follicleDensity?: string;
-    hairDiameter?: HairDiameter;
+    hairDiameter?: {
+      root: string;
+      tip: string;
+    };
     growthPhase?: string;
     damageAnalysis?: string;
   };
@@ -154,9 +121,7 @@ interface AnalysisResult {
       match: number;
     }>;
   };
-  regionalDensity: RegionalDensity;
 }
-
 const defaultHealthData = {
   labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
   datasets: [{
@@ -167,7 +132,6 @@ const defaultHealthData = {
     fill: true
   }]
 };
-
 const defaultMetrics = [{
   icon: "cut",
   label: "Hair Type",
@@ -230,7 +194,6 @@ const defaultMetrics = [{
   label: "Damage Analysis",
   value: "Minimal"
 }];
-
 const defaultRawMetrics = {
   hairType: "Type 2B Wavy",
   healthStatus: "Requires Attention",
@@ -251,7 +214,6 @@ const defaultRawMetrics = {
   growthPhase: "85% Anagen",
   damageAnalysis: "Minimal"
 };
-
 const defaultRecommendedTreatments = {
   primary: {
     name: "FUE Treatment",
@@ -282,7 +244,6 @@ const defaultRecommendedTreatments = {
     match: 55
   }]
 };
-
 const transformApiResponse = (apiResponse: any): AnalysisResult => {
   const rawMetrics = apiResponse.metrics || {};
   const metricsArray = Object.entries(apiResponse.metrics || {}).map(([key, value]) => {
@@ -367,7 +328,7 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
       label: 'Growth Phase',
       data: [],
       borderColor: '#9b87f5',
-      backgroundColor: 'rgba(155, 135, 245, 0.1)',
+      backgroundColor: 'rgba(153, 102, 255, 0.1)',
       fill: true
     }]
   };
@@ -395,46 +356,12 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
     structuralAnalysis: apiResponse.structuralAnalysis,
     quickSummary: apiResponse.quickSummary,
     hairInformation: apiResponse.hairInformation,
-    recommendedTreatments: apiResponse.recommendedTreatments,
-    regionalDensity: {
-      overall: "170 hairs/cm²",
-      regions: {
-        crown: {
-          density: "180 hairs/cm²",
-          status: "optimal",
-          comparison: "+5% above average"
-        },
-        temples: {
-          left: {
-            density: "165 hairs/cm²",
-            status: "normal",
-            comparison: "-3% below average"
-          },
-          right: {
-            density: "162 hairs/cm²",
-            status: "normal",
-            comparison: "-5% below average"
-          }
-        },
-        hairline: {
-          density: "155 hairs/cm²",
-          status: "thinning",
-          comparison: "-10% below average"
-        },
-        vertex: {
-          density: "175 hairs/cm²",
-          status: "optimal",
-          comparison: "+2% above average"
-        }
-      }
-    }
+    recommendedTreatments: apiResponse.recommendedTreatments
   };
 };
-
 interface AnalysisResultsProps {
   apiKey: string | null;
 }
-
 const AnalysisResults = ({
   apiKey
 }: AnalysisResultsProps) => {
@@ -463,39 +390,7 @@ const AnalysisResults = ({
         fill: true
       }]
     },
-    recommendedTreatments: defaultRecommendedTreatments,
-    regionalDensity: {
-      overall: "170 hairs/cm²",
-      regions: {
-        crown: {
-          density: "180 hairs/cm²",
-          status: "optimal",
-          comparison: "+5% above average"
-        },
-        temples: {
-          left: {
-            density: "165 hairs/cm²",
-            status: "normal",
-            comparison: "-3% below average"
-          },
-          right: {
-            density: "162 hairs/cm²",
-            status: "normal",
-            comparison: "-5% below average"
-          }
-        },
-        hairline: {
-          density: "155 hairs/cm²",
-          status: "thinning",
-          comparison: "-10% below average"
-        },
-        vertex: {
-          density: "175 hairs/cm²",
-          status: "optimal",
-          comparison: "+2% above average"
-        }
-      }
-    }
+    recommendedTreatments: defaultRecommendedTreatments
   });
   const [showAIDialog, setShowAIDialog] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -677,6 +572,38 @@ const AnalysisResults = ({
       borderColor: 'transparent'
     }]
   };
+  interface RegionalDensity {
+    overall: string;
+    regions: {
+      crown: {
+        density: string;
+        status: string;
+        comparison: string;
+      };
+      temples: {
+        left: {
+          density: string;
+          status: string;
+          comparison: string;
+        };
+        right: {
+          density: string;
+          status: string;
+          comparison: string;
+        };
+      };
+      hairline: {
+        density: string;
+        status: string;
+        comparison: string;
+      };
+      vertex: {
+        density: string;
+        status: string;
+        comparison: string;
+      };
+    };
+  }
   const renderHealthScoreCard = () => {
     const hydrationScore = analysisData.microscopicAnalysis?.cuticleLayerScore || 0;
     const growthScore = analysisData.structuralAnalysis?.growthPhaseDistribution?.find(phase => 'Anagen' in phase)?.['Anagen'] || 0;
@@ -685,6 +612,7 @@ const AnalysisResults = ({
     const surfaceScore = analysisData.microscopicAnalysis?.surfaceMapping?.texture ? 85 : 0;
     const protectionScore = analysisData.recommendedTreatments?.primary?.match || 0;
 
+    // Default regional density data if not provided by API
     const regionalDensity: RegionalDensity = {
       overall: "170 hairs/cm²",
       regions: {
@@ -787,6 +715,7 @@ const AnalysisResults = ({
           </div>
         </div>
 
+        {/* New Regional Density Analysis Card */}
         <div className="col-span-full bg-gray-700/50 rounded-lg p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -800,6 +729,7 @@ const AnalysisResults = ({
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Crown Region */}
             <div className="bg-gray-800/50 rounded-lg p-3">
               <div className="text-sm text-gray-300">Crown</div>
               <div className="text-lg font-semibold">{regionalDensity.regions.crown.density}</div>
@@ -808,6 +738,7 @@ const AnalysisResults = ({
               </div>
             </div>
 
+            {/* Temples (Left) */}
             <div className="bg-gray-800/50 rounded-lg p-3">
               <div className="text-sm text-gray-300">Left Temple</div>
               <div className="text-lg font-semibold">{regionalDensity.regions.temples.left.density}</div>
@@ -816,6 +747,7 @@ const AnalysisResults = ({
               </div>
             </div>
 
+            {/* Temples (Right) */}
             <div className="bg-gray-800/50 rounded-lg p-3">
               <div className="text-sm text-gray-300">Right Temple</div>
               <div className="text-lg font-semibold">{regionalDensity.regions.temples.right.density}</div>
@@ -824,6 +756,7 @@ const AnalysisResults = ({
               </div>
             </div>
 
+            {/* Vertex */}
             <div className="bg-gray-800/50 rounded-lg p-3">
               <div className="text-sm text-gray-300">Vertex</div>
               <div className="text-lg font-semibold">{regionalDensity.regions.vertex.density}</div>
@@ -832,6 +765,7 @@ const AnalysisResults = ({
               </div>
             </div>
 
+            {/* Hairline (Full Width) */}
             <div className="col-span-full bg-gray-800/50 rounded-lg p-3">
               <div className="text-sm text-gray-300">Hairline</div>
               <div className="text-lg font-semibold">{regionalDensity.regions.hairline.density}</div>
@@ -876,34 +810,358 @@ const AnalysisResults = ({
         {renderContent()}
       </div>;
   };
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  return <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-3 space-y-6">
+        {/* Gradient AI Analysis Button */}
         <div className="mb-6">
-          <Button onClick={handleGeminiAnalysis}>
-            Get Advanced Analysis
+          <Button onClick={handleGeminiAnalysis} disabled={!hasResults || isGeminiLoading} className="w-full bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-700 hover:via-purple-600 hover:to-indigo-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 group">
+            <Brain className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+            {isGeminiLoading ? <span className="flex items-center gap-2">
+                <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                Analyzing...
+              </span> : <span className="text-lg">Get AI Hair Analysis</span>}
+            {!hasResults && <span className="text-xs">(Upload image first)</span>}
           </Button>
         </div>
-        {renderHealthScoreCard()}
-      </div>
 
-      <Dialog open={showGeminiDialog} onOpenChange={setShowGeminiDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Advanced Hair Analysis</DialogTitle>
-          </DialogHeader>
-          {isGeminiLoading ? (
-            <div className="flex flex-col items-center justify-center p-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mb-4"></div>
-              <p className="text-gray-500">Analyzing your hair data...</p>
+        {/* Quick Summary Card with Glassmorphism */}
+        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
+          <h3 className="text-xl font-semibold mb-4 text-white flex items-center gap-2">
+            <Activity className="w-5 h-5 text-purple-400" />
+            Quick Summary
+          </h3>
+          <p className="text-gray-200 leading-relaxed">
+            {analysisData.quickSummary || "Your scalp and hair analysis shows key metrics including sebum levels, pore condition, inflammation markers, and follicular activity."}
+          </p>
+        </div>
+
+        {/* Recommended Treatments - Moved here */}
+        <div className="p-6 shadow-lg hover:shadow-xl transition-all duration-300 px-[59px] py-[47px] bg-[#548bd5]/80 rounded-md">
+          <h2 className="text-xl font-semibold mb-4">Recommended Treatments</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {analysisData.recommendedTreatments ? <>
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500 px-[6px] py-px">
+                  <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
+                  <div className="flex items-center mb-3">
+                    <i className="fas fa-check-circle text-green-500 mr-2"></i>
+                    <span className="font-medium">{analysisData.recommendedTreatments.primary.name}</span>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    {analysisData.recommendedTreatments.primary.description}
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">
+                      {analysisData.recommendedTreatments.primary.match}% Match
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
+                  <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
+                  <div className="flex items-center mb-3">
+                    <i className="fas fa-check-circle text-blue-500 mr-2"></i>
+                    <span className="font-medium">{analysisData.recommendedTreatments.secondary.name}</span>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    {analysisData.recommendedTreatments.secondary.description}
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
+                      {analysisData.recommendedTreatments.secondary.match}% Match
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
+                  <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
+                  <div className="flex items-center mb-3">
+                    <i className="fas fa-check-circle text-purple-500 mr-2"></i>
+                    <span className="font-medium">{analysisData.recommendedTreatments.supporting.name}</span>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    {analysisData.recommendedTreatments.supporting.description}
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">
+                      {analysisData.recommendedTreatments.supporting.match}% Match
+                    </span>
+                  </div>
+                </div>
+              </> : <>
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500">
+                  <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
+                  <div className="flex items-center mb-3">
+                    <i className="fas fa-check-circle text-green-500 mr-2"></i>
+                    <span className="font-medium">FUE (Follicular Unit Extraction)</span>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    Best suited for your pattern of hair loss and scalp condition. 
+                    Minimally invasive with natural-looking results.
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">98% Match</span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-blue-500">
+                  <h3 className="text-lg font-medium mb-2">Secondary Option</h3>
+                  <div className="flex items-center mb-3">
+                    <i className="fas fa-check-circle text-blue-500 mr-2"></i>
+                    <span className="font-medium">PRP Treatment</span>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    Recommended for strengthening existing hair and promoting new growth.
+                    Can be combined with FUE.
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">85% Match</span>
+                  </div>
+                </div>
+
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-purple-500">
+                  <h3 className="text-lg font-medium mb-2">Supporting Treatment</h3>
+                  <div className="flex items-center mb-3">
+                    <i className="fas fa-check-circle text-purple-500 mr-2"></i>
+                    <span className="font-medium">Exosomes Therapy</span>
+                  </div>
+                  <p className="text-sm text-gray-300">
+                    Excellent for scalp health and strengthening follicles.
+                    Complementary to main treatments.
+                  </p>
+                  <div className="mt-3">
+                    <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">
+                      {analysisData.recommendedTreatments.supporting.match}% Match
+                    </span>
+                  </div>
+                </div>
+              </>}
+          </div>
+
+          <div className="mt-6">
+            <h3 className="text-lg font-medium mb-3">Other Available Treatments</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {analysisData.recommendedTreatments?.other.map((treatment, index) => <div key={index} className="bg-gray-700/80 p-3 rounded-lg text-center">
+                  <span className="text-sm">{treatment.name}</span>
+                  <div className="text-xs text-gray-400 mt-1">{treatment.match}% Match</div>
+                </div>) || <>
+                  <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                    <span className="text-sm">Hair Transplant</span>
+                    <div className="text-xs text-gray-400 mt-1">65% Match</div>
+                  </div>
+                  <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                    <span className="text-sm">FUT</span>
+                    <div className="text-xs text-gray-400 mt-1">45% Match</div>
+                  </div>
+                  <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                    <span className="text-sm">SMP</span>
+                    <div className="text-xs text-gray-400 mt-1">40% Match</div>
+                  </div>
+                  <div className="bg-gray-700/80 p-3 rounded-lg text-center">
+                    <span className="text-sm">Micro FUE</span>
+                    <div className="text-xs text-gray-400 mt-1">55% Match</div>
+                  </div>
+                </>}
             </div>
-          ) : (
-            <AdvancedAnalysis analysis={geminiAnalysis} />
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-};
+          </div>
+        </div>
 
+        {/* Overall Health Score Card */}
+        {renderHealthScoreCard()}
+
+        {/* Rest of the components */}
+        {/* Curl Pattern Distribution */}
+        <div className="bg-gray-600/50 p-6 rounded mb-6">
+          <h4 className="font-medium mb-4 text-lg">Curl Pattern Distribution</h4>
+          <div className="aspect-w-16 aspect-h-9">
+            <Doughnut data={curlPatternData} options={doughnutOptions} />
+          </div>
+          <div className="mt-4 space-y-4">
+            <div className="bg-gray-700/50 p-4 rounded">
+              <p className="text-gray-300 text-sm leading-relaxed">
+                This chart shows how your different hair textures are distributed. It's perfectly normal to have a mix!
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-gray-300">
+                <li><span className="text-purple-400">•</span> Straight: Smooth, no waves or curls</li>
+                <li><span className="text-orange-400">��</span> Wavy: Gentle S-shaped waves</li>
+                <li><span className="text-blue-400">•</span> Curly: Springy, defined curls</li>
+                <li><span className="text-pink-400">•</span> Coily: Tight, compact curls</li>
+              </ul>
+              <p className="mt-3 text-sm text-gray-400">
+                Reference: Most people have a mix of patterns. What matters most is understanding your dominant pattern 
+                to choose the right hair care routine!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Growth Phase Distribution */}
+        <div className="bg-gray-600/50 p-6 rounded mb-6">
+          <h4 className="font-medium mb-4 text-lg">Growth Phase Distribution</h4>
+          <div className="aspect-w-16 aspect-h-9">
+            <Doughnut data={growthPhaseData} options={doughnutOptions} />
+          </div>
+          <div className="mt-4 space-y-4">
+            <div className="bg-gray-700/50 p-4 rounded">
+              <p className="text-gray-300 text-sm leading-relaxed">
+                Your hair goes through different growth phases - think of it like a garden's growing cycle!
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-gray-300">
+                <li><span className="text-blue-400">•</span> Anagen (Growing): The active growth phase. Ideally 80-90% of your hair should be here!</li>
+                <li><span className="text-purple-400">•</span> Catagen (Transitioning): A short resting phase. Usually 1-2% is normal.</li>
+                <li><span className="text-orange-400">•</span> Telogen (Resting/Shedding): The shedding phase. Typically 8-10% of hair is here.</li>
+              </ul>
+              <p className="mt-3 text-sm text-gray-400">
+                Reference: A healthy scalp typically has:
+                - 80-90% in Anagen
+                - 1-2% in Catagen
+                - 8-10% in Telogen
+                Don't worry if yours is a bit different - many factors can influence these numbers!
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Advanced Analysis Section */}
+        <AdvancedAnalysis data={analysisData} />
+
+        {/* Structural Analysis */}
+        <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
+          <h3 className="text-lg font-medium mb-3">Structural Analysis</h3>
+          <div className="space-y-6">
+            <div className="bg-gray-600/50 p-6 rounded">
+              <h4 className="font-medium mb-4 text-lg">Hair Growth Cycle Analysis</h4>
+              <div className="aspect-w-16 aspect-h-9">
+                <Line data={analysisData.healthData} options={doughnutOptions} />
+              </div>
+              <div className="mt-4 bg-gray-700/50 p-4 rounded">
+                <p className="text-gray-300 text-sm leading-relaxed">
+                  This graph shows your hair's growth journey over time. The higher the line goes, the better your hair is growing! 
+                  A healthy pattern usually shows steady growth or gentle ups and downs, which is totally normal. ( Premium Feature )
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Enhanced Metrics Grid */}
+        <div className="space-y-4">
+          {analysisData.metrics.map(metric => <div key={metric.label} className="rounded-lg p-6 transition-all duration-300 transform hover:scale-102 relative overflow-hidden group px-[45px] py-[61px] bg-[#000811]/80">
+              <div className="absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 bg-purple-500/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+              <div className="relative z-10">
+                <div className="flex items-center mb-3">
+                  <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mr-3">
+                    <i className={`fas fa-${metric.icon} text-purple-400`}></i>
+                  </div>
+                  <span className="text-gray-300 font-medium">{metric.label}</span>
+                </div>
+                <div className="pl-13">
+                  <span className={`text-lg font-semibold ${metric.color || 'text-white'}`}>
+                    {metric.value}
+                  </span>
+                  {metric.label === "Health Status" && <div className="mt-2 w-full bg-gray-600 rounded-full h-1.5">
+                      <div className="bg-purple-500 h-1.5 rounded-full transition-all duration-500" style={{
+                  width: `${analysisData.healthScore}%`
+                }}></div>
+                    </div>}
+                  {metric.label === "Scalp Condition" && <p className="mt-2 text-sm text-gray-400 leading-relaxed">
+                      {metric.value}
+                    </p>}
+                </div>
+              </div>
+            </div>)}
+        </div>
+
+        {/* Hair Information */}
+        <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+          <h2 className="text-xl font-semibold mb-4">Hair Information</h2>
+          <div className="space-y-4">
+            <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
+              <h3 className="text-lg font-medium mb-2">Diagnostic Analysis</h3>
+              <p className="text-gray-300">
+                {analysisData.hairInformation?.diagnosticAnalysis || "Advanced microscopic analysis reveals signs of androgenetic alopecia..."}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-gray-700/80 rounded-lg p-4">
+                <Line data={analysisData.healthData} options={doughnutOptions} />
+                <p className="text-center text-sm text-gray-400 mt-2">Hair Growth Progress ( Premium Feature )</p>
+              </div>
+              <div className="bg-gray-700/80 rounded-lg p-4">
+                <Line data={analysisData.healthData} options={doughnutOptions} />
+                <p className="text-center text-sm text-gray-400 mt-2">Optimal vs Current Conditions ( Premium Feature )</p>
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-sm text-gray-400">Care Tips</h3>
+              <ul className="list-disc list-inside text-gray-300 space-y-2">
+                {analysisData.hairInformation?.careTips?.map((tip, index) => <li key={index}>{tip}</li>) || <>
+                    <li>Use DHT-blocking shampoo</li>
+                    <li>Supplement with Biotin & Iron</li>
+                    <li>Scalp massage 2x daily</li>
+                    <li>Minimize heat styling</li>
+                    <li>Practice stress management</li>
+                    <li>Monthly scalp detox</li>
+                    <li>Use microneeding treatment</li>
+                    <li>Apply growth serums</li>
+                  </>}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-center space-x-4 flex-wrap gap-4">
+          <Button className="bg-purple-600 hover:bg-purple-700">
+            <i className="fas fa-save mr-2"></i>Save Analysis
+          </Button>
+          <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+            <i className="fas fa-share-alt mr-2"></i>Share Results
+          </Button>
+          <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+            <i className="fas fa-download mr-2"></i>Download Report
+          </Button>
+          <Button variant="outline" className="bg-gray-700 hover:bg-gray-600">
+            <i className="fas fa-redo mr-2"></i>New Scan
+          </Button>
+        </div>
+
+        {/* Gemini Analysis Dialog */}
+        <Dialog open={showGeminiDialog} onOpenChange={setShowGeminiDialog}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gray-900/95 backdrop-blur-lg">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-bold text-white">AI Hair Analysis Report</DialogTitle>
+            </DialogHeader>
+            {isGeminiLoading ? <div className="flex flex-col items-center justify-center p-8 space-y-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+                <p className="text-gray-400">Analyzing your hair data...</p>
+              </div> : <div className="space-y-6 p-4">
+                {geminiAnalysis && <>
+                    {renderAnalysisCard("Welcome & Overview", geminiAnalysis.welcome, <Clipboard className="w-6 h-6 text-purple-400" />, "bg-gradient-to-br from-purple-600/20 to-indigo-600/20")}
+                    
+                    {renderAnalysisCard("Hair Status", geminiAnalysis.hairStatus, <Microscope className="w-6 h-6 text-blue-400" />, "bg-gradient-to-br from-blue-600/20 to-cyan-600/20")}
+                    
+                    {renderAnalysisCard("Growth Phase", geminiAnalysis.growthPhase, <Activity className="w-6 h-6 text-emerald-400" />, "bg-gradient-to-br from-emerald-600/20 to-teal-600/20")}
+                    
+                    {renderAnalysisCard("Care Routine", geminiAnalysis.careRoutine, <Heart className="w-6 h-6 text-pink-400" />, "bg-gradient-to-br from-pink-600/20 to-rose-600/20")}
+                    
+                    {renderAnalysisCard("Lifestyle Tips", geminiAnalysis.lifestyleTips, <Leaf className="w-6 h-6 text-green-400" />, "bg-gradient-to-br from-green-600/20 to-emerald-600/20")}
+                    
+                    {renderAnalysisCard("Seasonal Care", geminiAnalysis.seasonalCare, <Wind className="w-6 h-6 text-cyan-400" />, "bg-gradient-to-br from-cyan-600/20 to-blue-600/20")}
+                    
+                    {renderAnalysisCard("Treatments", geminiAnalysis.treatments, <Pill className="w-6 h-6 text-violet-400" />, "bg-gradient-to-br from-violet-600/20 to-purple-600/20")}
+                    
+                    {renderAnalysisCard("Progress Goals", geminiAnalysis.progressGoals, <Brain className="w-6 h-6 text-amber-400" />, "bg-gradient-to-br from-amber-600/20 to-orange-600/20")}
+                    
+                    {renderAnalysisCard("Emergency Care", geminiAnalysis.emergencyCare, <ShieldCheck className="w-6 h-6 text-red-400" />, "bg-gradient-to-br from-red-600/20 to-rose-600/20")}
+                    
+                    {renderAnalysisCard("Product Guide", geminiAnalysis.productGuide, <Droplet className="w-6 h-6 text-sky-400" />, "bg-gradient-to-br from-sky-600/20 to-indigo-600/20")}
+                  </>}
+              </div>}
+          </DialogContent>
+        </Dialog>
+      </div>
+    </div>;
+};
 export default AnalysisResults;

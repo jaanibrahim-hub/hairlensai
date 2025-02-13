@@ -11,37 +11,3 @@ export interface SecondaryAnalysisResponse {
   emergencyCare: string;
   productGuide: string;
 }
-
-export interface RegionalDensity {
-  overall: string;
-  regions: {
-    crown: {
-      density: string;
-      status: string;
-      comparison: string;
-    };
-    temples: {
-      left: {
-        density: string;
-        status: string;
-        comparison: string;
-      };
-      right: {
-        density: string;
-        status: string;
-        comparison: string;
-      };
-    };
-    hairline: {
-      density: string;
-      status: string;
-      comparison: string;
-    };
-    vertex: {
-      density: string;
-      status: string;
-      comparison: string;
-    };
-  };
-}
-
