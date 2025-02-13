@@ -10,4 +10,5 @@ export interface SecondaryAnalysisResponse {
   progressGoals: string;
   emergencyCare: string;
   productGuide: string;
+  professionalConsultation: string;
 }

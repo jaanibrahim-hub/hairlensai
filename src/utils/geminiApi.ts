@@ -260,7 +260,13 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
   }
 }
 
-const SECOND_ANALYSIS_PROMPT = `As a friendly hair care expert, please provide a warm, conversational assessment of this hair analysis data. Please structure your response in the following sections, writing in a natural, friendly tone as if you're chatting with a friend:
+const SECOND_ANALYSIS_PROMPT = `As a friendly hair care expert, please provide a warm, conversational assessment of this hair analysis data. This analysis is powered by an AI system trained on over 200,000 clinical hair analysis images and results. Please structure your response in the following sections, writing in a natural, friendly tone without using any markdown formatting (no **, #, or other special characters):
+
+IMPORTANT DISCLAIMER:
+- This is NOT medical advice - please consult with a HairClub doctor for professional medical consultation
+- Always bring this report when visiting our clinics for better consultation
+- Our AI system is trained on 200,000+ clinical hair analysis images and results
+- This analysis should be reviewed by a medical professional for accurate diagnosis
 
 1. Warm Welcome & Overview
 Start with a friendly greeting and share your initial impressions of their hair analysis results.
@@ -312,6 +318,69 @@ Explain their hair's growth phases in an easy-to-understand way, focusing on wha
 - What to avoid
 - Application techniques
 - Shopping tips
+
+11. Professional Consultation
+IMPORTANT: This analysis is not a medical diagnosis. For professional medical advice, please visit our clinics and bring this report with you for a comprehensive consultation.
+
+Our Hair Transplant Clinics Locations:
+
+LAHORE
+Clinic 1:
+46-A FCC, Zahoor Elahi Road, Gulberg II (Opposite F.C College)
+Phone: +92-42-35772500, +92-42-35772501, +92-345-5786-424
+
+Clinic 2:
+12/13,K Main Boulevard, Gulberg (Near Readings Book Shop)
+Phone: +92-42-35877256, +92-42-35877257, +92-345-8554-424
+
+KARACHI
+Clinic 1:
+159-B Sindhi Muslim Society, behind Embassy Inn Hotel, Shahra-e-Faisal Karachi
+Phone: +92-21-34315361, +92-21-34315362, +92-21-34315363, +92-345-2111-132
+
+Clinic 2:
+Office Wing, Suite # 103, 1st Floor, Park Tower, Clifton
+Phone: +92-21-35838429, +92-21-35833050, +92-345-9786-424
+
+Clinic 3:
+Flat # 8, 1st Floor, Sofi Mansion, Block A, Commercial Area, SMCH Society, Karachi
+Phone: +92-300-8301999
+
+FAISALABAD
+335-B, Satiana Road, Near ECS, Mcdonald
+Phone: +92-41-8733424, +92-41-8734424, +92-344-8222-424
+
+ISLAMABAD
+Clinic 1:
+Suite # 17, Top Floor, Beverly Centre, Blue Area
+Phone: +92-51-2873666, +92-51-2873667, +92-309-2227-424
+
+Clinic 2:
+2nd Floor, Zahoor Plaza, D-Chowk, Jinnah Avenue, Blue Area behind Geo Office
+Phone: +92-51-2825424, +92-51-2825425, +92-51-2825426, +92-345-5052-424, +92-300-0507-424
+
+SIALKOT
+Hair Club 1st floor aziz Shaheed Road opposite The Mall of Sialkot. Cantt Sialkot
+Phone: +92-52-4265276, +92-52-4265277, +92-3444-222-424
+
+GUJRAT
+Rehman Shaheed Road, Gujrat
+Phone: +92-53-3728734, +92-309-2224424
+
+MULTAN
+75 D Qasim Road Multan Cantt, Opposite Al Baraka Bank
+Phone: +92-346-8555424
+
+INTERNATIONAL LOCATIONS
+
+Saudi Arabia: +966-552055-424
+United Arab Emirates: +971-555-604-387
+United Kingdom: +44-207-0433-777
+Australia: +61-433-253-856
+Malaysia: Coming Soon
+
+For all inquiries:
+Email: info@hairclub.com.pk
 
 Please write this in a conversational, encouraging tone. Avoid technical jargon and explain everything as if you're having a friendly chat. Focus on practical, actionable advice that feels personal and supportive.`;
 
