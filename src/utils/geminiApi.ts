@@ -402,30 +402,33 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
       throw new Error('Malformed API response structure');
     }
 
-    // Extract and parse JSON from the response
+    // Get the response text
     const responseText = data.candidates[0].content.parts[0].text;
-    let jsonResponse;
-    try {
-      // Handle potential markdown formatting
-      const jsonString = responseText.includes('```json') 
-        ? responseText.split('```json')[1].split('```')[0].trim()
-        : responseText;
-      jsonResponse = JSON.parse(jsonString);
-      
-      // Validate response structure
-      if (!jsonResponse.diagnostic_summary || !jsonResponse.detailed_analysis || !Array.isArray(jsonResponse.treatment_plan)) {
-        throw new Error('Invalid response format from API');
-      }
-      
-    } catch (parseError) {
-      console.error('JSON parsing error:', parseError);
-      throw new Error('Failed to parse API response');
-    }
+    console.log('Raw response text:', responseText);
 
-    return jsonResponse;
+    // Parse the sections based on numbered headings
+    const sections = responseText.split(/\d+\.\s+/).filter(Boolean);
+    
+    // Create a structured response
+    const structuredResponse = {
+      welcome: sections[0]?.trim() || "Welcome section not found",
+      hairStatus: sections[1]?.trim() || "Hair status section not found",
+      growthPhase: sections[2]?.trim() || "Growth phase section not found",
+      careRoutine: sections[3]?.trim() || "Care routine section not found",
+      lifestyleTips: sections[4]?.trim() || "Lifestyle tips section not found",
+      seasonalCare: sections[5]?.trim() || "Seasonal care section not found",
+      treatments: sections[6]?.trim() || "Treatments section not found",
+      progressGoals: sections[7]?.trim() || "Progress goals section not found",
+      emergencyCare: sections[8]?.trim() || "Emergency care section not found",
+      productGuide: sections[9]?.trim() || "Product guide section not found"
+    };
+
+    console.log('Structured response:', structuredResponse);
+    return structuredResponse;
+
   } catch (error) {
     console.error('Secondary analysis error:', error);
-    toast.error('Secondary analysis failed: ' + error.message);
+    toast.error('Secondary analysis failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
     throw error;
   }
-}
+};
