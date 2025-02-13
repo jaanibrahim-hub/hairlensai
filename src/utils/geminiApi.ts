@@ -260,17 +260,60 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
   }
 }
 
-const SECOND_ANALYSIS_PROMPT = `As a trichology expert, analyze this hair health data and provide a comprehensive medical assessment. Format your response as structured JSON with the following schema:
-{
-  "diagnostic_summary": "Brief overview of key findings",
-  "detailed_analysis": "In-depth examination of all metrics",
-  "treatment_plan": [
-    {
-      "category": "treatment category",
-      "recommendations": ["specific recommendations"]
-    }
-  ]
-}`;
+const SECOND_ANALYSIS_PROMPT = `As a friendly hair care expert, please provide a warm, conversational assessment of this hair analysis data. Please structure your response in the following sections, writing in a natural, friendly tone as if you're chatting with a friend:
+
+1. Warm Welcome & Overview
+Start with a friendly greeting and share your initial impressions of their hair analysis results.
+
+2. Current Hair Status
+Break down what you see in their hair health, texture, and condition in simple, everyday language.
+
+3. Growth Phase Understanding
+Explain their hair's growth phases in an easy-to-understand way, focusing on what's most important for them to know.
+
+4. Personalized Care Routine
+- Morning care steps
+- Evening care steps
+- Weekly special treatments
+- Product types that would work well
+
+5. Lifestyle & Environmental Tips
+- Diet suggestions for better hair health
+- Exercise benefits for hair growth
+- Environmental protection advice
+- Stress management for hair health
+
+6. Seasonal Care Guide
+- Current season recommendations
+- Preparing for upcoming weather changes
+- Humidity and temperature management
+- Special occasion preparation tips
+
+7. Treatment Recommendations
+- At-home care suggestions
+- Professional treatments to consider
+- Natural remedy options
+- Treatment timing recommendations
+
+8. Progress Goals & Milestones
+- Short-term improvements to look for
+- Medium-term goals
+- Long-term expectations
+- Success indicators
+
+9. Emergency Care Tips
+- Quick fixes for bad hair days
+- DIY emergency treatments
+- Warning signs to watch for
+- When to seek professional help
+
+10. Product Guide
+- Ingredients that would benefit your hair
+- What to avoid
+- Application techniques
+- Shopping tips
+
+Please write this in a conversational, encouraging tone. Avoid technical jargon and explain everything as if you're having a friendly chat. Focus on practical, actionable advice that feels personal and supportive.`;
 
 export const performSecondaryAnalysis = async (analysisData: any, apiKey: string) => {
   console.log('Starting secondary analysis with data:', analysisData);
