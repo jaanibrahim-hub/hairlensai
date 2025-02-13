@@ -511,27 +511,26 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
 
       const secondaryAnalysis = await performSecondaryAnalysis(analysisData, API_KEYS[0]);
 
-    // Parse the sections based on numbered headings
-    const sections = responseText.split(/\d+\.\s+/).filter(Boolean);
-    
-    // Create a structured response
-    const structuredResponse = {
-      welcome: sections[0]?.trim() || "Welcome section not found",
-      hairStatus: sections[1]?.trim() || "Hair status section not found",
-      growthPhase: sections[2]?.trim() || "Growth phase section not found",
-      careRoutine: sections[3]?.trim() || "Care routine section not found",
-      lifestyleTips: sections[4]?.trim() || "Lifestyle tips section not found",
-      seasonalCare: sections[5]?.trim() || "Seasonal care section not found",
-      treatments: sections[6]?.trim() || "Treatments section not found",
-      progressGoals: sections[7]?.trim() || "Progress goals section not found",
-      emergencyCare: sections[8]?.trim() || "Emergency care section not found",
-      productGuide: sections[9]?.trim() || "Product guide section not found",
-      professionalConsultation: sections[10]?.trim() || "Professional consultation section not found"
-    };
+      // Parse the sections based on numbered headings
+      const sections = responseText.split(/\d+\.\s+/).filter(Boolean);
+      
+      // Create a structured response
+      const structuredResponse = {
+        welcome: sections[0]?.trim() || "Welcome section not found",
+        hairStatus: sections[1]?.trim() || "Hair status section not found",
+        growthPhase: sections[2]?.trim() || "Growth phase section not found",
+        careRoutine: sections[3]?.trim() || "Care routine section not found",
+        lifestyleTips: sections[4]?.trim() || "Lifestyle tips section not found",
+        seasonalCare: sections[5]?.trim() || "Seasonal care section not found",
+        treatments: sections[6]?.trim() || "Treatments section not found",
+        progressGoals: sections[7]?.trim() || "Progress goals section not found",
+        emergencyCare: sections[8]?.trim() || "Emergency care section not found",
+        productGuide: sections[9]?.trim() || "Product guide section not found",
+        professionalConsultation: sections[10]?.trim() || "Professional consultation section not found"
+      };
 
-    console.log('Structured response:', structuredResponse);
-    return structuredResponse;
-      setGeminiAnalysis(secondaryAnalysis);
+      console.log('Structured response:', structuredResponse);
+      setGeminiAnalysis(structuredResponse);
       
       toast({
         title: "Analysis Complete",
@@ -872,9 +871,29 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-3 space-y-6">
-        {/* Gradient AI Analysis Button */}
-        <div className="mb-6">
-          <Button
-            onClick={handleGeminiAnalysis}
-            disabled={!hasResults || isGeminiLoading}
-            className="w-full bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-700 hover:via-purple-600 hover:to-indigo-700 text-white font-medium py-3 px-6
+        <Button
+          onClick={handleGeminiAnalysis}
+          disabled={!hasResults || isGeminiLoading}
+          className="w-full bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-700 hover:via-purple-600 hover:to-indigo-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
+        >
+          {isGeminiLoading ? (
+            <>
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              Analyzing...
+            </>
+          ) : (
+            <>
+              <Brain className="w-5 h-5" />
+              Get AI Analysis
+            </>
+          )}
+        </Button>
+        
+        {/* Render other components */}
+        {/* ... keep existing code (rendering of other UI components) */}
+      </div>
+    </div>
+  );
+};
+
+export default AnalysisResults;
