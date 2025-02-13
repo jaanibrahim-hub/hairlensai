@@ -392,7 +392,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   const [aiAnalysis, setAiAnalysis] = useState<string>("");
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [isGeminiLoading, setIsGeminiLoading] = useState(false);
-  const [geminiAnalysis, setGeminiAnalysis] = useState<string>("");
+  const [geminiAnalysis, setGeminiAnalysis] = useState<GeminiAnalysis | null>(null);
   const [showGeminiDialog, setShowGeminiDialog] = useState(false);
 
   useEffect(() => {
@@ -511,7 +511,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
       const secondaryAnalysis = await performSecondaryAnalysis(analysisData, API_KEYS[0]);
       
       // Process the analysis sections
-      const processedAnalysis = {
+      const processedAnalysis: GeminiAnalysis = {
         diagnostic_summary: secondaryAnalysis.diagnostic_summary.trim(),
         detailed_analysis: secondaryAnalysis.detailed_analysis.trim(),
         treatment_plan: Array.isArray(secondaryAnalysis.treatment_plan) 
@@ -838,7 +838,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     return Object.entries(content).map(([key, value], index) => (
       <div key={index} className="mt-4">
         <h4 className="text-lg font-medium text-white mb-2">
-          {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+          {key.split(/(?=[A-Z])/).join(" ").replace(/_/g, " ")}
         </h4>
         <p className="text-gray-200 leading-relaxed whitespace-pre-line">{value}</p>
       </div>
