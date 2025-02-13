@@ -1045,7 +1045,7 @@ const AnalysisResults = ({
 
         {/* Enhanced Metrics Grid */}
         <div className="space-y-4">
-          {analysisData.metrics.map(metric => <div key={metric.label} className="rounded-lg p-6 transition-all duration-300 transform hover:scale-102 relative overflow-hidden group px-[45px] py-[61px] bg-[#000811]/80">
+          {analysisData.metrics.map(metric => <div key={metric.label} className="bg-gray-700/80 rounded-lg p-6 hover:bg-gray-600/80 transition-all duration-300 transform hover:scale-102 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 bg-purple-500/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
               <div className="relative z-10">
                 <div className="flex items-center mb-3">
