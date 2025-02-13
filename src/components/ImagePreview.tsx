@@ -1,13 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 interface Hotspot {
   id: string;
   x: number;
@@ -15,72 +9,62 @@ interface Hotspot {
   label: string;
   description: string;
 }
-
-const defaultHotspots: Hotspot[] = [
-  {
-    id: "crown",
-    x: 50,
-    y: 20,
-    label: "Crown Area",
-    description: "Density: Medium-high, showing healthy growth patterns",
-  },
-  {
-    id: "hairline",
-    x: 50,
-    y: 10,
-    label: "Hairline",
-    description: "Natural hairline with consistent density",
-  },
-  {
-    id: "temple",
-    x: 20,
-    y: 30,
-    label: "Temple Area",
-    description: "Good follicle density, minimal recession",
-  },
-  {
-    id: "side",
-    x: 80,
-    y: 30,
-    label: "Side Growth",
-    description: "Healthy thickness and pattern consistency",
-  },
-  {
-    id: "nape",
-    x: 50,
-    y: 80,
-    label: "Nape Area",
-    description: "Strong growth with good density",
-  }
-];
-
+const defaultHotspots: Hotspot[] = [{
+  id: "crown",
+  x: 50,
+  y: 20,
+  label: "Crown Area",
+  description: "Density: Medium-high, showing healthy growth patterns"
+}, {
+  id: "hairline",
+  x: 50,
+  y: 10,
+  label: "Hairline",
+  description: "Natural hairline with consistent density"
+}, {
+  id: "temple",
+  x: 20,
+  y: 30,
+  label: "Temple Area",
+  description: "Good follicle density, minimal recession"
+}, {
+  id: "side",
+  x: 80,
+  y: 30,
+  label: "Side Growth",
+  description: "Healthy thickness and pattern consistency"
+}, {
+  id: "nape",
+  x: 50,
+  y: 80,
+  label: "Nape Area",
+  description: "Strong growth with good density"
+}];
 const ImagePreview = () => {
   const [previewUrl, setPreviewUrl] = useState<string>("/placeholder.svg");
   const [isZoomed, setIsZoomed] = useState(false);
   const [hotspots, setHotspots] = useState<Hotspot[]>(defaultHotspots);
-  const { toast } = useToast();
-
+  const {
+    toast
+  } = useToast();
   useEffect(() => {
     const handleImageUpload = (event: CustomEvent<string>) => {
       setPreviewUrl(event.detail);
       toast({
         title: "Make sure You sclap is within the Dots",
-        description: "And Image is not Blur.",
+        description: "And Image is not Blur."
       });
     };
-
     window.addEventListener('imageUploaded', handleImageUpload as EventListener);
 
     // Fallback image if preview is not available
     if (previewUrl === "/placeholder.svg") {
       setPreviewUrl("/lovable-uploads/1.png");
     }
-
     return () => {
       window.removeEventListener('imageUploaded', handleImageUpload as EventListener);
     };
   }, []);
-
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -90,94 +74,59 @@ const ImagePreview = () => {
         setPreviewUrl(result);
         toast({
           title: "Make sure You sclap is within the Dots",
-          description: "Image is not Blur..",
+          description: "Image is not Blur.."
         });
       };
       reader.readAsDataURL(file);
     }
   };
-
   const handleRotate = () => {
     toast({
       title: "Image rotated",
-      description: "Your image has been rotated 90 degrees.( Premium Feature )",
+      description: "Your image has been rotated 90 degrees.( Premium Feature )"
     });
   };
-
   const handleCrop = () => {
     toast({
       title: "Crop mode activated",
-      description: "Drag to select the area you want to analyze.( Premium Feature )",
+      description: "Drag to select the area you want to analyze.( Premium Feature )"
     });
   };
-
   const toggleZoom = () => {
     setIsZoomed(!isZoomed);
   };
-
-  return (
-    <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+  return <div className="p-6 shadow-lg hover:shadow-xl transition-all duration-300 px-[138px] py-[27px] rounded-md bg-[#000209]/80">
       <h2 className="text-xl font-semibold mb-4 text-white flex items-center justify-between">
         <div className="flex items-center">
           <i className="fas fa-image mr-2 text-purple-400"></i>
           Preview 
         </div>
         <div className="flex gap-2">
-          <input
-            type="file"
-            id="preview-upload"
-            className="hidden"
-            accept="image/*"
-            onChange={handleFileUpload}
-          />
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-purple-400 hover:text-purple-300 bg-gray-700"
-            onClick={() => document.getElementById('preview-upload')?.click()}
-          >
+          <input type="file" id="preview-upload" className="hidden" accept="image/*" onChange={handleFileUpload} />
+          <Button variant="outline" size="sm" className="text-purple-400 hover:text-purple-300 bg-gray-700" onClick={() => document.getElementById('preview-upload')?.click()}>
             <i className="fas fa-upload mr-1"></i>
             Upload
           </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-purple-400 hover:text-purple-300"
-            onClick={toggleZoom}
-          >
+          <Button variant="ghost" size="sm" className="text-purple-400 hover:text-purple-300" onClick={toggleZoom}>
             <i className={`fas fa-${isZoomed ? 'compress' : 'expand'} mr-1`}></i>
             {isZoomed ? 'Minimize' : 'Expand'}
           </Button>
         </div>
       </h2>
-      <div 
-        className={`relative group transition-all duration-300 ease-in-out ${
-          isZoomed ? 'aspect-w-16 aspect-h-9' : 'aspect-w-9 aspect-h-16'
-        }`}
-      >
+      <div className={`relative group transition-all duration-300 ease-in-out ${isZoomed ? 'aspect-w-16 aspect-h-9' : 'aspect-w-9 aspect-h-16'}`}>
         <div className="bg-gray-700 rounded-lg overflow-hidden relative">
-          <img
-            src={previewUrl}
-            alt="Hair Preview"
-            className={`object-cover w-full h-full transition-transform duration-300 ${
-              isZoomed ? 'scale-100' : 'group-hover:scale-105'
-            }`}
-          />
+          <img src={previewUrl} alt="Hair Preview" className={`object-cover w-full h-full transition-transform duration-300 ${isZoomed ? 'scale-100' : 'group-hover:scale-105'}`} />
           <div className="absolute inset-0">
             <TooltipProvider>
-              {hotspots.map((hotspot) => (
-                <Tooltip key={hotspot.id}>
+              {hotspots.map(hotspot => <Tooltip key={hotspot.id}>
                   <TooltipTrigger asChild>
-                    <button
-                      className="absolute w-6 h-6 rounded-full bg-purple-500/50 hover:bg-purple-500/80 
+                    <button className="absolute w-6 h-6 rounded-full bg-purple-500/50 hover:bg-purple-500/80 
                                border-2 border-white transform -translate-x-1/2 -translate-y-1/2 
                                transition-all duration-300 hover:scale-110 cursor-pointer
-                               animate-pulse hover:animate-none"
-                      style={{
-                        left: `${hotspot.x}%`,
-                        top: `${hotspot.y}%`,
-                      }}
-                    >
+                               animate-pulse hover:animate-none" style={{
+                  left: `${hotspot.x}%`,
+                  top: `${hotspot.y}%`
+                }}>
                       <span className="sr-only">{hotspot.label}</span>
                     </button>
                   </TooltipTrigger>
@@ -185,8 +134,7 @@ const ImagePreview = () => {
                     <h3 className="font-medium text-white mb-1">{hotspot.label}</h3>
                     <p className="text-sm text-gray-300">{hotspot.description}</p>
                   </TooltipContent>
-                </Tooltip>
-              ))}
+                </Tooltip>)}
             </TooltipProvider>
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -199,33 +147,18 @@ const ImagePreview = () => {
         </div>
       </div>
       <div className="flex justify-center space-x-4 mt-4">
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="bg-gray-700 hover:bg-gray-600"
-          onClick={handleRotate}
-        >
+        <Button variant="outline" size="icon" className="bg-gray-700 hover:bg-gray-600" onClick={handleRotate}>
           <i className="fas fa-rotate text-lg text-purple-400"></i>
         </Button>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="bg-gray-700 hover:bg-gray-600"
-          onClick={handleCrop}
-        >
+        <Button variant="outline" size="icon" className="bg-gray-700 hover:bg-gray-600" onClick={handleCrop}>
           <i className="fas fa-crop text-lg text-purple-400"></i>
         </Button>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="bg-gray-700 hover:bg-gray-600"
-          onClick={() => {
-            toast({
-              title: "Enhancement applied",
-              description: "Image enhanced for better analysis.",
-            });
-          }}
-        >
+        <Button variant="outline" size="icon" className="bg-gray-700 hover:bg-gray-600" onClick={() => {
+        toast({
+          title: "Enhancement applied",
+          description: "Image enhanced for better analysis."
+        });
+      }}>
           <i className="fas fa-wand-magic-sparkles text-lg text-purple-400"></i>
         </Button>
       </div>
@@ -237,8 +170,6 @@ const ImagePreview = () => {
           </span>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ImagePreview;
