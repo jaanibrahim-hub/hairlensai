@@ -511,8 +511,8 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
 
       const analysisResponse = await performSecondaryAnalysis(analysisData, API_KEYS[0]);
 
-      // The response is already structured, so we can use it directly
-      const structuredResponse = {
+      // The response is already structured according to SecondaryAnalysisResponse interface
+      const structuredResponse: SecondaryAnalysisResponse = {
         welcome: analysisResponse.welcome || "Welcome section not found",
         hairStatus: analysisResponse.hairStatus || "Hair status section not found",
         growthPhase: analysisResponse.growthPhase || "Growth phase section not found",
