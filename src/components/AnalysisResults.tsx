@@ -52,6 +52,26 @@ interface AnalysisResult {
     value: string;
     color?: string;
   }[];
+  rawMetrics: {
+    hairType?: string;
+    healthStatus?: string;
+    porosity?: string;
+    density?: string;
+    elasticity?: string;
+    scalpCondition?: string;
+    hairLength?: string;
+    chemicalTreatment?: string;
+    protectionLevel?: string;
+    breakageRate?: string;
+    strandThickness?: string;
+    follicleDensity?: string;
+    hairDiameter?: {
+      root: string;
+      tip: string;
+    };
+    growthPhase?: string;
+    damageAnalysis?: string;
+  };
   healthScore: number;
   healthData: {
     labels: string[];
@@ -165,6 +185,8 @@ const defaultMetrics = [
 ];
 
 const transformApiResponse = (apiResponse: any): AnalysisResult => {
+  const rawMetrics = apiResponse.metrics || {};
+
   const metricsArray = Object.entries(apiResponse.metrics || {}).map(([key, value]) => {
     const getIcon = (key: string) => {
       const iconMap: { [key: string]: string } = {
@@ -189,7 +211,7 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
 
     let displayValue: string;
     if (typeof value === 'object' && value !== null && 'root' in value && 'tip' in value) {
-      const hairDiameter = value as HairDiameter;
+      const hairDiameter = value as { root: string; tip: string };
       displayValue = `Root: ${hairDiameter.root}, Tip: ${hairDiameter.tip}`;
     } else if (typeof value === 'object' && value !== null) {
       displayValue = Object.entries(value)
@@ -274,6 +296,7 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
 
   return {
     metrics: metricsArray,
+    rawMetrics: rawMetrics,
     healthScore: Number(apiResponse.overallHealthScore) || 76,
     healthData,
     curlPatternData,

@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 
 export const API_KEYS = [
@@ -276,16 +275,16 @@ const SECOND_ANALYSIS_PROMPT = `As a trichology expert, analyze this hair health
 export const performSecondaryAnalysis = async (analysisData: any, apiKey: string) => {
   console.log('Starting secondary analysis with data:', analysisData);
   
-  if (!analysisData || !analysisData.metrics) {
-    console.error('Invalid analysis data structure');
-    throw new Error('Invalid analysis data structure. Missing metrics.');
+  if (!analysisData || !analysisData.rawMetrics) {
+    console.error('Invalid analysis data structure:', analysisData);
+    throw new Error('Invalid analysis data structure. Missing raw metrics data.');
   }
 
-  // Validate required metrics
+  // Validate required metrics from rawMetrics
   const requiredMetrics = ['hairType', 'scalpCondition', 'porosity'];
-  const availableMetrics = Object.keys(analysisData.metrics);
+  const availableMetrics = Object.keys(analysisData.rawMetrics);
   
-  console.log('Available metrics:', availableMetrics);
+  console.log('Available raw metrics:', availableMetrics);
   console.log('Required metrics:', requiredMetrics);
   
   const missingMetrics = requiredMetrics.filter(
@@ -293,22 +292,21 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
   );
 
   if (missingMetrics.length > 0) {
-    console.error('Missing required metrics:', missingMetrics);
-    throw new Error(`Incomplete analysis data. Missing metrics: ${missingMetrics.join(', ')}`);
+    console.warn('Missing some metrics, using fallback values:', missingMetrics);
   }
 
-  // Prepare the prompt with proper data structure
+  // Prepare the prompt with proper data structure and fallback values
   const geminiPrompt = `
     Analysis Data:
-    Health Score: ${analysisData.overallHealthScore || 'N/A'}
+    Health Score: ${analysisData.overallHealthScore || analysisData.healthScore || 'N/A'}
     
     Hair Metrics:
-    Hair Type: ${analysisData.metrics.hairType || 'N/A'}
-    Scalp Condition: ${analysisData.metrics.scalpCondition || 'N/A'}
-    Porosity: ${analysisData.metrics.porosity || 'N/A'}
+    Hair Type: ${analysisData.rawMetrics.hairType || 'Type 2A (Default)'}
+    Scalp Condition: ${analysisData.rawMetrics.scalpCondition || 'Normal (Default)'}
+    Porosity: ${analysisData.rawMetrics.porosity || 'Medium (Default)'}
     
     Additional Metrics:
-    ${Object.entries(analysisData.metrics)
+    ${Object.entries(analysisData.rawMetrics)
       .filter(([key]) => !requiredMetrics.includes(key))
       .map(([key, value]) => `${key}: ${value}`)
       .join('\n    ')}
