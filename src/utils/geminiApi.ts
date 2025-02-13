@@ -50,6 +50,38 @@ const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a detailed as
       {"Telogen": 10}
     ]
   },
+  "regionalDensity": {
+    "overall": "Average hairs per square centimeter",
+    "regions": {
+      "crown": {
+        "density": "Hairs per square centimeter",
+        "status": "optimal/normal/thinning",
+        "comparison": "Percentage comparison to average"
+      },
+      "temples": {
+        "left": {
+          "density": "Hairs per square centimeter",
+          "status": "optimal/normal/thinning",
+          "comparison": "Percentage comparison to average"
+        },
+        "right": {
+          "density": "Hairs per square centimeter",
+          "status": "optimal/normal/thinning",
+          "comparison": "Percentage comparison to average"
+        }
+      },
+      "hairline": {
+        "density": "Hairs per square centimeter",
+        "status": "optimal/normal/thinning",
+        "comparison": "Percentage comparison to average"
+      },
+      "vertex": {
+        "density": "Hairs per square centimeter",
+        "status": "optimal/normal/thinning",
+        "comparison": "Percentage comparison to average"
+      }
+    }
+  },
   "microscopicAnalysis": {
     "cuticleLayerScore": 75,
     "shaftStructure": {

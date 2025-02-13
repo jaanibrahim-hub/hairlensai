@@ -10,11 +10,47 @@ import { Line, Doughnut } from 'react-chartjs-2';
 import AdvancedAnalysis from "./AdvancedAnalysis";
 import { performSecondaryAnalysis } from "@/utils/geminiApi";
 import { SecondaryAnalysisResponse } from "@/types/analysis";
+
 ChartJS.register(ArcElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler, RadialLinearScale);
+
 interface HairDiameter {
   root: string;
   tip: string;
 }
+
+interface RegionalDensity {
+  overall: string;
+  regions: {
+    crown: {
+      density: string;
+      status: string;
+      comparison: string;
+    };
+    temples: {
+      left: {
+        density: string;
+        status: string;
+        comparison: string;
+      };
+      right: {
+        density: string;
+        status: string;
+        comparison: string;
+      };
+    };
+    hairline: {
+      density: string;
+      status: string;
+      comparison: string;
+    };
+    vertex: {
+      density: string;
+      status: string;
+      comparison: string;
+    };
+  };
+}
+
 interface AnalysisResult {
   metrics: {
     icon: string;
@@ -35,10 +71,7 @@ interface AnalysisResult {
     breakageRate?: string;
     strandThickness?: string;
     follicleDensity?: string;
-    hairDiameter?: {
-      root: string;
-      tip: string;
-    };
+    hairDiameter?: HairDiameter;
     growthPhase?: string;
     damageAnalysis?: string;
   };
@@ -121,7 +154,9 @@ interface AnalysisResult {
       match: number;
     }>;
   };
+  regionalDensity: RegionalDensity;
 }
+
 const defaultHealthData = {
   labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
   datasets: [{
@@ -132,6 +167,7 @@ const defaultHealthData = {
     fill: true
   }]
 };
+
 const defaultMetrics = [{
   icon: "cut",
   label: "Hair Type",
@@ -194,6 +230,7 @@ const defaultMetrics = [{
   label: "Damage Analysis",
   value: "Minimal"
 }];
+
 const defaultRawMetrics = {
   hairType: "Type 2B Wavy",
   healthStatus: "Requires Attention",
@@ -214,6 +251,7 @@ const defaultRawMetrics = {
   growthPhase: "85% Anagen",
   damageAnalysis: "Minimal"
 };
+
 const defaultRecommendedTreatments = {
   primary: {
     name: "FUE Treatment",
@@ -244,6 +282,7 @@ const defaultRecommendedTreatments = {
     match: 55
   }]
 };
+
 const transformApiResponse = (apiResponse: any): AnalysisResult => {
   const rawMetrics = apiResponse.metrics || {};
   const metricsArray = Object.entries(apiResponse.metrics || {}).map(([key, value]) => {
@@ -356,12 +395,46 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
     structuralAnalysis: apiResponse.structuralAnalysis,
     quickSummary: apiResponse.quickSummary,
     hairInformation: apiResponse.hairInformation,
-    recommendedTreatments: apiResponse.recommendedTreatments
+    recommendedTreatments: apiResponse.recommendedTreatments,
+    regionalDensity: {
+      overall: "170 hairs/cm²",
+      regions: {
+        crown: {
+          density: "180 hairs/cm²",
+          status: "optimal",
+          comparison: "+5% above average"
+        },
+        temples: {
+          left: {
+            density: "165 hairs/cm²",
+            status: "normal",
+            comparison: "-3% below average"
+          },
+          right: {
+            density: "162 hairs/cm²",
+            status: "normal",
+            comparison: "-5% below average"
+          }
+        },
+        hairline: {
+          density: "155 hairs/cm²",
+          status: "thinning",
+          comparison: "-10% below average"
+        },
+        vertex: {
+          density: "175 hairs/cm²",
+          status: "optimal",
+          comparison: "+2% above average"
+        }
+      }
+    }
   };
 };
+
 interface AnalysisResultsProps {
   apiKey: string | null;
 }
+
 const AnalysisResults = ({
   apiKey
 }: AnalysisResultsProps) => {
@@ -572,38 +645,6 @@ const AnalysisResults = ({
       borderColor: 'transparent'
     }]
   };
-  interface RegionalDensity {
-    overall: string;
-    regions: {
-      crown: {
-        density: string;
-        status: string;
-        comparison: string;
-      };
-      temples: {
-        left: {
-          density: string;
-          status: string;
-          comparison: string;
-        };
-        right: {
-          density: string;
-          status: string;
-          comparison: string;
-        };
-      };
-      hairline: {
-        density: string;
-        status: string;
-        comparison: string;
-      };
-      vertex: {
-        density: string;
-        status: string;
-        comparison: string;
-      };
-    };
-  }
   const renderHealthScoreCard = () => {
     const hydrationScore = analysisData.microscopicAnalysis?.cuticleLayerScore || 0;
     const growthScore = analysisData.structuralAnalysis?.growthPhaseDistribution?.find(phase => 'Anagen' in phase)?.['Anagen'] || 0;
@@ -612,7 +653,6 @@ const AnalysisResults = ({
     const surfaceScore = analysisData.microscopicAnalysis?.surfaceMapping?.texture ? 85 : 0;
     const protectionScore = analysisData.recommendedTreatments?.primary?.match || 0;
 
-    // Default regional density data if not provided by API
     const regionalDensity: RegionalDensity = {
       overall: "170 hairs/cm²",
       regions: {
@@ -715,7 +755,6 @@ const AnalysisResults = ({
           </div>
         </div>
 
-        {/* New Regional Density Analysis Card */}
         <div className="col-span-full bg-gray-700/50 rounded-lg p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -729,7 +768,6 @@ const AnalysisResults = ({
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {/* Crown Region */}
             <div className="bg-gray-800/50 rounded-lg p-3">
               <div className="text-sm text-gray-300">Crown</div>
               <div className="text-lg font-semibold">{regionalDensity.regions.crown.density}</div>
@@ -738,7 +776,6 @@ const AnalysisResults = ({
               </div>
             </div>
 
-            {/* Temples (Left) */}
             <div className="bg-gray-800/50 rounded-lg p-3">
               <div className="text-sm text-gray-300">Left Temple</div>
               <div className="text-lg font-semibold">{regionalDensity.regions.temples.left.density}</div>
@@ -747,7 +784,6 @@ const AnalysisResults = ({
               </div>
             </div>
 
-            {/* Temples (Right) */}
             <div className="bg-gray-800/50 rounded-lg p-3">
               <div className="text-sm text-gray-300">Right Temple</div>
               <div className="text-lg font-semibold">{regionalDensity.regions.temples.right.density}</div>
@@ -756,7 +792,6 @@ const AnalysisResults = ({
               </div>
             </div>
 
-            {/* Vertex */}
             <div className="bg-gray-800/50 rounded-lg p-3">
               <div className="text-sm text-gray-300">Vertex</div>
               <div className="text-lg font-semibold">{regionalDensity.regions.vertex.density}</div>
@@ -765,7 +800,6 @@ const AnalysisResults = ({
               </div>
             </div>
 
-            {/* Hairline (Full Width) */}
             <div className="col-span-full bg-gray-800/50 rounded-lg p-3">
               <div className="text-sm text-gray-300">Hairline</div>
               <div className="text-lg font-semibold">{regionalDensity.regions.hairline.density}</div>
@@ -812,7 +846,6 @@ const AnalysisResults = ({
   };
   return <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-3 space-y-6">
-        {/* Gradient AI Analysis Button */}
         <div className="mb-6">
           <Button onClick={handleGeminiAnalysis} disabled={!hasResults || isGeminiLoading} className="w-full bg-gradient-to-r from-purple-600 via-purple-500 to-indigo-600 hover:from-purple-700 hover:via-purple-600 hover:to-indigo-700 text-white font-medium py-3 px-6 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 group">
             <Brain className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
@@ -824,7 +857,6 @@ const AnalysisResults = ({
           </Button>
         </div>
 
-        {/* Quick Summary Card with Glassmorphism */}
         <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
           <h3 className="text-xl font-semibold mb-4 text-white flex items-center gap-2">
             <Activity className="w-5 h-5 text-purple-400" />
@@ -835,7 +867,6 @@ const AnalysisResults = ({
           </p>
         </div>
 
-        {/* Recommended Treatments - Moved here */}
         <div className="p-6 shadow-lg hover:shadow-xl transition-all duration-300 px-[59px] py-[47px] bg-[#548bd5]/80 rounded-md">
           <h2 className="text-xl font-semibold mb-4">Recommended Treatments</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -965,11 +996,58 @@ const AnalysisResults = ({
           </div>
         </div>
 
-        {/* Overall Health Score Card */}
-        {renderHealthScoreCard()}
+        <div className="rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+          <h3 className="text-xl font-semibold mb-4 text-white flex items-center gap-2">
+            <Heart className="w-5 h-5 text-purple-400" />
+            Overall Health Score
+          </h3>
+          <Progress value={analysisData.healthScore} className="h-3 mb-4" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+            <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+              <Droplet className="w-5 h-5 text-blue-400" />
+              <div>
+                <div className="text-sm text-gray-300">Hydration</div>
+                <div className="text-lg font-semibold text-white">{analysisData.healthData.datasets[0].data[0]}</div>
+              </div>
+            </div>
+            <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+              <Activity className="w-5 h-5 text-green-400" />
+              <div>
+                <div className="text-sm text-gray-300">Growth Rate</div>
+                <div className="text-lg font-semibold text-white">{analysisData.healthData.datasets[0].data[1]}</div>
+              </div>
+            </div>
+            <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+              <Microscope className="w-5 h-5 text-yellow-400" />
+              <div>
+                <div className="text-sm text-gray-300">Shaft Integrity</div>
+                <div className="text-lg font-semibold text-white">{analysisData.healthData.datasets[0].data[2]}</div>
+              </div>
+            </div>
+            <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+              <Ruler className="w-5 h-5 text-pink-400" />
+              <div>
+                <div className="text-sm text-gray-300">Medulla Score</div>
+                <div className="text-lg font-semibold text-white">{analysisData.healthData.datasets[0].data[3]}</div>
+              </div>
+            </div>
+            <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+              <Leaf className="w-5 h-5 text-emerald-400" />
+              <div>
+                <div className="text-sm text-gray-300">Surface Quality</div>
+                <div className="text-lg font-semibold text-white">{analysisData.healthData.datasets[0].data[4]}</div>
+              </div>
+            </div>
+            <div className="bg-gray-700/50 rounded-lg p-4 flex items-center gap-3">
+              <ShieldCheck className="w-5 h-5 text-indigo-400" />
+              <div>
+                <div className="text-sm text-gray-300">Protection Level</div>
+                <div className="text-lg font-semibold text-white">{analysisData.healthData.datasets[0].data[5]}</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        {/* Rest of the components */}
-        {/* Curl Pattern Distribution */}
         <div className="bg-gray-600/50 p-6 rounded mb-6">
           <h4 className="font-medium mb-4 text-lg">Curl Pattern Distribution</h4>
           <div className="aspect-w-16 aspect-h-9">
@@ -994,7 +1072,6 @@ const AnalysisResults = ({
           </div>
         </div>
 
-        {/* Growth Phase Distribution */}
         <div className="bg-gray-600/50 p-6 rounded mb-6">
           <h4 className="font-medium mb-4 text-lg">Growth Phase Distribution</h4>
           <div className="aspect-w-16 aspect-h-9">
@@ -1021,10 +1098,8 @@ const AnalysisResults = ({
           </div>
         </div>
 
-        {/* Advanced Analysis Section */}
         <AdvancedAnalysis data={analysisData} />
 
-        {/* Structural Analysis */}
         <div className="bg-gray-700/80 rounded-lg p-4 mb-4">
           <h3 className="text-lg font-medium mb-3">Structural Analysis</h3>
           <div className="space-y-6">
@@ -1043,7 +1118,6 @@ const AnalysisResults = ({
           </div>
         </div>
 
-        {/* Enhanced Metrics Grid */}
         <div className="space-y-4">
           {analysisData.metrics.map(metric => <div key={metric.label} className="bg-gray-700/80 rounded-lg p-6 hover:bg-gray-600/80 transition-all duration-300 transform hover:scale-102 relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 bg-purple-500/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
@@ -1071,7 +1145,6 @@ const AnalysisResults = ({
             </div>)}
         </div>
 
-        {/* Hair Information */}
         <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
           <h2 className="text-xl font-semibold mb-4">Hair Information</h2>
           <div className="space-y-4">
@@ -1111,7 +1184,6 @@ const AnalysisResults = ({
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex justify-center space-x-4 flex-wrap gap-4">
           <Button className="bg-purple-600 hover:bg-purple-700">
             <i className="fas fa-save mr-2"></i>Save Analysis
@@ -1127,7 +1199,6 @@ const AnalysisResults = ({
           </Button>
         </div>
 
-        {/* Gemini Analysis Dialog */}
         <Dialog open={showGeminiDialog} onOpenChange={setShowGeminiDialog}>
           <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-gray-900/95 backdrop-blur-lg">
             <DialogHeader>
@@ -1164,4 +1235,5 @@ const AnalysisResults = ({
       </div>
     </div>;
 };
+
 export default AnalysisResults;
