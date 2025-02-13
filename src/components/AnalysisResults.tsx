@@ -836,7 +836,7 @@ const AnalysisResults = ({
         </div>
 
         {/* Recommended Treatments - Moved here */}
-        <div className="bg-gray-800/80 rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+        <div className="p-6 shadow-lg hover:shadow-xl transition-all duration-300 px-[59px] py-[47px] bg-[#548bd5]/80 rounded-md">
           <h2 className="text-xl font-semibold mb-4">Recommended Treatments</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {analysisData.recommendedTreatments ? <>
