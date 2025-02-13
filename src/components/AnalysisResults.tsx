@@ -40,15 +40,6 @@ ChartJS.register(
   RadialLinearScale
 );
 
-interface GeminiAnalysis {
-  diagnostic_summary: string;
-  detailed_analysis: string;
-  treatment_plan: Array<{
-    category: string;
-    recommendations: string[];
-  }>;
-}
-
 interface HairDiameter {
   root: string;
   tip: string;
@@ -401,7 +392,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   const [aiAnalysis, setAiAnalysis] = useState<string>("");
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [isGeminiLoading, setIsGeminiLoading] = useState(false);
-  const [geminiAnalysis, setGeminiAnalysis] = useState<GeminiAnalysis | null>(null);
+  const [geminiAnalysis, setGeminiAnalysis] = useState<string>("");
   const [showGeminiDialog, setShowGeminiDialog] = useState(false);
 
   useEffect(() => {
@@ -518,20 +509,13 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
       });
 
       const secondaryAnalysis = await performSecondaryAnalysis(analysisData, API_KEYS[0]);
-      
-      // Process the analysis sections
-      const processedAnalysis: GeminiAnalysis = {
-        diagnostic_summary: secondaryAnalysis.diagnostic_summary.trim(),
-        detailed_analysis: secondaryAnalysis.detailed_analysis.trim(),
-        treatment_plan: Array.isArray(secondaryAnalysis.treatment_plan) 
-          ? secondaryAnalysis.treatment_plan 
-          : [{
-              category: "General Recommendations",
-              recommendations: [secondaryAnalysis.treatment_plan.toString()]
-            }]
-      };
-
-      setGeminiAnalysis(processedAnalysis);
+      setGeminiAnalysis(
+        `# Diagnostic Summary\n${secondaryAnalysis.diagnostic_summary}\n\n` +
+        `# Detailed Analysis\n${secondaryAnalysis.detailed_analysis}\n\n` +
+        `# Treatment Plan\n${secondaryAnalysis.treatment_plan.map(plan => 
+          `## ${plan.category}\n${plan.recommendations.join('\n')}`
+        ).join('\n\n')}`
+      );
       
       toast({
         title: "Analysis Complete",
@@ -822,51 +806,49 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
     );
   };
 
-  const renderContent = (content: string | Record<string, string> | Array<{category: string, recommendations: string[]}>) => {
-    if (typeof content === 'string') {
-      return (
-        <div className="prose prose-invert max-w-none">
-          <p className="text-gray-200 leading-relaxed whitespace-pre-line">{content}</p>
-        </div>
-      );
-    }
-    
-    if (Array.isArray(content)) {
-      return content.map((item, index) => (
-        <div key={index} className="mt-4">
-          <h4 className="text-lg font-medium text-white mb-2">{item.category}</h4>
-          <ul className="list-disc list-inside space-y-2">
-            {item.recommendations.map((rec, recIndex) => (
-              <li key={recIndex} className="text-gray-200">{rec}</li>
-            ))}
-          </ul>
-        </div>
-      ));
-    }
-    
-    return Object.entries(content).map(([key, value], index) => (
-      <div key={index} className="mt-4">
-        <h4 className="text-lg font-medium text-white mb-2">
-          {key.split(/(?=[A-Z])/).join(" ").replace(/_/g, " ")}
-        </h4>
-        <p className="text-gray-200 leading-relaxed whitespace-pre-line">{value}</p>
-      </div>
-    ));
-  };
-
   const renderAnalysisCard = (
     title: string, 
     content: string | Record<string, string> | Array<{category: string, recommendations: string[]}>,
     icon: React.ReactNode,
     gradientClasses: string
   ) => {
+    const renderContent = () => {
+      if (typeof content === 'string') {
+        return (
+          <div className="prose prose-invert max-w-none">
+            <p className="text-gray-200 leading-relaxed">{content}</p>
+          </div>
+        );
+      } else if (Array.isArray(content)) {
+        return content.map((item, index) => (
+          <div key={index} className="mt-4">
+            <h4 className="text-lg font-medium text-white mb-2">{item.category}</h4>
+            <ul className="list-disc list-inside space-y-2">
+              {item.recommendations.map((rec, recIndex) => (
+                <li key={recIndex} className="text-gray-200">{rec}</li>
+              ))}
+            </ul>
+          </div>
+        ));
+      } else {
+        return Object.entries(content).map(([key, value], index) => (
+          <div key={index} className="mt-4">
+            <h4 className="text-lg font-medium text-white mb-2">
+              {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+            </h4>
+            <p className="text-gray-200 leading-relaxed">{value}</p>
+          </div>
+        ));
+      }
+    };
+
     return (
       <div className={`${gradientClasses} rounded-xl p-6 backdrop-blur-sm border border-white/20 shadow-xl hover:shadow-2xl transition-all duration-300 mb-6`}>
         <div className="flex items-center gap-3 mb-4">
           {icon}
           <h2 className="text-xl font-semibold text-white">{title}</h2>
         </div>
-        {renderContent(content)}
+        {renderContent()}
       </div>
     );
   };
@@ -1237,21 +1219,21 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
                   <>
                     {renderAnalysisCard(
                       "Diagnostic Summary",
-                      geminiAnalysis.diagnostic_summary,
+                      geminiAnalysis.split('# Diagnostic Summary\n')[1]?.split('#')[0]?.trim() || "No diagnostic summary available",
                       <Clipboard className="w-6 h-6 text-purple-400" />,
                       "bg-gradient-to-br from-purple-600/20 to-indigo-600/20"
                     )}
                     
                     {renderAnalysisCard(
                       "Detailed Analysis",
-                      geminiAnalysis.detailed_analysis,
+                      geminiAnalysis.split('# Detailed Analysis\n')[1]?.split('#')[0]?.trim() || "No detailed analysis available",
                       <Microscope className="w-6 h-6 text-blue-400" />,
                       "bg-gradient-to-br from-blue-600/20 to-cyan-600/20"
                     )}
                     
                     {renderAnalysisCard(
                       "Treatment Plan",
-                      geminiAnalysis.treatment_plan,
+                      geminiAnalysis.split('# Treatment Plan\n')[1]?.trim() || "No treatment plan available",
                       <Pill className="w-6 h-6 text-emerald-400" />,
                       "bg-gradient-to-br from-emerald-600/20 to-teal-600/20"
                     )}
