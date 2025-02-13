@@ -657,7 +657,7 @@ const AnalysisResults = ({
           return 'text-gray-400';
       }
     };
-    return <div className="bg-gray-800/80 rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300">
+    return <div className="rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 px-[19px] py-[37px] bg-[#58216a]">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-semibold text-white flex items-center gap-2">
             <Heart className="w-5 h-5 text-purple-400" />
