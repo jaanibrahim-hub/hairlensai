@@ -260,60 +260,85 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
   }
 }
 
-const SECOND_ANALYSIS_PROMPT = `As a friendly hair care expert, please provide a warm, conversational assessment of this hair analysis data. Please structure your response in the following sections, writing in a natural, friendly tone as if you're chatting with a friend:
+const SECOND_ANALYSIS_PROMPT = `As a hair care professional with expertise from analyzing over 200,000 clinical cases, please provide a comprehensive, friendly yet professional assessment. Structure your response in clear sections, avoiding any markdown characters or special formatting. Keep the tone warm and professional.
 
-1. Warm Welcome & Overview
-Start with a friendly greeting and share your initial impressions of their hair analysis results.
+Please structure your response in these sections, using clear paragraphs and simple dashes (-) for lists:
+
+1. Welcome & Overview
+Introduce yourself warmly and share your initial impressions about their hair analysis results. Include a brief summary of your clinical experience and expertise.
 
 2. Current Hair Status
-Break down what you see in their hair health, texture, and condition in simple, everyday language.
+Provide a clear, detailed assessment of their hair health, texture, and condition using professional terminology while maintaining accessibility. Include specific measurements and comparisons to clinical standards.
 
 3. Growth Phase Understanding
-Explain their hair's growth phases in an easy-to-understand way, focusing on what's most important for them to know.
+Explain their current hair growth phase distribution, comparing it to optimal clinical ranges. Include specific percentages and what they mean for the client's hair health journey.
 
 4. Personalized Care Routine
-- Morning care steps
-- Evening care steps
-- Weekly special treatments
-- Product types that would work well
+Morning Routine:
+- Specific product types and application methods
+- Timing and frequency recommendations
+- Professional application techniques
+
+Evening Routine:
+- Detailed cleansing and treatment steps
+- Product recommendations based on clinical research
+- Prevention and protection measures
+
+Weekly Special Treatments:
+- Deep conditioning protocols
+- Scalp treatment recommendations
+- Professional treatment schedule
 
 5. Lifestyle & Environmental Tips
-- Diet suggestions for better hair health
-- Exercise benefits for hair growth
-- Environmental protection advice
-- Stress management for hair health
+Incorporate evidence-based recommendations for:
+- Nutrition and dietary support for hair health
+- Exercise impact on hair growth
+- Environmental protection strategies
+- Stress management techniques for hair health
 
 6. Seasonal Care Guide
-- Current season recommendations
-- Preparing for upcoming weather changes
-- Humidity and temperature management
-- Special occasion preparation tips
+Current Season Focus:
+- Specific environmental challenges
+- Protective measures
+- Product adjustments needed
+
+Upcoming Season Preparation:
+- Transitional care steps
+- Preventive measures
+- Product rotation recommendations
 
 7. Treatment Recommendations
-- At-home care suggestions
-- Professional treatments to consider
-- Natural remedy options
-- Treatment timing recommendations
+Based on clinical analysis:
+- Primary treatment protocol
+- Secondary support treatments
+- At-home care integration
+- Professional treatment schedule
 
 8. Progress Goals & Milestones
-- Short-term improvements to look for
-- Medium-term goals
-- Long-term expectations
-- Success indicators
+Establish clear, measurable objectives:
+- 30-day improvements to expect
+- 90-day progress markers
+- 6-month transformation goals
+- Annual maintenance targets
 
 9. Emergency Care Tips
-- Quick fixes for bad hair days
-- DIY emergency treatments
-- Warning signs to watch for
+Professional guidance for:
+- Immediate solutions for common issues
 - When to seek professional help
+- Quick fixes backed by clinical experience
+- Warning signs to monitor
 
 10. Product Guide
-- Ingredients that would benefit your hair
-- What to avoid
-- Application techniques
-- Shopping tips
+Evidence-based recommendations:
+- Key ingredients and their clinical benefits
+- Application techniques from professional practice
+- Product synergy recommendations
+- Shopping guidance with professional insights
 
-Please write this in a conversational, encouraging tone. Avoid technical jargon and explain everything as if you're having a friendly chat. Focus on practical, actionable advice that feels personal and supportive.`;
+Clinical Disclaimer:
+This analysis is based on advanced AI technology and extensive clinical data. While comprehensive, it should not replace professional medical advice. We recommend scheduling a consultation with a certified trichologist or dermatologist for personalized treatment plans.
+
+Remember to present this information in a warm, professional manner, avoiding any special formatting characters or markdown syntax. Use clear paragraphs and simple dashes for lists.`;
 
 export const performSecondaryAnalysis = async (analysisData: any, apiKey: string) => {
   console.log('Starting secondary analysis with data:', analysisData);
@@ -323,7 +348,6 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
     throw new Error('Invalid analysis data structure. Missing raw metrics data.');
   }
 
-  // Validate required metrics from rawMetrics
   const requiredMetrics = ['hairType', 'scalpCondition', 'porosity'];
   const availableMetrics = Object.keys(analysisData.rawMetrics);
   
@@ -338,7 +362,6 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
     console.warn('Missing some metrics, using fallback values:', missingMetrics);
   }
 
-  // Prepare the prompt with proper data structure and fallback values
   const geminiPrompt = `
     Analysis Data:
     Health Score: ${analysisData.overallHealthScore || analysisData.healthScore || 'N/A'}
@@ -357,7 +380,6 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
     ${SECOND_ANALYSIS_PROMPT}
   `;
 
-  // Token count validation
   const inputTokens = JSON.stringify(geminiPrompt).length / 4;
   if (inputTokens > 1000000) {
     throw new Error('Context window overflow');
@@ -369,7 +391,7 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
       parts: [{ text: geminiPrompt }]
     }],
     generationConfig: {
-      temperature: 0.2,
+      temperature: 0.1,
       topK: 40,
       topP: 0.8,
       maxOutputTokens: 8192
@@ -402,14 +424,16 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
       throw new Error('Malformed API response structure');
     }
 
-    // Get the response text
     const responseText = data.candidates[0].content.parts[0].text;
     console.log('Raw response text:', responseText);
 
-    // Parse the sections based on numbered headings
-    const sections = responseText.split(/\d+\.\s+/).filter(Boolean);
+    const cleanedText = responseText
+      .replace(/[#*`]/g, '')  // Remove markdown characters
+      .replace(/\n{3,}/g, '\n\n')  // Normalize multiple line breaks
+      .trim();
+
+    const sections = cleanedText.split(/\d+\.\s+/).filter(Boolean);
     
-    // Create a structured response
     const structuredResponse = {
       welcome: sections[0]?.trim() || "Welcome section not found",
       hairStatus: sections[1]?.trim() || "Hair status section not found",
