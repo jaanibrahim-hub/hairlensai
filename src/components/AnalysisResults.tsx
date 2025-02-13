@@ -184,6 +184,27 @@ const defaultMetrics = [
   { icon: "exclamation-triangle", label: "Damage Analysis", value: "Minimal" },
 ];
 
+const defaultRawMetrics = {
+  hairType: "Type 2B Wavy",
+  healthStatus: "Requires Attention",
+  porosity: "Medium",
+  density: "Medium-High",
+  elasticity: "Good",
+  scalpCondition: "Mild Inflammation",
+  hairLength: "Medium (12-16 inches)",
+  chemicalTreatment: "Minimal",
+  protectionLevel: "Moderate",
+  breakageRate: "7% (Low)",
+  strandThickness: "0.08mm (Medium)",
+  follicleDensity: "165 hairs/cm²",
+  hairDiameter: {
+    root: "0.09mm",
+    tip: "0.06mm"
+  },
+  growthPhase: "85% Anagen",
+  damageAnalysis: "Minimal"
+};
+
 const transformApiResponse = (apiResponse: any): AnalysisResult => {
   const rawMetrics = apiResponse.metrics || {};
 
@@ -315,6 +336,7 @@ interface AnalysisResultsProps {
 const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   const [analysisData, setAnalysisData] = useState<AnalysisResult>({
     metrics: defaultMetrics,
+    rawMetrics: defaultRawMetrics,
     healthScore: 80,
     healthData: defaultHealthData,
     curlPatternData: {
@@ -938,7 +960,9 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
                     Complementary to main treatments.
                   </p>
                   <div className="mt-3">
-                    <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">75% Match</span>
+                    <span className="text-xs bg-purple-500/20 text-purple-400 px-2 py-1 rounded">
+                      {analysisData.recommendedTreatments.supporting.match}% Match
+                    </span>
                   </div>
                 </div>
               </>
@@ -994,7 +1018,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
               </p>
               <ul className="mt-3 space-y-2 text-sm text-gray-300">
                 <li><span className="text-purple-400">•</span> Straight: Smooth, no waves or curls</li>
-                <li><span className="text-orange-400">•</span> Wavy: Gentle S-shaped waves</li>
+                <li><span className="text-orange-400">��</span> Wavy: Gentle S-shaped waves</li>
                 <li><span className="text-blue-400">•</span> Curly: Springy, defined curls</li>
                 <li><span className="text-pink-400">•</span> Coily: Tight, compact curls</li>
               </ul>
