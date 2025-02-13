@@ -511,22 +511,19 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
 
       const analysisResponse = await performSecondaryAnalysis(analysisData, API_KEYS[0]);
 
-      // Parse the sections based on numbered headings
-      const sections = analysisResponse.split(/\d+\.\s+/).filter(Boolean);
-      
-      // Create a structured response
+      // The response is already structured, so we can use it directly
       const structuredResponse = {
-        welcome: sections[0]?.trim() || "Welcome section not found",
-        hairStatus: sections[1]?.trim() || "Hair status section not found",
-        growthPhase: sections[2]?.trim() || "Growth phase section not found",
-        careRoutine: sections[3]?.trim() || "Care routine section not found",
-        lifestyleTips: sections[4]?.trim() || "Lifestyle tips section not found",
-        seasonalCare: sections[5]?.trim() || "Seasonal care section not found",
-        treatments: sections[6]?.trim() || "Treatments section not found",
-        progressGoals: sections[7]?.trim() || "Progress goals section not found",
-        emergencyCare: sections[8]?.trim() || "Emergency care section not found",
-        productGuide: sections[9]?.trim() || "Product guide section not found",
-        professionalConsultation: sections[10]?.trim() || "Professional consultation section not found"
+        welcome: analysisResponse.welcome || "Welcome section not found",
+        hairStatus: analysisResponse.hairStatus || "Hair status section not found",
+        growthPhase: analysisResponse.growthPhase || "Growth phase section not found",
+        careRoutine: analysisResponse.careRoutine || "Care routine section not found",
+        lifestyleTips: analysisResponse.lifestyleTips || "Lifestyle tips section not found",
+        seasonalCare: analysisResponse.seasonalCare || "Seasonal care section not found",
+        treatments: analysisResponse.treatments || "Treatments section not found",
+        progressGoals: analysisResponse.progressGoals || "Progress goals section not found",
+        emergencyCare: analysisResponse.emergencyCare || "Emergency care section not found",
+        productGuide: analysisResponse.productGuide || "Product guide section not found",
+        professionalConsultation: analysisResponse.professionalConsultation || "Professional consultation section not found"
       };
 
       console.log('Structured response:', structuredResponse);
