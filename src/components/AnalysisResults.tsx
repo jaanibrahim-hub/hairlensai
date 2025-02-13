@@ -511,8 +511,8 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
 
       const analysisResponse = await performSecondaryAnalysis(analysisData, API_KEYS[0]);
 
-      // The response is already structured according to SecondaryAnalysisResponse interface
-      const structuredResponse: SecondaryAnalysisResponse = {
+      // Only include the properties that exist in the SecondaryAnalysisResponse interface
+      const structuredResponse = {
         welcome: analysisResponse.welcome || "Welcome section not found",
         hairStatus: analysisResponse.hairStatus || "Hair status section not found",
         growthPhase: analysisResponse.growthPhase || "Growth phase section not found",
@@ -522,8 +522,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         treatments: analysisResponse.treatments || "Treatments section not found",
         progressGoals: analysisResponse.progressGoals || "Progress goals section not found",
         emergencyCare: analysisResponse.emergencyCare || "Emergency care section not found",
-        productGuide: analysisResponse.productGuide || "Product guide section not found",
-        professionalConsultation: analysisResponse.professionalConsultation || "Professional consultation section not found"
+        productGuide: analysisResponse.productGuide || "Product guide section not found"
       };
 
       console.log('Structured response:', structuredResponse);
