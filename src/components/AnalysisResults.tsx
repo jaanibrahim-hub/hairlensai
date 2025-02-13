@@ -509,10 +509,10 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         description: "Processing your hair analysis data...",
       });
 
-      const secondaryAnalysis = await performSecondaryAnalysis(analysisData, API_KEYS[0]);
+      const analysisResponse = await performSecondaryAnalysis(analysisData, API_KEYS[0]);
 
       // Parse the sections based on numbered headings
-      const sections = responseText.split(/\d+\.\s+/).filter(Boolean);
+      const sections = analysisResponse.split(/\d+\.\s+/).filter(Boolean);
       
       // Create a structured response
       const structuredResponse = {
