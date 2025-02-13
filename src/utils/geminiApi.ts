@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 
 export const API_KEYS = [
@@ -275,9 +276,14 @@ const SECOND_ANALYSIS_PROMPT = `As a trichology expert, analyze this hair health
 export const performSecondaryAnalysis = async (analysisData: any, apiKey: string) => {
   console.log('Starting secondary analysis with data:', analysisData);
   
-  // Normalize metric labels for case-insensitive comparison
-  const requiredMetrics = ['hair type', 'scalp condition', 'porosity'];
-  const availableMetrics = analysisData.metrics.map((metric: any) => metric.label.toLowerCase());
+  if (!analysisData || !analysisData.metrics) {
+    console.error('Invalid analysis data structure');
+    throw new Error('Invalid analysis data structure. Missing metrics.');
+  }
+
+  // Validate required metrics
+  const requiredMetrics = ['hairType', 'scalpCondition', 'porosity'];
+  const availableMetrics = Object.keys(analysisData.metrics);
   
   console.log('Available metrics:', availableMetrics);
   console.log('Required metrics:', requiredMetrics);
@@ -291,11 +297,21 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
     throw new Error(`Incomplete analysis data. Missing metrics: ${missingMetrics.join(', ')}`);
   }
 
-  // Prepare the prompt with the analysis data
+  // Prepare the prompt with proper data structure
   const geminiPrompt = `
     Analysis Data:
-    Health Score: ${analysisData.healthScore}
-    Metrics: ${JSON.stringify(analysisData.metrics)}
+    Health Score: ${analysisData.overallHealthScore || 'N/A'}
+    
+    Hair Metrics:
+    Hair Type: ${analysisData.metrics.hairType || 'N/A'}
+    Scalp Condition: ${analysisData.metrics.scalpCondition || 'N/A'}
+    Porosity: ${analysisData.metrics.porosity || 'N/A'}
+    
+    Additional Metrics:
+    ${Object.entries(analysisData.metrics)
+      .filter(([key]) => !requiredMetrics.includes(key))
+      .map(([key, value]) => `${key}: ${value}`)
+      .join('\n    ')}
     
     ${SECOND_ANALYSIS_PROMPT}
   `;
@@ -354,6 +370,12 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
         ? responseText.split('```json')[1].split('```')[0].trim()
         : responseText;
       jsonResponse = JSON.parse(jsonString);
+      
+      // Validate response structure
+      if (!jsonResponse.diagnostic_summary || !jsonResponse.detailed_analysis || !Array.isArray(jsonResponse.treatment_plan)) {
+        throw new Error('Invalid response format from API');
+      }
+      
     } catch (parseError) {
       console.error('JSON parsing error:', parseError);
       throw new Error('Failed to parse API response');
@@ -362,6 +384,7 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
     return jsonResponse;
   } catch (error) {
     console.error('Secondary analysis error:', error);
+    toast.error('Secondary analysis failed: ' + error.message);
     throw error;
   }
 }
