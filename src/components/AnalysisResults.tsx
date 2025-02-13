@@ -392,7 +392,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
   const [aiAnalysis, setAiAnalysis] = useState<string>("");
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [isGeminiLoading, setIsGeminiLoading] = useState(false);
-  const [geminiAnalysis, setGeminiAnalysis] = useState<string>("");
+  const [geminiAnalysis, setGeminiAnalysis] = useState<SecondaryAnalysisResponse | null>(null);
   const [showGeminiDialog, setShowGeminiDialog] = useState(false);
 
   useEffect(() => {
@@ -509,13 +509,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
       });
 
       const secondaryAnalysis = await performSecondaryAnalysis(analysisData, API_KEYS[0]);
-      setGeminiAnalysis(
-        `# Diagnostic Summary\n${secondaryAnalysis.diagnostic_summary}\n\n` +
-        `# Detailed Analysis\n${secondaryAnalysis.detailed_analysis}\n\n` +
-        `# Treatment Plan\n${secondaryAnalysis.treatment_plan.map(plan => 
-          `## ${plan.category}\n${plan.recommendations.join('\n')}`
-        ).join('\n\n')}`
-      );
+      setGeminiAnalysis(secondaryAnalysis);
       
       toast({
         title: "Analysis Complete",
@@ -834,7 +828,7 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
         return Object.entries(content).map(([key, value], index) => (
           <div key={index} className="mt-4">
             <h4 className="text-lg font-medium text-white mb-2">
-              {key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+              {key.split(/(?=[A-Z])/).join(" ").replace(/_/g, " ")}
             </h4>
             <p className="text-gray-200 leading-relaxed">{value}</p>
           </div>
