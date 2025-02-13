@@ -260,85 +260,134 @@ async function makeApiCall(imageBase64: string, apiKey: string) {
   }
 }
 
-const SECOND_ANALYSIS_PROMPT = `As a hair care professional with expertise from analyzing over 200,000 clinical cases, please provide a comprehensive, friendly yet professional assessment. Structure your response in clear sections, avoiding any markdown characters or special formatting. Keep the tone warm and professional.
+const SECOND_ANALYSIS_PROMPT = `As a hair care professional with expertise from analyzing over 200,000 clinical cases, please provide a comprehensive, friendly yet professional assessment. 
 
-Please structure your response in these sections, using clear paragraphs and simple dashes (-) for lists:
+IMPORTANT FORMATTING INSTRUCTIONS:
+- Start each bullet point with a dash (-) followed by a space
+- Place each bullet point on its own line
+- Add a blank line before and after bullet point lists
+- Maintain consistent indentation for all bullet points
+- Do not use any markdown characters or special formatting
+- Keep paragraphs separated by blank lines
+- Use clear section numbering without special characters
+
+Please structure your response in these sections:
 
 1. Welcome & Overview
-Introduce yourself warmly and share your initial impressions about their hair analysis results. Include a brief summary of your clinical experience and expertise.
+Introduce yourself warmly and share your initial impressions about their hair analysis results.
 
 2. Current Hair Status
-Provide a clear, detailed assessment of their hair health, texture, and condition using professional terminology while maintaining accessibility. Include specific measurements and comparisons to clinical standards.
+Provide a clear, detailed assessment of their hair health, texture, and condition.
+
+Key Findings:
+- Current hair health score and what it means
+- Texture and porosity assessment
+- Scalp condition overview
+- Density and growth patterns
 
 3. Growth Phase Understanding
-Explain their current hair growth phase distribution, comparing it to optimal clinical ranges. Include specific percentages and what they mean for the client's hair health journey.
+Explain their current hair growth phase distribution.
+
+Phase Distribution:
+- Anagen phase percentage and significance
+- Telogen phase current status
+- Catagen phase observations
+- Comparison to optimal ranges
 
 4. Personalized Care Routine
+
 Morning Routine:
-- Specific product types and application methods
-- Timing and frequency recommendations
-- Professional application techniques
+- Cleansing recommendations
+- Treatment application sequence
+- Styling product suggestions
+- Protection measures
 
 Evening Routine:
-- Detailed cleansing and treatment steps
-- Product recommendations based on clinical research
-- Prevention and protection measures
+- Deep cleansing steps
+- Treatment applications
+- Overnight care protocols
+- Product rotation schedule
 
 Weekly Special Treatments:
-- Deep conditioning protocols
-- Scalp treatment recommendations
-- Professional treatment schedule
+- Deep conditioning protocol
+- Scalp treatment schedule
+- Specialized care procedures
+- Treatment timing recommendations
 
 5. Lifestyle & Environmental Tips
-Incorporate evidence-based recommendations for:
-- Nutrition and dietary support for hair health
-- Exercise impact on hair growth
-- Environmental protection strategies
-- Stress management techniques for hair health
+
+Nutrition Support:
+- Essential vitamins and minerals
+- Dietary recommendations
+- Hydration guidelines
+- Supplement suggestions
+
+Exercise Considerations:
+- Best workout timing
+- Sweat management
+- Post-exercise hair care
+- Protective styling for activities
 
 6. Seasonal Care Guide
-Current Season Focus:
-- Specific environmental challenges
-- Protective measures
-- Product adjustments needed
 
-Upcoming Season Preparation:
+Current Season Focus:
+- Environmental protection strategies
+- Moisture balance techniques
+- Product adjustments needed
+- Protection protocols
+
+Next Season Preparation:
 - Transitional care steps
+- Product rotation plan
+- Environmental adaptations
 - Preventive measures
-- Product rotation recommendations
 
 7. Treatment Recommendations
-Based on clinical analysis:
-- Primary treatment protocol
-- Secondary support treatments
-- At-home care integration
-- Professional treatment schedule
+
+Primary Protocol:
+- Main treatment focus
+- Application frequency
+- Expected outcomes
+- Progress monitoring
+
+Support Treatments:
+- Complementary procedures
+- Integration schedule
+- Combination benefits
+- Application guidelines
 
 8. Progress Goals & Milestones
-Establish clear, measurable objectives:
-- 30-day improvements to expect
-- 90-day progress markers
-- 6-month transformation goals
-- Annual maintenance targets
+
+30-Day Goals:
+- Expected improvements
+- Monitoring metrics
+- Adjustment points
+- Success indicators
+
+90-Day Objectives:
+- Progress benchmarks
+- Measurement criteria
+- Adaptation points
+- Success markers
 
 9. Emergency Care Tips
-Professional guidance for:
-- Immediate solutions for common issues
-- When to seek professional help
-- Quick fixes backed by clinical experience
+
+Immediate Solutions:
+- Quick fix protocols
+- Professional intervention triggers
+- At-home emergency care
 - Warning signs to monitor
 
 10. Product Guide
-Evidence-based recommendations:
-- Key ingredients and their clinical benefits
-- Application techniques from professional practice
-- Product synergy recommendations
-- Shopping guidance with professional insights
+
+Essential Products:
+- Key ingredients to look for
+- Application techniques
+- Product synergies
+- Shopping recommendations
 
 Clinical Disclaimer:
-This analysis is based on advanced AI technology and extensive clinical data. While comprehensive, it should not replace professional medical advice. We recommend scheduling a consultation with a certified trichologist or dermatologist for personalized treatment plans.
-
-Remember to present this information in a warm, professional manner, avoiding any special formatting characters or markdown syntax. Use clear paragraphs and simple dashes for lists.`;
+This analysis is based on advanced AI technology and extensive clinical data. While comprehensive, it should not replace professional medical advice. We recommend scheduling a consultation with a certified trichologist or dermatologist for personalized treatment plans.`;
 
 export const performSecondaryAnalysis = async (analysisData: any, apiKey: string) => {
   console.log('Starting secondary analysis with data:', analysisData);
@@ -427,13 +476,20 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
     const responseText = data.candidates[0].content.parts[0].text;
     console.log('Raw response text:', responseText);
 
+    // Enhanced text cleaning function to properly handle bullet points
     const cleanedText = responseText
       .replace(/[#*`]/g, '')  // Remove markdown characters
       .replace(/\n{3,}/g, '\n\n')  // Normalize multiple line breaks
+      .replace(/(?<![\n])-\s/g, '\n-') // Ensure each bullet point starts on a new line
+      .replace(/([.:])\s*-/g, '$1\n\n-') // Add line break after headings before bullet points
+      .replace(/\n-\s*([^\n]+)(?!\n)/g, '\n- $1\n') // Add line break after each bullet point
+      .replace(/\n{4,}/g, '\n\n\n') // Normalize excessive line breaks
       .trim();
 
+    // Parse the sections based on numbered headings with improved bullet point handling
     const sections = cleanedText.split(/\d+\.\s+/).filter(Boolean);
     
+    // Create a structured response
     const structuredResponse = {
       welcome: sections[0]?.trim() || "Welcome section not found",
       hairStatus: sections[1]?.trim() || "Hair status section not found",
