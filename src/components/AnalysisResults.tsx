@@ -1218,24 +1218,73 @@ const AnalysisResults = ({ apiKey }: AnalysisResultsProps) => {
                 {geminiAnalysis && (
                   <>
                     {renderAnalysisCard(
-                      "Diagnostic Summary",
-                      geminiAnalysis.split('# Diagnostic Summary\n')[1]?.split('#')[0]?.trim() || "No diagnostic summary available",
+                      "Welcome & Overview",
+                      geminiAnalysis.welcome,
                       <Clipboard className="w-6 h-6 text-purple-400" />,
                       "bg-gradient-to-br from-purple-600/20 to-indigo-600/20"
                     )}
                     
                     {renderAnalysisCard(
-                      "Detailed Analysis",
-                      geminiAnalysis.split('# Detailed Analysis\n')[1]?.split('#')[0]?.trim() || "No detailed analysis available",
+                      "Hair Status",
+                      geminiAnalysis.hairStatus,
                       <Microscope className="w-6 h-6 text-blue-400" />,
                       "bg-gradient-to-br from-blue-600/20 to-cyan-600/20"
                     )}
                     
                     {renderAnalysisCard(
-                      "Treatment Plan",
-                      geminiAnalysis.split('# Treatment Plan\n')[1]?.trim() || "No treatment plan available",
-                      <Pill className="w-6 h-6 text-emerald-400" />,
+                      "Growth Phase",
+                      geminiAnalysis.growthPhase,
+                      <Activity className="w-6 h-6 text-emerald-400" />,
                       "bg-gradient-to-br from-emerald-600/20 to-teal-600/20"
+                    )}
+                    
+                    {renderAnalysisCard(
+                      "Care Routine",
+                      geminiAnalysis.careRoutine,
+                      <Heart className="w-6 h-6 text-pink-400" />,
+                      "bg-gradient-to-br from-pink-600/20 to-rose-600/20"
+                    )}
+                    
+                    {renderAnalysisCard(
+                      "Lifestyle Tips",
+                      geminiAnalysis.lifestyleTips,
+                      <Leaf className="w-6 h-6 text-green-400" />,
+                      "bg-gradient-to-br from-green-600/20 to-emerald-600/20"
+                    )}
+                    
+                    {renderAnalysisCard(
+                      "Seasonal Care",
+                      geminiAnalysis.seasonalCare,
+                      <Wind className="w-6 h-6 text-cyan-400" />,
+                      "bg-gradient-to-br from-cyan-600/20 to-blue-600/20"
+                    )}
+                    
+                    {renderAnalysisCard(
+                      "Treatments",
+                      geminiAnalysis.treatments,
+                      <Pill className="w-6 h-6 text-violet-400" />,
+                      "bg-gradient-to-br from-violet-600/20 to-purple-600/20"
+                    )}
+                    
+                    {renderAnalysisCard(
+                      "Progress Goals",
+                      geminiAnalysis.progressGoals,
+                      <Brain className="w-6 h-6 text-amber-400" />,
+                      "bg-gradient-to-br from-amber-600/20 to-orange-600/20"
+                    )}
+                    
+                    {renderAnalysisCard(
+                      "Emergency Care",
+                      geminiAnalysis.emergencyCare,
+                      <ShieldCheck className="w-6 h-6 text-red-400" />,
+                      "bg-gradient-to-br from-red-600/20 to-rose-600/20"
+                    )}
+                    
+                    {renderAnalysisCard(
+                      "Product Guide",
+                      geminiAnalysis.productGuide,
+                      <Droplet className="w-6 h-6 text-sky-400" />,
+                      "bg-gradient-to-br from-sky-600/20 to-indigo-600/20"
                     )}
                   </>
                 )}
