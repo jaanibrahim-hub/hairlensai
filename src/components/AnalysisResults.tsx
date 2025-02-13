@@ -26,6 +26,7 @@ import {
 import { Line, Doughnut } from 'react-chartjs-2';
 import AdvancedAnalysis from "./AdvancedAnalysis";
 import { performSecondaryAnalysis } from "@/utils/geminiApi";
+import { SecondaryAnalysisResponse } from "@/types/analysis";
 
 ChartJS.register(
   ArcElement,
