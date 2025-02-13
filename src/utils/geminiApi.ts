@@ -2,7 +2,7 @@ import { toast } from "sonner";
 
 export const API_KEYS = [
   'AIzaSyCbiokMrXsfZyXHi_OFwFwM5bG9QXazCPA',
-  'AIzaSyBrUoI6e9BCAarqbXQf3NfTTe3wyZ_4O-Mo',
+  'AIzaSyBrUoI6e9BCAarqbXQf3NfTe3wyZ_4O-Mo',
   'AIzaSyDP-5zEsfl0SkNAdfB2Hx70MOgC3j6QvHk',
   'AIzaSyBZJ7jynPsUbw8310LtVgx9dhB_sQK6hx4',
   'AIzaSyC6G-t916odkj3tkx4lO0S9FMK3NhwpuUo',
@@ -34,30 +34,6 @@ const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a detailed as
     },
     "growthPhase": "Dominant growth phase estimate",
     "damageAnalysis": "Visible damage assessment"
-  },
-  "regionalAnalysis": {
-    "overall": "Qualitative description of overall density patterns",
-    "regions": {
-      "crown": {
-        "status": "dense/medium/sparse",
-        "pattern": "Description of distribution pattern",
-        "concerns": "Any visible issues or patterns"
-      },
-      "temples": {
-        "leftStatus": "dense/medium/sparse",
-        "rightStatus": "dense/medium/sparse",
-        "symmetry": "Description of left-right balance"
-      },
-      "hairline": {
-        "status": "dense/medium/sparse",
-        "pattern": "Description of hairline characteristics"
-      },
-      "vertex": {
-        "status": "dense/medium/sparse",
-        "pattern": "Description of vertex coverage"
-      }
-    },
-    "comparativeAnalysis": "Overall description of density variations between regions"
   },
   "overallHealthScore": "Numerical score 0-100",
   "structuralAnalysis": {
@@ -129,15 +105,16 @@ const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a detailed as
   }
 }
 
-Important guidelines for regional analysis:
-1. Focus on visible density patterns in each region
-2. Compare density between different regions
-3. Note any asymmetry or unusual patterns
-4. Describe distribution patterns clearly
-5. Identify areas of concern
-6. Consider both close-up details and overall appearance
-7. Note any distinct variations in different regions
-8. Include specific observations about edges and transitions between regions`;
+Important guidelines for analysis:
+1. Provide specific numerical values whenever possible
+2. Focus on visible characteristics in the image
+3. Make reasonable estimates based on visible features
+4. Use comparative analysis with standard hair types
+5. Consider both close-up details and overall appearance
+6. Assess multiple areas of the image for comprehensive analysis
+7. Note any distinct patterns or variations
+8. Include specific measurements where visible indicators allow estimation
+`;
 
 export const analyzeHairImage = async (imageBase64: string): Promise<any> => {
   if (!validateImage(imageBase64)) {
