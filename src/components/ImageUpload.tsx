@@ -46,46 +46,58 @@ const ImageUpload = () => {
   
   // Force file input trigger function
   const triggerFileInput = () => {
-    console.log('triggerFileInput called');
+    console.log('🎯 triggerFileInput called');
     
-    // Method 1: Try via ref
-    if (fileInputRef.current) {
-      console.log('Clicking via ref');
-      fileInputRef.current.click();
-      return;
-    }
-    
-    // Method 2: Try via document ID
-    const input = document.getElementById('imageInput') as HTMLInputElement;
-    if (input) {
-      console.log('Clicking via document.getElementById');
-      input.click();
-      return;
-    }
-    
-    // Method 3: Try via querySelector
-    const inputQuery = document.querySelector('input[type="file"]') as HTMLInputElement;
-    if (inputQuery) {
-      console.log('Clicking via querySelector');
-      inputQuery.click();
-      return;
-    }
-    
-    // Method 4: Create new file input dynamically as backup
-    console.warn('Creating new file input dynamically');
-    const newInput = document.createElement('input');
-    newInput.type = 'file';
-    newInput.accept = '.png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp';
-    newInput.style.display = 'none';
-    newInput.onchange = (e) => {
-      const target = e.target as HTMLInputElement;
-      if (target.files && target.files[0]) {
-        handleImageUpload({ target: { files: target.files } } as any);
+    try {
+      // Method 1: Try via ref
+      console.log('🔗 Checking fileInputRef.current:', fileInputRef.current);
+      if (fileInputRef.current) {
+        console.log('✅ Clicking via ref');
+        fileInputRef.current.click();
+        return;
       }
-      document.body.removeChild(newInput);
-    };
-    document.body.appendChild(newInput);
-    newInput.click();
+      
+      // Method 2: Try via document ID
+      console.log('🔍 Searching by ID...');
+      const input = document.getElementById('imageInput') as HTMLInputElement;
+      console.log('📄 Found by ID:', input);
+      if (input) {
+        console.log('✅ Clicking via document.getElementById');
+        input.click();
+        return;
+      }
+      
+      // Method 3: Try via querySelector
+      console.log('🔎 Searching by querySelector...');
+      const inputQuery = document.querySelector('input[type="file"]') as HTMLInputElement;
+      console.log('📄 Found by query:', inputQuery);
+      if (inputQuery) {
+        console.log('✅ Clicking via querySelector');
+        inputQuery.click();
+        return;
+      }
+      
+      // Method 4: Create new file input dynamically as backup
+      console.warn('⚠️ Creating new file input dynamically');
+      const newInput = document.createElement('input');
+      newInput.type = 'file';
+      newInput.accept = '.png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp';
+      newInput.style.display = 'none';
+      newInput.onchange = (e) => {
+        const target = e.target as HTMLInputElement;
+        console.log('📁 Dynamic input files:', target.files);
+        if (target.files && target.files[0]) {
+          handleImageUpload({ target: { files: target.files } } as any);
+        }
+        document.body.removeChild(newInput);
+      };
+      document.body.appendChild(newInput);
+      console.log('🆕 Created and clicking dynamic input');
+      newInput.click();
+      
+    } catch (error) {
+      console.error('❌ Error in triggerFileInput:', error);
+    }
   };
 
   const validateImage = async (file: File): Promise<boolean> => {
@@ -144,11 +156,15 @@ const ImageUpload = () => {
   };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('handleImageUpload called');
-    console.log('event.target.files:', event.target.files);
+    console.log('📥 handleImageUpload called');
+    console.log('📁 event.target.files:', event.target.files);
     const file = event.target.files?.[0];
-    console.log('Selected file:', file);
-    if (!file) return;
+    console.log('🗂 Selected file:', file);
+    if (!file) {
+      console.log('❌ No file selected');
+      return;
+    }
+    console.log('✅ File selected successfully:', file.name, file.size, file.type);
 
     try {
       setUploadProgress(0);
@@ -406,12 +422,20 @@ const ImageUpload = () => {
             {!currentImage ? (
               <div className="space-y-4">
                 <Button 
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg relative z-20"
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg relative z-20 cursor-pointer"
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('Main upload button clicked');
+                    console.log('🚀 MAIN UPLOAD BUTTON CLICKED! Event:', e.type);
+                    console.log('Button disabled?', isProcessingQuality);
+                    console.log('About to call triggerFileInput...');
                     triggerFileInput();
+                  }}
+                  onMouseDown={(e) => {
+                    console.log('🖱️ BUTTON MOUSE DOWN');
+                  }}
+                  onTouchStart={(e) => {
+                    console.log('📱 BUTTON TOUCH START');
                   }}
                   disabled={isProcessingQuality}
                   type="button"
@@ -431,17 +455,18 @@ const ImageUpload = () => {
                 
                 {/* Alternative direct click on label */}
                 <div className="text-center">
-                  <label 
-                    htmlFor="imageInput" 
+                  <button 
+                    type="button"
                     className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg cursor-pointer transition-colors relative z-20"
                     onClick={(e) => {
                       e.preventDefault();
-                      console.log('Label clicked');
+                      e.stopPropagation();
+                      console.log('🔵 ALTERNATIVE BUTTON CLICKED!');
                       triggerFileInput();
                     }}
                   >
                     Alternative: Click here to upload
-                  </label>
+                  </button>
                 </div>
               </div>
             ) : (
