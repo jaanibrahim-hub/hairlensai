@@ -174,33 +174,60 @@ Return comprehensive analysis in this enhanced JSON format:
   },
   "recommendedTreatments": {
     "primary": {
-      "name": "Primary evidence-based treatment",
-      "description": "Detailed treatment description with mechanism",
-      "match": "Precision match percentage",
-      "timeline": "Expected results timeline",
-      "contraindications": "Important contraindications"
+      "name": "Primary evidence-based treatment (select from comprehensive database below)",
+      "description": "Detailed treatment description with mechanism of action",
+      "match": "Precision match percentage (85-98%)",
+      "timeline": "Expected results timeline with milestones",
+      "contraindications": "Important contraindications and warnings",
+      "cost": "Estimated cost range",
+      "invasiveness": "Non-invasive/Minimally invasive/Surgical"
     },
     "secondary": {
-      "name": "Secondary treatment option",
-      "description": "Alternative treatment approach",
-      "match": "Match percentage",
-      "synergy": "Combination potential with primary"
+      "name": "Secondary treatment option (select from database)",
+      "description": "Alternative treatment approach with scientific basis",
+      "match": "Match percentage (70-95%)",
+      "synergy": "Combination potential with primary treatment",
+      "timeline": "Expected results timeline"
     },
     "supporting": {
-      "name": "Supporting therapy",
+      "name": "Supporting therapy (select from database)",
       "description": "Adjunct treatment description",
-      "match": "Support treatment match"
+      "match": "Support treatment match (60-85%)",
+      "frequency": "Recommended frequency and duration"
     },
-    "lifestyle": {
-      "nutrition": "Specific nutritional recommendations",
-      "supplements": "Evidence-based supplement suggestions",
-      "habits": "Beneficial lifestyle modifications"
+    "categories": {
+      "surgical": [
+        "List 3-5 most relevant surgical options from: FUE Hair Transplant, FUT Hair Transplant, DHI (Direct Hair Implantation), Micro FUE, Mega Sessions FUE, Body Hair Transplant, Eyebrow Transplant, Scalp Micropigmentation (SMP), Scalp Reduction Surgery, Hair Flap Surgery, Tissue Expansion, Robotic Hair Transplant (ARTAS), Sapphire FUE, Percutaneous FUE, Strip Harvesting, Follicular Unit Grafting"
+      ],
+      "medical": [
+        "List 5-8 most relevant medical treatments from: Finasteride (Propecia), Dutasteride (Avodart), Minoxidil 2%, Minoxidil 5%, Minoxidil 10%, Topical Finasteride, RU58841, Ketoconazole Shampoo, Nizoral, Spironolactone, Flutamide, Cyproterone Acetate, Estrogen Therapy, Biotin Supplements, Saw Palmetto, Pumpkin Seed Oil, Rosemary Oil, Adenosine, Copper Peptides, Aminexil, Stemoxydine, Procyanidin B-2, Caffeine Solutions, Tretinoin, Azelaic Acid"
+      ],
+      "procedural": [
+        "List 6-10 most relevant procedures from: PRP (Platelet Rich Plasma), PRF (Platelet Rich Fibrin), Stem Cell Therapy, Exosome Therapy, Microneedling, Dermaroller Treatment, Dermapen, LLLT (Low Level Laser Therapy), LED Light Therapy, Scalp Massage Therapy, Ozone Therapy, Mesotherapy, Hair Growth Injections, Scalp Acupuncture, Carboxytherapy, Radiofrequency Treatment, Ultrasound Therapy, Electromagnetic Field Therapy, Cryotherapy, Photobiomodulation"
+      ],
+      "topical": [
+        "List 8-12 most relevant topical treatments from: Minoxidil Foam, Minoxidil Solution, Nanoxidil, Redensyl, Procapil, Capixyl, Baicapil, Follicusan, Trichogen, Sympeptide XLASH, Peptide Complex, Growth Factors, Adenosine Serum, Copper Peptide Serum, Niacinamide, Caffeine Shampoo, Biotin Shampoo, Keratin Treatment, Argan Oil, Castor Oil, Jojoba Oil, Essential Oils Blend, Scalp Serums, Leave-in Treatments, Hair Masks, Protein Treatments"
+      ],
+      "natural": [
+        "List 6-8 most relevant natural treatments from: Rosemary Essential Oil, Peppermint Oil, Lavender Oil, Cedarwood Oil, Thyme Oil, Saw Palmetto Extract, Pumpkin Seed Oil, Green Tea Extract, Ginseng, Bhringraj Oil, Amla Oil, Onion Juice, Aloe Vera, Fenugreek Seeds, Hibiscus, Curry Leaves, Coconut Oil, Olive Oil, Egg Masks, Scalp Massage, Yoga, Meditation, Dietary Changes, Iron Supplements, Vitamin D, Zinc, Omega-3"
+      ],
+      "lifestyle": [
+        "List 5-7 most relevant lifestyle modifications from: Stress Management, Sleep Optimization, Exercise Routine, Nutritional Diet, Hydration, Avoiding Heat Styling, Gentle Hair Handling, Silk Pillowcases, Regular Scalp Cleansing, UV Protection, Smoking Cessation, Alcohol Reduction, Hormone Balance, Weight Management, Blood Sugar Control"
+      ]
     },
-    "other": [
-      {"name": "Alternative option 1", "match": "percentage", "notes": "specific notes"},
-      {"name": "Alternative option 2", "match": "percentage", "notes": "specific notes"},
-      {"name": "Emerging therapy", "match": "percentage", "notes": "research-backed option"}
-    ]
+    "comprehensive_analysis": "Based on the specific hair analysis findings, select the most appropriate treatments from each category above. Provide match percentages based on: hair type compatibility, scalp condition suitability, damage level appropriateness, lifestyle factors, age considerations, and expected effectiveness. Rank treatments by evidence level (clinical studies, peer-reviewed research, case studies).",
+    "combination_protocols": [
+      "Recommend 3-5 evidence-based treatment combinations with synergistic effects",
+      "Include timing, sequencing, and monitoring protocols for combinations",
+      "Specify which treatments should not be combined and why"
+    ],
+    "timeline_expectations": {
+      "immediate": "0-4 weeks: What to expect",
+      "short_term": "1-3 months: Early results", 
+      "medium_term": "3-6 months: Significant changes",
+      "long_term": "6-12 months: Full results",
+      "maintenance": "12+ months: Ongoing care protocol"
+    }
   }
 }
 
@@ -208,15 +235,33 @@ CRITICAL ANALYSIS GUIDELINES:
 1. Use Gemini 2.5 Flash advanced reasoning for clinical correlations
 2. Provide precise numerical values with confidence intervals
 3. Correlate visual findings with clinical knowledge
-4. Consider demographic factors in analysis
+4. Consider demographic factors in analysis (age, gender, ethnicity)
 5. Map regional variations across scalp areas
 6. Assess both immediate and long-term hair health indicators
 7. Integrate environmental and lifestyle factor analysis
-8. Provide evidence-based treatment recommendations
-9. Include contraindications and safety considerations
-10. Offer realistic timeline expectations for improvements
+8. **COMPREHENSIVE TREATMENT SELECTION: From the 60+ treatments listed above, select the most relevant options for each category based on the specific analysis findings**
+9. **EVIDENCE-BASED RANKING: Rank all recommended treatments by scientific evidence level and expected effectiveness for this specific case**
+10. Include contraindications and safety considerations for each treatment
+11. Offer realistic timeline expectations with milestone markers
+12. **PERSONALIZATION: Customize treatment recommendations based on lifestyle, budget considerations, and invasiveness preferences**
+13. **COMBINATION THERAPY: Suggest evidence-based treatment combinations with synergistic effects**
+14. **PROGRESSIVE PROTOCOL: Design a step-by-step treatment escalation plan from conservative to advanced options**
+15. Provide alternative options for different budget ranges and time commitments
 
-Ensure all assessments are based on visible evidence with appropriate confidence levels.`;
+**TREATMENT SELECTION MANDATE: You must select from the comprehensive treatment database above to provide users with the best possible recommendations. Choose treatments based on:**
+
+- **Specific hair analysis findings** (density, miniaturization, inflammation)
+- **Scalp condition compatibility** (sensitive, oily, dry, inflamed)
+- **Severity level appropriateness** (mild, moderate, severe hair loss)
+- **Patient demographic factors** (age, gender, lifestyle)
+- **Evidence strength** (FDA-approved, clinical trials, case studies)
+- **Safety profile** (minimal side effects, contraindications)
+- **Cost-effectiveness** (budget-friendly to premium options)
+- **Treatment accessibility** (widely available vs specialized clinics)
+
+**COMPREHENSIVE COVERAGE REQUIREMENT: Provide minimum 15-20 treatment recommendations across all categories, with detailed match percentages, timelines, and combination possibilities.**
+
+Ensure all assessments are based on visible evidence with appropriate confidence levels and scientific backing.`;
 
 export const analyzeHairImage = async (imageBase64: string): Promise<any> => {
   if (!validateImage(imageBase64)) {
