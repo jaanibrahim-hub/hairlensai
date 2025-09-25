@@ -244,6 +244,87 @@ const ImageUpload = () => {
     }
   };
 
+  // Debug function to test API response structure
+  const testApiStructure = async () => {
+    if (!fileInputRef.current?.files?.[0]) {
+      toast.error('Please upload an image first');
+      return;
+    }
+    
+    console.log('🗋 Testing API response structure...');
+    
+    try {
+      const file = fileInputRef.current.files[0];
+      const reader = new FileReader();
+      
+      reader.onload = async (e) => {
+        try {
+          const base64String = e.target?.result as string;
+          console.log('🗋 Making test API call...');
+          
+          const result = await analyzeHairImage(base64String);
+          
+          console.log('🗋 === API TEST RESULTS ===');
+          console.log('🗋 Full result object:', result);
+          console.log('🗋 Result keys:', Object.keys(result));
+          
+          if (result.structuralAnalysis) {
+            console.log('🗋 structuralAnalysis found:', result.structuralAnalysis);
+            console.log('🗋 structuralAnalysis keys:', Object.keys(result.structuralAnalysis));
+            
+            if (result.structuralAnalysis.growthPhaseDistribution) {
+              console.log('🗋 growthPhaseDistribution:', result.structuralAnalysis.growthPhaseDistribution);
+              console.log('🗋 Is array?', Array.isArray(result.structuralAnalysis.growthPhaseDistribution));
+              if (Array.isArray(result.structuralAnalysis.growthPhaseDistribution)) {
+                result.structuralAnalysis.growthPhaseDistribution.forEach((phase, index) => {
+                  console.log(`🗋 Growth phase ${index}:`, phase, typeof phase);
+                  if (typeof phase === 'object' && phase !== null) {
+                    Object.entries(phase).forEach(([key, value]) => {
+                      console.log(`🗋   ${key}: ${value} (${typeof value})`);
+                    });
+                  }
+                });
+              }
+            } else {
+              console.log('❌ No growthPhaseDistribution found');
+            }
+            
+            if (result.structuralAnalysis.curlPatternDistribution) {
+              console.log('🗋 curlPatternDistribution:', result.structuralAnalysis.curlPatternDistribution);
+              console.log('🗋 Is array?', Array.isArray(result.structuralAnalysis.curlPatternDistribution));
+              if (Array.isArray(result.structuralAnalysis.curlPatternDistribution)) {
+                result.structuralAnalysis.curlPatternDistribution.forEach((pattern, index) => {
+                  console.log(`🗋 Curl pattern ${index}:`, pattern, typeof pattern);
+                  if (typeof pattern === 'object' && pattern !== null) {
+                    Object.entries(pattern).forEach(([key, value]) => {
+                      console.log(`🗋   ${key}: ${value} (${typeof value})`);
+                    });
+                  }
+                });
+              }
+            } else {
+              console.log('❌ No curlPatternDistribution found');
+            }
+          } else {
+            console.log('❌ No structuralAnalysis found in result');
+          }
+          
+          toast.success('API test completed! Check console for detailed logs.');
+          
+        } catch (error) {
+          console.error('❌ API test failed:', error);
+          toast.error('API test failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
+        }
+      };
+      
+      reader.readAsDataURL(file);
+      
+    } catch (error) {
+      console.error('❌ Test setup failed:', error);
+      toast.error('Test setup failed');
+    }
+  };
+
   const handleAnalyzeImage = async () => {
     if (!fileInputRef.current?.files?.[0]) {
       toast.error("No image selected for analysis");
@@ -578,6 +659,14 @@ const ImageUpload = () => {
                   >
                     <i className="fas fa-exchange-alt mr-2"></i>
                     Replace
+                  </Button>
+                  <Button 
+                    onClick={testApiStructure}
+                    variant="outline"
+                    className="border-blue-600 text-blue-300 bg-blue-600/10 hover:bg-blue-600/20"
+                  >
+                    <i className="fas fa-bug mr-2"></i>
+                    Debug API
                   </Button>
                 </div>
                 

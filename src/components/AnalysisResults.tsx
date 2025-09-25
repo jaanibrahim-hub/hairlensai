@@ -6,9 +6,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Brain, Activity, Heart, Droplet, Wind, Microscope, Ruler, Leaf, ShieldCheck, MapPin, Clipboard, Pill } from "lucide-react";
 import { API_KEYS } from "@/utils/geminiApi";
 import { Chart as ChartJS, ArcElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler, RadialLinearScale } from 'chart.js';
-import { Line, Doughnut } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 import AdvancedAnalysis from "./AdvancedAnalysis";
 import TreatmentTabs from "./TreatmentTabs";
+import ApiDataDisplay from "./ApiDataDisplay";
 import { performSecondaryAnalysis } from "@/utils/geminiApi";
 import { SecondaryAnalysisResponse } from "@/types/analysis";
 ChartJS.register(ArcElement, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler, RadialLinearScale);
@@ -1085,58 +1086,8 @@ const AnalysisResults = ({
         {/* Overall Health Score Card */}
         {renderHealthScoreCard()}
 
-        {/* Rest of the components */}
-        {/* Curl Pattern Distribution */}
-        <div className="bg-gray-600/50 p-6 rounded mb-6">
-          <h4 className="font-medium mb-4 text-lg">Curl Pattern Distribution</h4>
-          <div className="aspect-w-16 aspect-h-9">
-            <Doughnut data={curlPatternData} options={doughnutOptions} />
-          </div>
-          <div className="mt-4 space-y-4">
-            <div className="bg-gray-700/50 p-4 rounded">
-              <p className="text-gray-300 text-sm leading-relaxed">
-                This chart shows how your different hair textures are distributed. It's perfectly normal to have a mix!
-              </p>
-              <ul className="mt-3 space-y-2 text-sm text-gray-300">
-                <li><span className="text-purple-400">•</span> Straight: Smooth, no waves or curls</li>
-                <li><span className="text-orange-400">��</span> Wavy: Gentle S-shaped waves</li>
-                <li><span className="text-blue-400">•</span> Curly: Springy, defined curls</li>
-                <li><span className="text-pink-400">•</span> Coily: Tight, compact curls</li>
-              </ul>
-              <p className="mt-3 text-sm text-gray-400">
-                Reference: Most people have a mix of patterns. What matters most is understanding your dominant pattern 
-                to choose the right hair care routine!
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Growth Phase Distribution */}
-        <div className="bg-gray-600/50 p-6 rounded mb-6">
-          <h4 className="font-medium mb-4 text-lg">Growth Phase Distribution</h4>
-          <div className="aspect-w-16 aspect-h-9">
-            <Doughnut data={growthPhaseData} options={doughnutOptions} />
-          </div>
-          <div className="mt-4 space-y-4">
-            <div className="bg-gray-700/50 p-4 rounded">
-              <p className="text-gray-300 text-sm leading-relaxed">
-                Your hair goes through different growth phases - think of it like a garden's growing cycle!
-              </p>
-              <ul className="mt-3 space-y-2 text-sm text-gray-300">
-                <li><span className="text-blue-400">•</span> Anagen (Growing): The active growth phase. Ideally 80-90% of your hair should be here!</li>
-                <li><span className="text-purple-400">•</span> Catagen (Transitioning): A short resting phase. Usually 1-2% is normal.</li>
-                <li><span className="text-orange-400">•</span> Telogen (Resting/Shedding): The shedding phase. Typically 8-10% of hair is here.</li>
-              </ul>
-              <p className="mt-3 text-sm text-gray-400">
-                Reference: A healthy scalp typically has:
-                - 80-90% in Anagen
-                - 1-2% in Catagen
-                - 8-10% in Telogen
-                Don't worry if yours is a bit different - many factors can influence these numbers!
-              </p>
-            </div>
-          </div>
-        </div>
+        {/* API Data Display - Engaging presentation of real analysis data */}
+        <ApiDataDisplay analysisData={analysisData} />
 
         {/* Advanced Analysis Section */}
         <AdvancedAnalysis data={analysisData} />

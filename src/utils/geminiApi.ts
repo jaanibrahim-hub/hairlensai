@@ -122,15 +122,15 @@ Return comprehensive analysis in this enhanced JSON format:
   "structuralAnalysis": {
     "hairGrowthCycle": "6-month projection array",
     "curlPatternDistribution": [
-      {"Type1_Straight": "percentage"},
-      {"Type2_Wavy": "percentage"},
-      {"Type3_Curly": "percentage"},
-      {"Type4_Coily": "percentage"}
+      {"Type1_Straight": "numeric percentage (e.g., 25.5)"},
+      {"Type2_Wavy": "numeric percentage (e.g., 35.2)"},
+      {"Type3_Curly": "numeric percentage (e.g., 30.1)"},
+      {"Type4_Coily": "numeric percentage (e.g., 9.2)"}
     ],
     "growthPhaseDistribution": [
-      {"Anagen": "percentage with duration estimate"},
-      {"Catagen": "percentage"},
-      {"Telogen": "percentage with shedding rate"}
+      {"Anagen": "numeric percentage (e.g., 85.3)"},
+      {"Catagen": "numeric percentage (e.g., 4.2)"},
+      {"Telogen": "numeric percentage (e.g., 10.5)"}
     ]
   },
   "microscopicAnalysis": {
@@ -562,6 +562,26 @@ async function makeApiCallWithRetry(
     const data = await response.json();
     console.log(`✅ Raw API response from ${modelName}:`, data);
     
+    // Enhanced logging for response content analysis
+    if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+      const responseText = data.candidates[0].content.parts[0].text;
+      console.log('🔍 Response text preview:', responseText.substring(0, 1000));
+      console.log('🔍 Looking for structuralAnalysis in response...');
+      
+      // Check if response contains growth phase or curl pattern data
+      if (responseText.includes('growthPhaseDistribution')) {
+        console.log('✅ Found growthPhaseDistribution in response');
+      } else {
+        console.log('❌ growthPhaseDistribution NOT found in response');
+      }
+      
+      if (responseText.includes('curlPatternDistribution')) {
+        console.log('✅ Found curlPatternDistribution in response');
+      } else {
+        console.log('❌ curlPatternDistribution NOT found in response');
+      }
+    }
+    
     if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
       console.warn('Invalid response format from API');
       throw new AnalysisError(
@@ -635,6 +655,29 @@ function parseAnalysisResponse(responseText: string, modelName: string): any {
     
     const parsedData = JSON.parse(jsonText);
     console.log('✅ Successfully parsed analysis response');
+    
+    // Enhanced debugging for structural analysis data
+    if (parsedData.structuralAnalysis) {
+      console.log('🔍 PARSED structuralAnalysis:', parsedData.structuralAnalysis);
+      
+      if (parsedData.structuralAnalysis.growthPhaseDistribution) {
+        console.log('🔍 PARSED growthPhaseDistribution:', parsedData.structuralAnalysis.growthPhaseDistribution);
+        console.log('🔍 Growth phase data type:', typeof parsedData.structuralAnalysis.growthPhaseDistribution);
+        console.log('🔍 Growth phase array length:', Array.isArray(parsedData.structuralAnalysis.growthPhaseDistribution) ? parsedData.structuralAnalysis.growthPhaseDistribution.length : 'Not an array');
+      } else {
+        console.log('❌ No growthPhaseDistribution in parsed data');
+      }
+      
+      if (parsedData.structuralAnalysis.curlPatternDistribution) {
+        console.log('🔍 PARSED curlPatternDistribution:', parsedData.structuralAnalysis.curlPatternDistribution);
+        console.log('🔍 Curl pattern data type:', typeof parsedData.structuralAnalysis.curlPatternDistribution);
+        console.log('🔍 Curl pattern array length:', Array.isArray(parsedData.structuralAnalysis.curlPatternDistribution) ? parsedData.structuralAnalysis.curlPatternDistribution.length : 'Not an array');
+      } else {
+        console.log('❌ No curlPatternDistribution in parsed data');
+      }
+    } else {
+      console.log('❌ No structuralAnalysis in parsed data');
+    }
     
     // Add metadata
     parsedData._modelUsed = modelName;
