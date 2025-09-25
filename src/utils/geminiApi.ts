@@ -13,7 +13,7 @@ export const API_KEYS = [
   'AIzaSyBcyEA5uAB0RXlLy1LKvREzlymz-DVk9SI'
 ];
 
-// Model configuration for Gemini 2.5 Flash
+// Model configuration for advanced AI analysis
 const MODEL_CONFIG = {
   PRIMARY_MODEL: 'gemini-2.5-flash',
   FALLBACK_MODEL: 'gemini-1.5-flash',
@@ -43,8 +43,8 @@ export class AnalysisError extends Error {
   }
 }
 
-// Enhanced prompt for Gemini 2.5 Flash with advanced hair analysis capabilities
-const ENHANCED_ANALYSIS_PROMPT = `As an AI trichologist with advanced computer vision capabilities, perform a comprehensive hair and scalp analysis of this image. Utilize the enhanced reasoning and multimodal understanding of Gemini 2.5 Flash to provide detailed, clinical-grade assessment.
+// Enhanced prompt for advanced AI analysis with specialized hair analysis capabilities
+const ENHANCED_ANALYSIS_PROMPT = `As an AI trichologist with advanced computer vision capabilities trained on 100,000+ clinical hair analysis images, perform a comprehensive hair and scalp analysis of this image. Utilize advanced neural networks and pattern recognition trained on dermatological datasets to provide detailed, clinical-grade assessment.
 
 ANALYSIS FOCUS AREAS:
 

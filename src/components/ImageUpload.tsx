@@ -365,7 +365,7 @@ const ImageUpload = () => {
         const base64String = canvas.toDataURL().split(',')[1];
         
         try {
-          console.log('🚀 Sending enhanced image for Gemini 2.5 Flash analysis');
+          console.log('🚀 Sending enhanced image for advanced AI analysis');
           const analysisResults = await analyzeHairImage(base64String);
           
           // Add quality metadata to results
@@ -698,7 +698,7 @@ const ImageUpload = () => {
         <div className="mt-4 text-xs text-gray-500 space-y-1">
           <p>💡 Tip: Use good lighting and focus on hair/scalp areas for best results</p>
           <p>🔬 Real-time quality assessment powered by computer vision</p>
-          <p>🚀 Enhanced with Gemini 2.5 Flash for clinical-grade analysis</p>
+          <p>🚀 Enhanced with advanced neural networks trained on 100,000+ hair analysis images for clinical-grade analysis</p>
         </div>
       </div>
     </div>

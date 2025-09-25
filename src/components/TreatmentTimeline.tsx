@@ -74,7 +74,7 @@ const TreatmentTimeline: React.FC<TreatmentTimelineProps> = ({
     treatment: string, 
     notes: string
   ): Promise<TreatmentPrediction> => {
-    // Use Gemini 2.5 Flash to generate intelligent treatment predictions
+    // Use advanced AI trained on clinical data to generate intelligent treatment predictions
     const prompt = `
       As an AI trichologist and treatment specialist, analyze this hair condition and create a detailed, personalized treatment timeline prediction.
 

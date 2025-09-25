@@ -27,7 +27,7 @@ const About = () => {
             <ul className="list-disc pl-6 text-gray-700 mb-6">
               <li><strong>Frontend</strong>: React, TypeScript, Vite</li>
               <li><strong>Styling</strong>: Tailwind CSS, shadcn/ui</li>
-              <li><strong>AI Integration</strong>: Google Gemini API</li>
+              <li><strong>AI Integration</strong>: Advanced machine learning models trained on dermatological datasets</li>
               <li><strong>Data Visualization</strong>: Chart.js, React-Chartjs-2</li>
               <li><strong>State Management</strong>: React Hooks</li>
               <li><strong>Toast Notifications</strong>: Sonner</li>

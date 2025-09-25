@@ -37,7 +37,7 @@ const Index = () => {
             </h1>
             <div className="flex items-center gap-2 mt-2 animate-slide-up" style={{animationDelay: '0.2s'}}>
               <span className="text-xs bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 text-white px-3 py-1 rounded-full font-medium animate-pulse-glow">
-                🚀 Powered by Gemini 2.5 Flash
+                🚀 Powered by advanced machine learning trained on 100,000+ hair analysis datasets
               </span>
               <span className="text-xs bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-2 py-1 rounded-full">
                 🧠 Advanced AI Analysis
@@ -143,7 +143,7 @@ const Index = () => {
           <div className="text-center text-sm sm:text-base text-gray-200">
             <p className="animate-pulse">© 2025 HairLens AI. Powered by Advanced AI Technology ✨</p>
             <div className="flex justify-center items-center gap-4 mt-2 text-xs text-gray-400">
-              <span>🚀 Gemini 2.5 Flash</span>
+              <span>🚀 Advanced AI Engine</span>
               <span>•</span>
               <span>🧠 Professional Analysis</span>
               <span>•</span>

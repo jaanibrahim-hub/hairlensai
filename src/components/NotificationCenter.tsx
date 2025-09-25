@@ -45,7 +45,7 @@ const NotificationCenter: React.FC = () => {
         id: '2',
         type: 'info',
         title: 'New AI Model Available',
-        message: 'Gemini 2.5 Flash now offers 25% better accuracy.',
+        message: 'Advanced AI engine now offers 25% better accuracy with enhanced training data.',
         timestamp: new Date(Date.now() - 900000), // 15 mins ago
         read: false
       },

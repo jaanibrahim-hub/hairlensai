@@ -482,12 +482,12 @@ const TreatmentTabs: React.FC<TreatmentTabsProps> = ({ analysisData }) => {
             Evidence-Based Combination Protocols
           </h3>
           <div className="space-y-2">
-            {[
+            {(analysisData.recommendedTreatments?.combination_protocols || [
               "Finasteride + Minoxidil + Microneedling (Triple Therapy Protocol - 95% effectiveness)",
               "PRP + LLLT + Topical Growth Factors (Regenerative Combination - 88% effectiveness)", 
               "Hair Transplant + Medical Therapy + LLLT (Surgical + Medical Maintenance - 97% success)",
               "Dutasteride + Topical Finasteride + LLLT (Advanced DHT Blocking - 92% effectiveness)"
-            ].map((protocol, index) => (
+            ]).map((protocol, index) => (
               <div key={index} className="text-sm text-gray-200 flex items-start gap-2">
                 <span className="text-purple-400 mt-0.5">•</span>
                 <span>{protocol}</span>
@@ -500,15 +500,17 @@ const TreatmentTabs: React.FC<TreatmentTabsProps> = ({ analysisData }) => {
           <div className="bg-gradient-to-br from-red-600/10 to-red-800/10 p-4 rounded-lg border border-red-500/20">
             <h3 className="font-medium mb-3 text-red-300 flex items-center gap-2">
               <Activity className="w-4 h-4" />
-              Surgical Options (4 treatments)
+              Surgical Options ({(analysisData.recommendedTreatments?.surgical || []).length || 4} treatments)
             </h3>
             <div className="space-y-2">
-              {["FUE Hair Transplant", "FUT Hair Transplant", "DHI (Direct Hair Implantation)", "Scalp Micropigmentation (SMP)"].map((treatment, index) => {
-                const match = 85 + Math.floor(Math.random() * 15);
+              {(analysisData.recommendedTreatments?.surgical || ["FUE Hair Transplant", "FUT Hair Transplant", "DHI (Direct Hair Implantation)", "Scalp Micropigmentation (SMP)"]).map((treatment, index) => {
+                const treatmentName = typeof treatment === 'object' ? treatment.name : treatment;
+                const apiMatch = typeof treatment === 'object' ? treatment.match : null;
+                const match = apiMatch || getTreatmentMatch(treatmentName, 'surgical');
                 return (
                   <div key={index} className="bg-gray-800/30 p-3 rounded-lg border border-gray-600/30 hover:border-red-500/40 transition-colors">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-white">{treatment}</span>
+                      <span className="text-sm font-medium text-white">{treatmentName}</span>
                       <span className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded">{match}% match</span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-gray-400">
@@ -524,15 +526,17 @@ const TreatmentTabs: React.FC<TreatmentTabsProps> = ({ analysisData }) => {
           <div className="bg-gradient-to-br from-blue-600/10 to-blue-800/10 p-4 rounded-lg border border-blue-500/20">
             <h3 className="font-medium mb-3 text-blue-300 flex items-center gap-2">
               <Pill className="w-4 h-4" />
-              Medical Therapies (6 treatments)
+              Medical Therapies ({(analysisData.recommendedTreatments?.medical || []).length || 6} treatments)
             </h3>
             <div className="space-y-2">
-              {["Finasteride (Propecia)", "Minoxidil (Rogaine)", "Dutasteride (Avodart)", "Topical Finasteride", "Oral Minoxidil", "Spironolactone"].map((treatment, index) => {
-                const match = 70 + Math.floor(Math.random() * 25);
+              {(analysisData.recommendedTreatments?.medical || ["Finasteride (Propecia)", "Minoxidil (Rogaine)", "Dutasteride (Avodart)", "Topical Finasteride", "Oral Minoxidil", "Spironolactone"]).map((treatment, index) => {
+                const treatmentName = typeof treatment === 'object' ? treatment.name : treatment;
+                const apiMatch = typeof treatment === 'object' ? treatment.match : null;
+                const match = apiMatch || getTreatmentMatch(treatmentName, 'medical');
                 return (
                   <div key={index} className="bg-gray-800/30 p-3 rounded-lg border border-gray-600/30 hover:border-blue-500/40 transition-colors">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm font-medium text-white">{treatment}</span>
+                      <span className="text-sm font-medium text-white">{treatmentName}</span>
                       <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">{match}% match</span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-gray-400">
@@ -549,15 +553,17 @@ const TreatmentTabs: React.FC<TreatmentTabsProps> = ({ analysisData }) => {
         <div className="bg-gradient-to-br from-green-600/10 to-green-800/10 p-4 rounded-lg border border-green-500/20 mb-6">
           <h3 className="font-medium mb-3 text-green-300 flex items-center gap-2">
             <Brain className="w-4 h-4" />
-            Natural & Alternative Approaches (8 treatments)
+            Natural & Alternative Approaches ({(analysisData.recommendedTreatments?.natural || []).length || 8} treatments)
           </h3>
           <div className="grid sm:grid-cols-2 gap-2">
-            {["PRP (Platelet-Rich Plasma)", "LLLT (Low-Level Laser Therapy)", "Microneedling (Dermarolling)", "Scalp Massage", "Essential Oils (Rosemary, Peppermint)", "Biotin & Supplements", "DHT-Blocking Shampoos", "Saw Palmetto Extract"].map((treatment, index) => {
-              const match = 50 + Math.floor(Math.random() * 35);
+            {(analysisData.recommendedTreatments?.natural || ["PRP (Platelet-Rich Plasma)", "LLLT (Low-Level Laser Therapy)", "Microneedling (Dermarolling)", "Scalp Massage", "Essential Oils (Rosemary, Peppermint)", "Biotin & Supplements", "DHT-Blocking Shampoos", "Saw Palmetto Extract"]).map((treatment, index) => {
+              const treatmentName = typeof treatment === 'object' ? treatment.name : treatment;
+              const apiMatch = typeof treatment === 'object' ? treatment.match : null;
+              const match = apiMatch || getTreatmentMatch(treatmentName, 'natural');
               return (
                 <div key={index} className="bg-gray-800/30 p-3 rounded-lg border border-gray-600/30 hover:border-green-500/40 transition-colors">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-medium text-white">{treatment}</span>
+                    <span className="text-sm font-medium text-white">{treatmentName}</span>
                     <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">{match}% match</span>
                   </div>
                   <div className="flex items-center justify-between text-xs text-gray-400">
