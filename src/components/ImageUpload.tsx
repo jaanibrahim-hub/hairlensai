@@ -1,10 +1,13 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { analyzeHairImage } from "@/utils/geminiApi";
 import { analyzeImageQuality, getQualityStatusColor, getQualityStatusText, ImageAnalysisResult } from "@/utils/imageQuality";
 import { toast } from "sonner";
+import { imageService } from "@/services/imageService";
+import { analysisService } from "@/services/analysisService";
+import { sessionService } from "@/services/sessionService";
+import { UploadedImage, AnalysisResult } from "@/types/api";
 import PremiumAccessModal from "./PremiumAccessModal";
 import LivePulse from "./LivePulse";
 import AIAnalysisModal from "./AIAnalysisModal";
@@ -42,8 +45,29 @@ const ImageUpload = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [imageQuality, setImageQuality] = useState<ImageAnalysisResult | null>(null);
   const [currentImage, setCurrentImage] = useState<string | null>(null);
+  const [uploadedImageData, setUploadedImageData] = useState<UploadedImage | null>(null);
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
   const [isProcessingQuality, setIsProcessingQuality] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Initialize session on component mount
+  useEffect(() => {
+    const initializeSession = async () => {
+      try {
+        const token = await sessionService.ensureSession();
+        setSessionToken(token);
+        if (token) {
+          console.log('✅ Session initialized:', token);
+        } else {
+          console.warn('⚠️ Failed to initialize session');
+        }
+      } catch (error) {
+        console.error('❌ Session initialization error:', error);
+      }
+    };
+
+    initializeSession();
+  }, []);
   
   // Force file input trigger function
   const triggerFileInput = () => {
@@ -171,6 +195,7 @@ const ImageUpload = () => {
       setUploadProgress(0);
       setImageQuality(null);
       setCurrentImage(null);
+      setUploadedImageData(null);
       
       console.log('Starting file validation...');
       const isValid = await validateImage(file);
@@ -180,11 +205,41 @@ const ImageUpload = () => {
         return;
       }
 
-      // Show image preview immediately
-      console.log('Creating image preview...');
-      const imageUrl = URL.createObjectURL(file);
-      setCurrentImage(imageUrl);
-      console.log('Image preview created:', imageUrl);
+      // Upload image to backend immediately
+      console.log('Uploading image to backend...');
+      
+      try {
+        const uploadResponse = await imageService.uploadImage({
+          image: file,
+          userId: sessionToken || undefined,
+          metadata: {
+            originalName: file.name,
+            uploadedAt: new Date().toISOString()
+          }
+        });
+
+        if (uploadResponse.success && uploadResponse.data) {
+          console.log('✅ Image uploaded successfully:', uploadResponse.data);
+          setUploadedImageData(uploadResponse.data);
+          
+          // Show image preview using the backend URL
+          const previewUrl = imageService.getImagePreviewUrl(uploadResponse.data.id);
+          setCurrentImage(previewUrl);
+          console.log('Image preview URL created:', previewUrl);
+          
+          toast.success("Image uploaded to backend successfully! Analyzing quality...");
+        } else {
+          throw new Error(uploadResponse.error || 'Upload failed');
+        }
+      } catch (uploadError) {
+        console.error('❌ Backend upload failed:', uploadError);
+        toast.error("Failed to upload image to backend. Using local preview.");
+        
+        // Fallback to local preview
+        const imageUrl = URL.createObjectURL(file);
+        setCurrentImage(imageUrl);
+        console.log('Using local image preview:', imageUrl);
+      }
       
       // Run quality analysis in the background (non-blocking)
       console.log('Starting background image quality analysis...');
@@ -327,12 +382,12 @@ const ImageUpload = () => {
   };
 
   const handleAnalyzeImage = async () => {
-    if (!fileInputRef.current?.files?.[0]) {
-      toast.error("No image selected for analysis");
+    if (!uploadedImageData) {
+      toast.error("No image uploaded for analysis");
       return;
     }
 
-    const file = fileInputRef.current.files[0];
+    const file = fileInputRef.current?.files?.[0];
     
     try {
       setIsAnalyzing(true);
@@ -366,21 +421,39 @@ const ImageUpload = () => {
         const base64String = canvas.toDataURL().split(',')[1];
         
         try {
-          console.log('🚀 Sending enhanced image for advanced AI analysis');
-          const analysisResults = await analyzeHairImage(base64String);
+          console.log('🚀 Starting backend AI analysis');
           
-          // Add quality metadata to results
-          analysisResults._imageQuality = imageQuality.quality;
-          analysisResults._enhancementApplied = imageQuality.enhancementApplied;
+          // Start analysis using the backend service
+          const analysisResponse = await analysisService.analyzeImage({
+            imageId: uploadedImageData.id,
+            userId: sessionToken || undefined,
+            analysisType: 'comprehensive'
+          });
           
-          window.dispatchEvent(new CustomEvent('hairAnalysisComplete', { detail: analysisResults }));
-          setUploadProgress(100);
-          toast.success("🎉 Advanced AI analysis complete!");
+          if (analysisResponse.success && analysisResponse.data) {
+            console.log('✅ Backend analysis completed:', analysisResponse.data);
+            
+            // Process the analysis data for frontend components
+            const processedResults = analysisService.formatForTreatmentTabs(analysisResponse.data);
+            
+            // Add quality metadata to results
+            processedResults._imageQuality = imageQuality?.quality;
+            processedResults._enhancementApplied = imageQuality?.enhancementApplied;
+            processedResults._analysisId = analysisResponse.data.id;
+            processedResults._imageId = uploadedImageData.id;
+            
+            window.dispatchEvent(new CustomEvent('hairAnalysisComplete', { detail: processedResults }));
+            setUploadProgress(100);
+            toast.success("🎉 Advanced AI analysis complete!");
+          } else {
+            throw new Error(analysisResponse.error || 'Analysis failed');
+          }
           
           // Clear the image after successful analysis
           setTimeout(() => {
             setCurrentImage(null);
             setImageQuality(null);
+            setUploadedImageData(null);
             if (fileInputRef.current) fileInputRef.current.value = '';
           }, 2000);
         } catch (error) {
@@ -406,6 +479,7 @@ const ImageUpload = () => {
   const resetUpload = () => {
     setCurrentImage(null);
     setImageQuality(null);
+    setUploadedImageData(null);
     setUploadProgress(0);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
@@ -699,7 +773,8 @@ const ImageUpload = () => {
         <div className="mt-4 text-xs text-gray-500 space-y-1">
           <p>💡 Tip: Use good lighting and focus on hair/scalp areas for best results</p>
           <p>🔬 Real-time quality assessment powered by computer vision</p>
-          <p>🚀 Enhanced with advanced neural networks trained on 100,000+ hair analysis images for clinical-grade analysis</p>
+          <p>🚀 Enhanced with advanced neural networks trained on 100,000+ hair analysis images</p>
+          <p>☁️ Secure cloud storage with encrypted image processing</p>
         </div>
       </div>
 

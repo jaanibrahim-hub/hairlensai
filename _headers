@@ -1,0 +1,15 @@
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/api/*
+  Access-Control-Allow-Origin: https://hair-analysis-ai.pages.dev
+  Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, Authorization, X-Session-Token
+  Access-Control-Max-Age: 86400

@@ -1,0 +1,30 @@
+name = "hair-analysis-ai"
+compatibility_date = "2024-09-25"
+
+[env.production]
+name = "hair-analysis-ai-production"
+
+[env.staging]
+name = "hair-analysis-ai-staging"
+
+# Environment variables for production
+[env.production.vars]
+# API keys will be set via Cloudflare dashboard for security
+
+[env.staging.vars]
+# Staging environment variables
+
+# Build configuration
+[build]
+command = "npm run build"
+cwd = ""
+watch_dir = "src"
+
+# Pages configuration for static site
+[[env.production.services]]
+binding = "IMAGES_DB"
+service = "hair-analysis-images-db"
+
+[[env.staging.services]]
+binding = "IMAGES_DB"
+service = "hair-analysis-images-db-staging"

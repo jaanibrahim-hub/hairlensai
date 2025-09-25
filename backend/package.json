@@ -1,0 +1,25 @@
+{
+  "name": "hair-analysis-backend",
+  "version": "1.0.0",
+  "description": "Backend services for Hair Analysis AI application",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "build": "esbuild src/index.ts --bundle --outfile=dist/worker.js --format=esm --platform=node",
+    "migrate:up": "wrangler d1 migrations apply hair-analysis-db",
+    "migrate:up:staging": "wrangler d1 migrations apply hair-analysis-db --env staging"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20240925.0",
+    "itty-router": "^5.0.17",
+    "hono": "^4.5.11"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.1",
+    "typescript": "^5.5.4",
+    "wrangler": "^3.78.12"
+  },
+  "type": "module"
+}

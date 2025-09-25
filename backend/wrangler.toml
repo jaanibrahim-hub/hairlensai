@@ -1,0 +1,51 @@
+name = "hair-analysis-backend"
+main = "src/index.ts"
+compatibility_date = "2024-09-25"
+
+# D1 Database for storing analysis results
+[[d1_databases]]
+binding = "DB"
+database_name = "hair-analysis-db"
+database_id = ""
+
+# R2 Storage for images
+[[r2_buckets]]
+binding = "IMAGES_BUCKET"
+bucket_name = "hair-analysis-images"
+
+# KV for session storage
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = ""
+
+[env.production]
+name = "hair-analysis-backend-prod"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "hair-analysis-db-prod"
+database_id = ""
+
+[[env.production.r2_buckets]]
+binding = "IMAGES_BUCKET"
+bucket_name = "hair-analysis-images-prod"
+
+[[env.production.kv_namespaces]]
+binding = "SESSIONS"
+id = ""
+
+[env.staging]
+name = "hair-analysis-backend-staging"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "hair-analysis-db-staging"
+database_id = ""
+
+[[env.staging.r2_buckets]]
+binding = "IMAGES_BUCKET"
+bucket_name = "hair-analysis-images-staging"
+
+[[env.staging.kv_namespaces]]
+binding = "SESSIONS"
+id = ""

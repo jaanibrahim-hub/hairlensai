@@ -1,14 +1,16 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "hair-analysis-ai",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:dev": "vite build --mode development",
+    "build:production": "vite build --mode production",
+    "build:staging": "vite build --mode staging",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy:cloudflare": "npm run build:production && wrangler pages deploy dist"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

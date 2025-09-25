@@ -1,0 +1,9 @@
+# Single Page Application routes
+/*    /index.html   200
+
+# API redirects (if needed)
+/api/*  https://hair-analysis-backend-prod.your-subdomain.workers.dev/api/:splat  200
+
+# Legacy redirects
+/gemini/*  /  301
+/old-path/*  /  301
