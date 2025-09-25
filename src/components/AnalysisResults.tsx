@@ -691,7 +691,7 @@ const AnalysisResults = ({
           return 'text-gray-400';
       }
     };
-    return <div className="rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300 px-[19px] py-[37px] bg-[#58216a]">
+    return <div className="rounded-xl p-4 sm:p-6 shadow-xl hover:shadow-2xl transition-all duration-300 bg-[#58216a] overflow-hidden">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-semibold text-white flex items-center gap-2">
             <Heart className="w-5 h-5 text-purple-400" />
@@ -818,13 +818,13 @@ const AnalysisResults = ({
     const renderContent = () => {
       if (typeof content === 'string') {
         return <div className="prose prose-invert max-w-none">
-            <p className="text-gray-200 leading-relaxed text-lg px-[28px] py-[32px] font-semibold">{content}</p>
+            <p className="text-gray-200 leading-relaxed text-sm px-2 py-3 break-words overflow-hidden">{content}</p>
           </div>;
       } else if (Array.isArray(content)) {
         return content.map((item, index) => <div key={index} className="mt-4">
             <h4 className="text-lg font-medium text-white mb-2">{item.category}</h4>
             <ul className="list-disc list-inside space-y-2">
-              {item.recommendations.map((rec, recIndex) => <li key={recIndex} className="text-gray-200">{rec}</li>)}
+              {item.recommendations.map((rec, recIndex) => <li key={recIndex} className="text-gray-200 text-sm break-words">{rec}</li>)}
             </ul>
           </div>);
       } else {
@@ -832,11 +832,11 @@ const AnalysisResults = ({
             <h4 className="text-lg font-medium text-white mb-2">
               {key.split(/(?=[A-Z])/).join(" ").replace(/_/g, " ")}
             </h4>
-            <p className="text-gray-200 leading-relaxed">{value}</p>
+            <p className="text-gray-200 leading-relaxed text-sm break-words">{value}</p>
           </div>);
       }
     };
-    return <div className="bg-zinc-950 hover:bg-zinc-800 rounded-md px-[67px] py-[61px]">
+    return <div className="bg-zinc-950 hover:bg-zinc-800 rounded-md p-4 sm:p-6 overflow-hidden">
         <div className="flex items-center gap-3 mb-4">
           {icon}
           <h2 className="text-xl font-semibold text-white">{title}</h2>
@@ -870,11 +870,11 @@ const AnalysisResults = ({
         </div>
 
         {/* Recommended Treatments - Moved here */}
-        <div className="p-6 shadow-lg hover:shadow-xl transition-all duration-300 px-[59px] py-[47px] bg-[#548bd5]/80 rounded-md">
+        <div className="p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 bg-[#548bd5]/80 rounded-md overflow-hidden">
           <h2 className="text-xl font-semibold mb-4">Recommended Treatments</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {analysisData.recommendedTreatments ? <>
-                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500 px-[6px] py-px">
+                <div className="bg-gray-700/80 rounded-lg p-4 border-l-4 border-green-500 overflow-hidden">
                   <h3 className="text-lg font-medium mb-2">Primary Recommendation</h3>
                   <div className="flex items-center mb-3">
                     <i className="fas fa-check-circle text-green-500 mr-2"></i>
@@ -1078,18 +1078,18 @@ const AnalysisResults = ({
         </div>
 
         {/* Enhanced Metrics Grid */}
-        <div className="space-y-4">
-          {analysisData.metrics.map(metric => <div key={metric.label} className="bg-gray-700/80 rounded-lg p-6 hover:bg-gray-600/80 transition-all duration-300 transform hover:scale-102 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 bg-purple-500/10 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {analysisData.metrics.map(metric => <div key={metric.label} className="bg-gray-700/80 rounded-lg p-4 hover:bg-gray-600/80 transition-all duration-300 transform hover:scale-102 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-20 h-20 -mr-10 -mt-10 bg-purple-500/10 rounded-full group-hover:scale-150 transition-transform duration-500 pointer-events-none"></div>
               <div className="relative z-10">
                 <div className="flex items-center mb-3">
-                  <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center mr-3">
-                    <i className={`fas fa-${metric.icon} text-purple-400`}></i>
+                  <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center mr-3 flex-shrink-0">
+                    <i className={`fas fa-${metric.icon} text-purple-400 text-sm`}></i>
                   </div>
-                  <span className="text-gray-300 font-medium">{metric.label}</span>
+                  <span className="text-gray-300 font-medium text-sm break-words">{metric.label}</span>
                 </div>
-                <div className="pl-13">
-                  <span className={`text-lg font-semibold ${metric.color || 'text-white'}`}>
+                <div className="ml-11">
+                  <span className={`text-base font-semibold ${metric.color || 'text-white'} break-words block`}>
                     {metric.value}
                   </span>
                   {metric.label === "Health Status" && <div className="mt-2 w-full bg-gray-600 rounded-full h-1.5">
@@ -1097,9 +1097,6 @@ const AnalysisResults = ({
                   width: `${analysisData.healthScore}%`
                 }}></div>
                     </div>}
-                  {metric.label === "Scalp Condition" && <p className="mt-2 text-sm text-gray-400 leading-relaxed">
-                      {metric.value}
-                    </p>}
                 </div>
               </div>
             </div>)}
