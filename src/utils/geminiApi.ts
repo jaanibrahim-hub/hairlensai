@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 
+// Enhanced API key management with fallback support
 export const API_KEYS = [
   'AIzaSyCbiokMrXsfZyXHi_OFwFwM5bG9QXazCPA',
   'AIzaSyBrUoI6e9BCAarqbXQf3NfTe3wyZ_4O-Mo',
@@ -12,146 +13,329 @@ export const API_KEYS = [
   'AIzaSyBcyEA5uAB0RXlLy1LKvREzlymz-DVk9SI'
 ];
 
-const ANALYSIS_PROMPT = `Analyze this hair/scalp image and provide a detailed assessment. Focus on visible features and provide specific values where possible. Return the analysis in this JSON format:
+// Model configuration for Gemini 2.5 Flash
+const MODEL_CONFIG = {
+  PRIMARY_MODEL: 'gemini-2.5-flash',
+  FALLBACK_MODEL: 'gemini-1.5-flash',
+  BASE_URL: 'https://generativelanguage.googleapis.com/v1beta/models',
+  MAX_RETRIES: 3,
+  RETRY_DELAY: 2000,
+} as const;
+
+// Enhanced error types for better error handling
+export enum AnalysisErrorType {
+  INVALID_IMAGE = 'INVALID_IMAGE',
+  API_QUOTA_EXCEEDED = 'API_QUOTA_EXCEEDED',
+  MODEL_UNAVAILABLE = 'MODEL_UNAVAILABLE',
+  NETWORK_ERROR = 'NETWORK_ERROR',
+  PARSING_ERROR = 'PARSING_ERROR',
+  UNKNOWN_ERROR = 'UNKNOWN_ERROR'
+}
+
+export class AnalysisError extends Error {
+  constructor(
+    public type: AnalysisErrorType,
+    message: string,
+    public originalError?: unknown
+  ) {
+    super(message);
+    this.name = 'AnalysisError';
+  }
+}
+
+// Enhanced prompt for Gemini 2.5 Flash with advanced hair analysis capabilities
+const ENHANCED_ANALYSIS_PROMPT = `As an AI trichologist with advanced computer vision capabilities, perform a comprehensive hair and scalp analysis of this image. Utilize the enhanced reasoning and multimodal understanding of Gemini 2.5 Flash to provide detailed, clinical-grade assessment.
+
+ANALYSIS FOCUS AREAS:
+
+🔬 ADVANCED SCALP ASSESSMENT:
+- Regional density mapping (crown, temples, vertex, hairline with specific density values)
+- Follicular unit analysis and miniaturization detection
+- Sebum production levels and oil distribution patterns
+- Inflammatory markers and redness indicators
+- Vascular visibility and microcirculation signs
+- Scalp pH indicators from visual texture and shine cues
+
+🧬 DETAILED HAIR STRUCTURE:
+- Hair diameter variations with root-to-tip measurements
+- Cuticle integrity and lifting patterns
+- Medulla continuity assessment
+- Cross-sectional uniformity analysis
+- Growth phase distribution with clinical accuracy
+- Hormonal pattern indicators (DHT sensitivity markers)
+
+🎯 ENVIRONMENTAL & DAMAGE ANALYSIS:
+- UV damage indicators and color fade patterns
+- Chemical treatment effects and structural integrity
+- Mechanical damage from styling and heat
+- Seasonal adaptation signs
+- Nutritional deficiency visual markers
+- Age-related changes assessment
+
+Return comprehensive analysis in this enhanced JSON format:
 
 {
+  "modelVersion": "gemini-2.5-flash",
+  "analysisTimestamp": "ISO timestamp",
+  "confidenceScore": "Overall analysis confidence 0-100",
   "metrics": {
-    "hairType": "Describe the hair type (e.g., 1A-4C)",
-    "healthStatus": "Overall health assessment",
-    "porosity": "Low/Medium/High based on shine and texture",
-    "density": "Assessment of hair density",
-    "elasticity": "Based on visible hair pattern",
-    "scalpCondition": "Visible scalp health indicators",
-    "hairLength": "Approximate length in inches",
-    "chemicalTreatment": "Signs of chemical processing",
-    "protectionLevel": "Assessment of hair protection",
-    "breakageRate": "Visible damage percentage",
-    "strandThickness": "Fine/Medium/Coarse assessment",
-    "follicleDensity": "Visible density pattern",
+    "hairType": "Detailed classification (e.g., 2B-C Mixed, Fine-Medium)",
+    "healthStatus": "Comprehensive health assessment with specific indicators",
+    "porosity": "Detailed porosity assessment with visual evidence",
+    "density": "Precise density with hairs per cm² estimate",
+    "elasticity": "Elasticity assessment with stretching indicators",
+    "scalpCondition": "Detailed scalp health with inflammation markers",
+    "hairLength": "Precise length measurement in inches/cm",
+    "chemicalTreatment": "Specific treatment history indicators",
+    "protectionLevel": "UV and heat protection assessment",
+    "breakageRate": "Precise damage percentage with location mapping",
+    "strandThickness": "Detailed thickness with micrometer estimates",
+    "follicleDensity": "Regional follicle mapping",
     "hairDiameter": {
-      "root": "Estimated root diameter",
-      "tip": "Estimated tip diameter"
+      "root": "Root diameter in micrometers",
+      "mid": "Mid-shaft diameter",
+      "tip": "Tip diameter with taper analysis"
     },
-    "growthPhase": "Dominant growth phase estimate",
-    "damageAnalysis": "Visible damage assessment"
+    "growthPhase": "Detailed growth phase distribution",
+    "damageAnalysis": "Comprehensive damage mapping"
   },
-  "overallHealthScore": "Numerical score 0-100",
+  "regionalAnalysis": {
+    "crown": {
+      "density": "Specific density value",
+      "healthScore": "0-100",
+      "concerns": "Array of specific concerns"
+    },
+    "temples": {
+      "left": {"density": "value", "recession": "assessment"},
+      "right": {"density": "value", "recession": "assessment"}
+    },
+    "vertex": {
+      "density": "Vertex density assessment",
+      "thinning": "Thinning pattern analysis"
+    },
+    "hairline": {
+      "shape": "Hairline shape and integrity",
+      "recession": "Recession pattern if present"
+    }
+  },
+  "overallHealthScore": "Enhanced score 0-100 with detailed breakdown",
   "structuralAnalysis": {
-    "hairGrowthCycle": [65, 70, 75, 80, 85, 90],
+    "hairGrowthCycle": "6-month projection array",
     "curlPatternDistribution": [
-      {"Straight": 30},
-      {"Wavy": 40},
-      {"Curly": 20},
-      {"Coily": 10}
+      {"Type1_Straight": "percentage"},
+      {"Type2_Wavy": "percentage"},
+      {"Type3_Curly": "percentage"},
+      {"Type4_Coily": "percentage"}
     ],
     "growthPhaseDistribution": [
-      {"Anagen": 85},
-      {"Catagen": 5},
-      {"Telogen": 10}
+      {"Anagen": "percentage with duration estimate"},
+      {"Catagen": "percentage"},
+      {"Telogen": "percentage with shedding rate"}
     ]
   },
   "microscopicAnalysis": {
-    "cuticleLayerScore": 75,
+    "cuticleLayerScore": "Detailed cuticle assessment 0-100",
     "shaftStructure": {
-      "integrity": 80,
-      "pattern": "Regular/Irregular pattern description"
+      "integrity": "Structural integrity 0-100",
+      "pattern": "Detailed pattern analysis",
+      "uniformity": "Shaft uniformity assessment"
     },
     "medullaAnalysis": {
-      "continuity": 85
+      "continuity": "Medulla continuity 0-100",
+      "thickness": "Medulla thickness relative to shaft"
     },
     "crossSection": {
-      "uniformity": 90
+      "uniformity": "Cross-sectional uniformity 0-100",
+      "shape": "Cross-sectional shape analysis"
     },
     "surfaceMapping": {
-      "texture": "Detailed texture description",
-      "damage": "Specific damage patterns"
+      "texture": "Surface texture detailed analysis",
+      "damage": "Damage pattern mapping",
+      "sebumDistribution": "Oil distribution assessment"
     }
   },
-  "quickSummary": "Brief analysis summary highlighting key findings",
+  "clinicalCorrelations": {
+    "hormonalIndicators": "DHT sensitivity and hormonal pattern signs",
+    "nutritionalMarkers": "Vitamin/mineral deficiency indicators",
+    "stressIndicators": "Stress-related hair changes",
+    "ageFactors": "Age-related changes assessment",
+    "geneticPatterns": "Hereditary pattern identification"
+  },
+  "quickSummary": "Enhanced clinical summary with key findings and confidence levels",
   "hairInformation": {
-    "diagnosticAnalysis": "Detailed diagnostic findings",
+    "diagnosticAnalysis": "Clinical-grade diagnostic findings with medical terminology",
     "careTips": [
-      "Specific care recommendation 1",
-      "Specific care recommendation 2",
-      "Specific care recommendation 3"
+      "Evidence-based care recommendation 1",
+      "Clinical care recommendation 2",
+      "Professional treatment suggestion 3",
+      "Lifestyle modification 4",
+      "Product recommendation 5"
     ]
   },
   "recommendedTreatments": {
     "primary": {
-      "name": "Primary treatment name",
-      "description": "Treatment description",
-      "match": 95
+      "name": "Primary evidence-based treatment",
+      "description": "Detailed treatment description with mechanism",
+      "match": "Precision match percentage",
+      "timeline": "Expected results timeline",
+      "contraindications": "Important contraindications"
     },
     "secondary": {
-      "name": "Secondary treatment name",
-      "description": "Treatment description",
-      "match": 85
+      "name": "Secondary treatment option",
+      "description": "Alternative treatment approach",
+      "match": "Match percentage",
+      "synergy": "Combination potential with primary"
     },
     "supporting": {
-      "name": "Supporting treatment name",
-      "description": "Treatment description",
-      "match": 75
+      "name": "Supporting therapy",
+      "description": "Adjunct treatment description",
+      "match": "Support treatment match"
+    },
+    "lifestyle": {
+      "nutrition": "Specific nutritional recommendations",
+      "supplements": "Evidence-based supplement suggestions",
+      "habits": "Beneficial lifestyle modifications"
     },
     "other": [
-      {
-        "name": "Alternative treatment 1",
-        "match": 65
-      },
-      {
-        "name": "Alternative treatment 2",
-        "match": 55
-      }
+      {"name": "Alternative option 1", "match": "percentage", "notes": "specific notes"},
+      {"name": "Alternative option 2", "match": "percentage", "notes": "specific notes"},
+      {"name": "Emerging therapy", "match": "percentage", "notes": "research-backed option"}
     ]
   }
 }
 
-Important guidelines for analysis:
-1. Provide specific numerical values whenever possible
-2. Focus on visible characteristics in the image
-3. Make reasonable estimates based on visible features
-4. Use comparative analysis with standard hair types
-5. Consider both close-up details and overall appearance
-6. Assess multiple areas of the image for comprehensive analysis
-7. Note any distinct patterns or variations
-8. Include specific measurements where visible indicators allow estimation
-`;
+CRITICAL ANALYSIS GUIDELINES:
+1. Use Gemini 2.5 Flash advanced reasoning for clinical correlations
+2. Provide precise numerical values with confidence intervals
+3. Correlate visual findings with clinical knowledge
+4. Consider demographic factors in analysis
+5. Map regional variations across scalp areas
+6. Assess both immediate and long-term hair health indicators
+7. Integrate environmental and lifestyle factor analysis
+8. Provide evidence-based treatment recommendations
+9. Include contraindications and safety considerations
+10. Offer realistic timeline expectations for improvements
+
+Ensure all assessments are based on visible evidence with appropriate confidence levels.`;
 
 export const analyzeHairImage = async (imageBase64: string): Promise<any> => {
   if (!validateImage(imageBase64)) {
-    throw new Error("Invalid image format or size");
+    throw new AnalysisError(
+      AnalysisErrorType.INVALID_IMAGE,
+      "Invalid image format or size. Please upload a high-quality JPEG image under 20MB."
+    );
   }
 
-  // Try each API key until one works
-  for (const apiKey of API_KEYS) {
+  let lastError: unknown;
+  
+  // First try with Gemini 2.5 Flash
+  for (let attempt = 0; attempt < API_KEYS.length; attempt++) {
+    const apiKey = API_KEYS[attempt];
+    
     try {
-      console.log('Attempting analysis with API key:', apiKey.substring(0, 5) + '...');
-      const result = await makeApiCall(imageBase64, apiKey);
+      console.log(`🚀 Attempting Gemini 2.5 Flash analysis with key ${attempt + 1}/${API_KEYS.length}`);
+      
+      const result = await makeApiCallWithRetry(imageBase64, apiKey, MODEL_CONFIG.PRIMARY_MODEL);
+      
       if (result) {
-        console.log('Analysis successful:', result);
+        console.log('✅ Analysis successful with Gemini 2.5 Flash:', {
+          model: MODEL_CONFIG.PRIMARY_MODEL,
+          keyIndex: attempt + 1,
+          confidenceScore: result.confidenceScore || 'N/A'
+        });
+        
+        // Add model version to result for tracking
+        result._modelUsed = MODEL_CONFIG.PRIMARY_MODEL;
+        result._analysisTimestamp = new Date().toISOString();
+        
         return result;
       }
     } catch (error) {
-      console.error(`Error with API key ${apiKey.substring(0, 5)}...`, error);
-      continue; // Try next API key
+      lastError = error;
+      console.warn(`❌ Key ${attempt + 1} failed with Gemini 2.5 Flash:`, error);
+      
+      // If it's a quota error, try fallback model immediately
+      if (isQuotaError(error)) {
+        console.log('⚠️ Quota exceeded, trying fallback model...');
+        break;
+      }
+      
+      continue;
     }
   }
 
-  throw new Error("All API keys failed. Please try again later.");
+  // Fallback to Gemini 1.5 Flash if 2.5 Flash failed
+  console.log('🔄 Falling back to Gemini 1.5 Flash...');
+  
+  for (let attempt = 0; attempt < API_KEYS.length; attempt++) {
+    const apiKey = API_KEYS[attempt];
+    
+    try {
+      console.log(`🚀 Attempting Gemini 1.5 Flash fallback with key ${attempt + 1}/${API_KEYS.length}`);
+      
+      const result = await makeApiCallWithRetry(imageBase64, apiKey, MODEL_CONFIG.FALLBACK_MODEL);
+      
+      if (result) {
+        console.log('✅ Fallback analysis successful with Gemini 1.5 Flash');
+        result._modelUsed = MODEL_CONFIG.FALLBACK_MODEL;
+        result._analysisTimestamp = new Date().toISOString();
+        
+        toast.info('Using fallback AI model for analysis', {
+          description: 'Primary model unavailable, using alternative for analysis'
+        });
+        
+        return result;
+      }
+    } catch (error) {
+      lastError = error;
+      console.warn(`❌ Fallback key ${attempt + 1} failed:`, error);
+      continue;
+    }
+  }
+
+  // All attempts failed
+  const errorType = determineErrorType(lastError);
+  const errorMessage = getErrorMessage(errorType, lastError);
+  
+  throw new AnalysisError(errorType, errorMessage, lastError);
 };
 
 const validateImage = (imageBase64: string): boolean => {
   try {
-    // Check if the string is a valid base64
-    if (!imageBase64 || !/^[A-Za-z0-9+/=]+$/.test(imageBase64)) {
-      console.warn('Invalid base64 string');
+    // Basic validation
+    if (!imageBase64 || typeof imageBase64 !== 'string') {
+      console.warn('Invalid image data: Empty or non-string');
       return false;
     }
 
-    // Check file size (max 20MB)
-    const sizeInBytes = (imageBase64.length * 3) / 4;
-    if (sizeInBytes > 20 * 1024 * 1024) {
-      console.warn('Image size exceeds 20MB limit');
+    // Remove data URL prefix if present
+    const base64Data = imageBase64.replace(/^data:image\/[a-z]+;base64,/, '');
+    
+    // Validate base64 format
+    if (!/^[A-Za-z0-9+/=]+$/.test(base64Data)) {
+      console.warn('Invalid base64 format');
       return false;
+    }
+
+    // Check minimum size (must be at least a tiny image)
+    if (base64Data.length < 100) {
+      console.warn('Image data too small');
+      return false;
+    }
+
+    // Check file size (max 20MB for Gemini API)
+    const sizeInBytes = (base64Data.length * 3) / 4;
+    const maxSize = 20 * 1024 * 1024; // 20MB
+    
+    if (sizeInBytes > maxSize) {
+      console.warn(`Image size ${(sizeInBytes / (1024 * 1024)).toFixed(2)}MB exceeds ${maxSize / (1024 * 1024)}MB limit`);
+      return false;
+    }
+
+    // Optimal size check (warn if very large)
+    const optimalSize = 4 * 1024 * 1024; // 4MB
+    if (sizeInBytes > optimalSize) {
+      console.info(`Image size ${(sizeInBytes / (1024 * 1024)).toFixed(2)}MB is large. Consider compressing for faster analysis.`);
     }
 
     return true;
@@ -161,102 +345,269 @@ const validateImage = (imageBase64: string): boolean => {
   }
 };
 
-async function makeApiCall(imageBase64: string, apiKey: string) {
+// Enhanced error handling utilities
+const isQuotaError = (error: unknown): boolean => {
+  if (error instanceof Error) {
+    const message = error.message.toLowerCase();
+    return message.includes('quota') || 
+           message.includes('rate limit') || 
+           message.includes('exceeded') ||
+           message.includes('429');
+  }
+  return false;
+};
+
+const determineErrorType = (error: unknown): AnalysisErrorType => {
+  if (error instanceof Error) {
+    const message = error.message.toLowerCase();
+    
+    if (message.includes('quota') || message.includes('rate limit')) {
+      return AnalysisErrorType.API_QUOTA_EXCEEDED;
+    }
+    
+    if (message.includes('model') || message.includes('unavailable')) {
+      return AnalysisErrorType.MODEL_UNAVAILABLE;
+    }
+    
+    if (message.includes('network') || message.includes('fetch')) {
+      return AnalysisErrorType.NETWORK_ERROR;
+    }
+    
+    if (message.includes('json') || message.includes('parse')) {
+      return AnalysisErrorType.PARSING_ERROR;
+    }
+  }
+  
+  return AnalysisErrorType.UNKNOWN_ERROR;
+};
+
+const getErrorMessage = (errorType: AnalysisErrorType, originalError: unknown): string => {
+  switch (errorType) {
+    case AnalysisErrorType.INVALID_IMAGE:
+      return 'Please upload a valid image file (JPEG/PNG) under 20MB in size.';
+    
+    case AnalysisErrorType.API_QUOTA_EXCEEDED:
+      return 'API usage limit reached. Please try again in a few minutes or contact support.';
+    
+    case AnalysisErrorType.MODEL_UNAVAILABLE:
+      return 'AI analysis service is temporarily unavailable. Please try again later.';
+    
+    case AnalysisErrorType.NETWORK_ERROR:
+      return 'Network connection issue. Please check your internet connection and try again.';
+    
+    case AnalysisErrorType.PARSING_ERROR:
+      return 'Analysis completed but results could not be processed. Please try again.';
+    
+    case AnalysisErrorType.UNKNOWN_ERROR:
+    default:
+      return `Analysis failed: ${originalError instanceof Error ? originalError.message : 'Unknown error occurred'}`;
+  }
+};
+
+// Delay utility for retries
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Enhanced API call with retry logic and model fallback
+async function makeApiCallWithRetry(
+  imageBase64: string, 
+  apiKey: string, 
+  modelName: string,
+  retryCount = 0
+): Promise<any> {
   if (!validateImage(imageBase64)) {
-    throw new Error("Invalid image format or size");
+    throw new AnalysisError(
+      AnalysisErrorType.INVALID_IMAGE,
+      "Invalid image format or size"
+    );
   }
 
   try {
-    console.log('Making API call with key:', apiKey.substring(0, 5) + '...');
+    console.log(`🔄 API call attempt ${retryCount + 1}/${MODEL_CONFIG.MAX_RETRIES + 1} with ${modelName}`);
+    
+    // Adjust config based on model
+    const isGemini25 = modelName === MODEL_CONFIG.PRIMARY_MODEL;
+    const maxTokens = isGemini25 ? 65536 : 8192;
+    
+    const requestBody = {
+      contents: [
+        {
+          parts: [
+            { text: ENHANCED_ANALYSIS_PROMPT },
+            {
+              inline_data: {
+                mime_type: "image/jpeg",
+                data: imageBase64.replace(/^data:image\/[a-z]+;base64,/, ''),
+              },
+            },
+          ],
+        },
+      ],
+      generationConfig: {
+        temperature: isGemini25 ? 0.2 : 0.3,
+        topK: 32,
+        topP: isGemini25 ? 0.85 : 0.8,
+        maxOutputTokens: maxTokens,
+        candidateCount: 1,
+        ...(isGemini25 && { responseMimeType: "application/json" })
+      },
+      safetySettings: [
+        {
+          category: "HARM_CATEGORY_HARASSMENT",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE",
+        },
+        {
+          category: "HARM_CATEGORY_HATE_SPEECH",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE",
+        },
+        {
+          category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE",
+        },
+        {
+          category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE",
+        },
+      ],
+    };
     
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      `${MODEL_CONFIG.BASE_URL}/${modelName}:generateContent?key=${apiKey}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: ANALYSIS_PROMPT },
-                {
-                  inline_data: {
-                    mime_type: "image/jpeg",
-                    data: imageBase64,
-                  },
-                },
-              ],
-            },
-          ],
-          generationConfig: {
-            temperature: 0.3,
-            topK: 40,
-            topP: 0.8,
-            maxOutputTokens: 8192,
-          },
-          safetySettings: [
-            {
-              category: "HARM_CATEGORY_HARASSMENT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE",
-            },
-            {
-              category: "HARM_CATEGORY_HATE_SPEECH",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE",
-            },
-            {
-              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE",
-            },
-            {
-              category: "HARM_CATEGORY_DANGEROUS_CONTENT",
-              threshold: "BLOCK_MEDIUM_AND_ABOVE",
-            },
-          ],
-        }),
+        body: JSON.stringify(requestBody),
       }
     );
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = await response.json().catch(() => null);
+      
       console.error('API Error:', {
+        model: modelName,
         status: response.status,
         statusText: response.statusText,
         errorData
       });
-      throw new Error(`API request failed: ${response.statusText}`);
+
+      // Handle specific error cases
+      if (response.status === 429 && retryCount < MODEL_CONFIG.MAX_RETRIES) {
+        console.log(`⏳ Rate limited, retrying in ${MODEL_CONFIG.RETRY_DELAY}ms...`);
+        await delay(MODEL_CONFIG.RETRY_DELAY * (retryCount + 1));
+        return makeApiCallWithRetry(imageBase64, apiKey, modelName, retryCount + 1);
+      }
+
+      if (response.status === 429) {
+        throw new AnalysisError(
+          AnalysisErrorType.API_QUOTA_EXCEEDED,
+          'API rate limit exceeded. Please try again later.'
+        );
+      }
+
+      if (response.status >= 500 && retryCount < MODEL_CONFIG.MAX_RETRIES) {
+        console.log(`🔄 Server error, retrying in ${MODEL_CONFIG.RETRY_DELAY}ms...`);
+        await delay(MODEL_CONFIG.RETRY_DELAY * (retryCount + 1));
+        return makeApiCallWithRetry(imageBase64, apiKey, modelName, retryCount + 1);
+      }
+
+      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
-    console.log('Raw API response:', data);
+    console.log(`✅ Raw API response from ${modelName}:`, data);
     
     if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
       console.warn('Invalid response format from API');
-      return null;
+      throw new AnalysisError(
+        AnalysisErrorType.PARSING_ERROR,
+        'Invalid response format from AI service'
+      );
     }
 
     const responseText = data.candidates[0].content.parts[0].text;
-    console.log('Response text:', responseText);
+    console.log('Response text length:', responseText.length);
     
-    // Extract JSON from markdown if present
-    let jsonText = responseText;
-    if (responseText.includes('```json')) {
-      jsonText = responseText.split('```json')[1].split('```')[0].trim();
-    }
+    return parseAnalysisResponse(responseText, modelName);
     
-    try {
-      const parsedData = JSON.parse(jsonText);
-      console.log('Successfully parsed JSON:', parsedData);
-      return parsedData;
-    } catch (parseError) {
-      console.error('JSON parsing error:', parseError);
-      console.log('Attempted to parse text:', jsonText);
-      return null;
-    }
   } catch (error) {
-    console.error(`Error with API key ${apiKey.substring(0, 5)}...`, error);
-    return null;
+    console.error(`❌ Error with ${modelName} and key ${apiKey.substring(0, 5)}...`, error);
+    
+    if (error instanceof AnalysisError) {
+      throw error;
+    }
+    
+    if (retryCount < MODEL_CONFIG.MAX_RETRIES && !isQuotaError(error)) {
+      console.log(`🔄 Retrying API call in ${MODEL_CONFIG.RETRY_DELAY}ms...`);
+      await delay(MODEL_CONFIG.RETRY_DELAY * (retryCount + 1));
+      return makeApiCallWithRetry(imageBase64, apiKey, modelName, retryCount + 1);
+    }
+    
+    throw error;
+  }
+}
+
+// Enhanced response parsing with better error handling
+function parseAnalysisResponse(responseText: string, modelName: string): any {
+  try {
+    // First try to parse as direct JSON (Gemini 2.5 with responseMimeType)
+    if (modelName === MODEL_CONFIG.PRIMARY_MODEL) {
+      try {
+        const directJson = JSON.parse(responseText);
+        console.log('✅ Parsed direct JSON response from Gemini 2.5');
+        return directJson;
+      } catch (e) {
+        // Fall through to markdown parsing
+        console.log('Direct JSON parse failed, trying markdown extraction...');
+      }
+    }
+    
+    // Extract JSON from markdown formatting
+    let jsonText = responseText;
+    
+    if (responseText.includes('```json')) {
+      const jsonMatch = responseText.match(/```json\s*\n([\s\S]*?)\n\s*```/);
+      if (jsonMatch) {
+        jsonText = jsonMatch[1].trim();
+      } else {
+        jsonText = responseText.split('```json')[1]?.split('```')[0]?.trim() || responseText;
+      }
+    } else if (responseText.includes('```')) {
+      // Handle generic code blocks
+      const codeMatch = responseText.match(/```[a-zA-Z]*\s*\n([\s\S]*?)\n\s*```/);
+      if (codeMatch) {
+        jsonText = codeMatch[1].trim();
+      }
+    }
+    
+    // Clean up common JSON formatting issues
+    jsonText = jsonText
+      .replace(/^\s*```json\s*/, '')
+      .replace(/\s*```\s*$/, '')
+      .replace(/,\s*}/g, '}')
+      .replace(/,\s*]/g, ']')
+      .trim();
+    
+    const parsedData = JSON.parse(jsonText);
+    console.log('✅ Successfully parsed analysis response');
+    
+    // Add metadata
+    parsedData._modelUsed = modelName;
+    parsedData._responseLength = responseText.length;
+    
+    return parsedData;
+    
+  } catch (parseError) {
+    console.error('❌ JSON parsing failed:', {
+      error: parseError,
+      responseLength: responseText.length,
+      responsePreview: responseText.substring(0, 500)
+    });
+    
+    throw new AnalysisError(
+      AnalysisErrorType.PARSING_ERROR,
+      `Failed to parse AI response: ${parseError instanceof Error ? parseError.message : 'Unknown parsing error'}`
+    );
   }
 }
 
@@ -390,11 +741,14 @@ Clinical Disclaimer:
 This analysis is based on advanced AI technology and extensive clinical data. While comprehensive, it should not replace professional medical advice. We recommend scheduling a consultation with a certified trichologist or dermatologist for personalized treatment plans.`;
 
 export const performSecondaryAnalysis = async (analysisData: any, apiKey: string) => {
-  console.log('Starting secondary analysis with data:', analysisData);
+  console.log('🚀 Starting enhanced secondary analysis with Gemini 2.5 Flash');
   
   if (!analysisData || !analysisData.rawMetrics) {
     console.error('Invalid analysis data structure:', analysisData);
-    throw new Error('Invalid analysis data structure. Missing raw metrics data.');
+    throw new AnalysisError(
+      AnalysisErrorType.INVALID_IMAGE,
+      'Invalid analysis data structure. Missing raw metrics data.'
+    );
   }
 
   const requiredMetrics = ['hairType', 'scalpCondition', 'porosity'];
@@ -411,104 +765,170 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
     console.warn('Missing some metrics, using fallback values:', missingMetrics);
   }
 
-  const geminiPrompt = `
-    Analysis Data:
-    Health Score: ${analysisData.overallHealthScore || analysisData.healthScore || 'N/A'}
+  // Enhanced prompt with Gemini 2.5 Flash context
+  const enhancedSecondaryPrompt = `
+    You are an advanced AI trichologist using Gemini 2.5 Flash capabilities. Provide comprehensive, personalized hair care analysis based on this data:
     
-    Hair Metrics:
+    ANALYSIS INPUT DATA:
+    Model Used: ${analysisData._modelUsed || 'gemini-2.5-flash'}
+    Health Score: ${analysisData.overallHealthScore || analysisData.healthScore || 'N/A'}
+    Confidence Score: ${analysisData.confidenceScore || 'N/A'}
+    
+    PRIMARY HAIR METRICS:
     Hair Type: ${analysisData.rawMetrics.hairType || 'Type 2A (Default)'}
     Scalp Condition: ${analysisData.rawMetrics.scalpCondition || 'Normal (Default)'}
     Porosity: ${analysisData.rawMetrics.porosity || 'Medium (Default)'}
     
-    Additional Metrics:
+    COMPREHENSIVE METRICS:
     ${Object.entries(analysisData.rawMetrics)
       .filter(([key]) => !requiredMetrics.includes(key))
       .map(([key, value]) => `${key}: ${value}`)
       .join('\n    ')}
     
+    REGIONAL ANALYSIS:
+    ${analysisData.regionalAnalysis ? 
+      Object.entries(analysisData.regionalAnalysis)
+        .map(([region, data]) => `${region}: ${JSON.stringify(data)}`)
+        .join('\n    ') 
+      : 'No regional data available'
+    }
+    
+    CLINICAL CORRELATIONS:
+    ${analysisData.clinicalCorrelations ? 
+      Object.entries(analysisData.clinicalCorrelations)
+        .map(([factor, assessment]) => `${factor}: ${assessment}`)
+        .join('\n    ')
+      : 'No clinical correlations available'
+    }
+    
     ${SECOND_ANALYSIS_PROMPT}
   `;
 
-  const inputTokens = JSON.stringify(geminiPrompt).length / 4;
-  if (inputTokens > 1000000) {
-    throw new Error('Context window overflow');
+  // Check token limits for Gemini 2.5 Flash
+  const estimatedTokens = enhancedSecondaryPrompt.length / 4;
+  if (estimatedTokens > 1000000) {
+    throw new AnalysisError(
+      AnalysisErrorType.PARSING_ERROR,
+      'Analysis data too large for processing'
+    );
   }
 
   const requestBody = {
     contents: [{
       role: "user",
-      parts: [{ text: geminiPrompt }]
+      parts: [{ text: enhancedSecondaryPrompt }]
     }],
     generationConfig: {
-      temperature: 0.1,
-      topK: 40,
-      topP: 0.8,
-      maxOutputTokens: 8192
+      temperature: 0.15, // Optimized for Gemini 2.5 Flash thinking
+      topK: 32,
+      topP: 0.9,
+      maxOutputTokens: 65536, // Full Gemini 2.5 Flash capacity
+      candidateCount: 1
     }
   };
 
-  try {
-    console.log('Making secondary analysis API call...');
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody)
+  let lastError: unknown;
+  
+  // Try primary model first, then fallback
+  for (const model of [MODEL_CONFIG.PRIMARY_MODEL, MODEL_CONFIG.FALLBACK_MODEL]) {
+    try {
+      console.log(`🔄 Secondary analysis attempt with ${model}`);
+      
+      const response = await fetch(
+        `${MODEL_CONFIG.BASE_URL}/${model}:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody)
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        console.error(`Secondary analysis API error with ${model}:`, errorData);
+        
+        if (response.status === 429) {
+          lastError = new AnalysisError(
+            AnalysisErrorType.API_QUOTA_EXCEEDED,
+            'Secondary analysis quota exceeded'
+          );
+        } else {
+          lastError = new Error(`API request failed: ${response.statusText}`);
+        }
+        
+        // Try fallback model if primary fails
+        if (model === MODEL_CONFIG.PRIMARY_MODEL) {
+          continue;
+        } else {
+          throw lastError;
+        }
       }
-    );
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Secondary analysis API error:', errorData);
-      throw new Error(`API request failed: ${response.statusText}`);
+      const data = await response.json();
+      console.log(`✅ Secondary analysis response from ${model}:`, data);
+
+      if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
+        throw new AnalysisError(
+          AnalysisErrorType.PARSING_ERROR,
+          'Malformed secondary analysis response'
+        );
+      }
+
+      const responseText = data.candidates[0].content.parts[0].text;
+      console.log('Secondary analysis response text length:', responseText.length);
+
+      // Enhanced text cleaning function for Gemini 2.5 Flash outputs
+      const cleanedText = responseText
+        .replace(/[#*`]/g, '')  // Remove markdown characters
+        .replace(/\n{3,}/g, '\n\n')  // Normalize multiple line breaks
+        .replace(/(?<![\n])-\s/g, '\n-') // Ensure each bullet point starts on a new line
+        .replace(/([.:])\s*-/g, '$1\n\n-') // Add line break after headings before bullet points
+        .replace(/\n-\s*([^\n]+)(?!\n)/g, '\n- $1\n') // Add line break after each bullet point
+        .replace(/\n{4,}/g, '\n\n\n') // Normalize excessive line breaks
+        .trim();
+
+      // Parse sections with enhanced handling for Gemini 2.5 outputs
+      const sections = cleanedText.split(/\d+\.\s+/).filter(Boolean);
+      
+      // Create enhanced structured response
+      const structuredResponse = {
+        _modelUsed: model,
+        _analysisTimestamp: new Date().toISOString(),
+        welcome: sections[0]?.trim() || "Welcome section not found",
+        hairStatus: sections[1]?.trim() || "Hair status section not found", 
+        growthPhase: sections[2]?.trim() || "Growth phase section not found",
+        careRoutine: sections[3]?.trim() || "Care routine section not found",
+        lifestyleTips: sections[4]?.trim() || "Lifestyle tips section not found",
+        seasonalCare: sections[5]?.trim() || "Seasonal care section not found",
+        treatments: sections[6]?.trim() || "Treatments section not found",
+        progressGoals: sections[7]?.trim() || "Progress goals section not found",
+        emergencyCare: sections[8]?.trim() || "Emergency care section not found",
+        productGuide: sections[9]?.trim() || "Product guide section not found"
+      };
+
+      console.log(`✅ Secondary analysis completed successfully with ${model}`);
+      return structuredResponse;
+      
+    } catch (error) {
+      lastError = error;
+      console.error(`❌ Secondary analysis failed with ${model}:`, error);
+      
+      // Continue to fallback model if primary fails
+      if (model === MODEL_CONFIG.PRIMARY_MODEL) {
+        continue;
+      } else {
+        break;
+      }
     }
-
-    const data = await response.json();
-    console.log('Secondary analysis response:', data);
-
-    if (!data.candidates?.[0]?.content?.parts?.[0]?.text) {
-      throw new Error('Malformed API response structure');
-    }
-
-    const responseText = data.candidates[0].content.parts[0].text;
-    console.log('Raw response text:', responseText);
-
-    // Enhanced text cleaning function to properly handle bullet points
-    const cleanedText = responseText
-      .replace(/[#*`]/g, '')  // Remove markdown characters
-      .replace(/\n{3,}/g, '\n\n')  // Normalize multiple line breaks
-      .replace(/(?<![\n])-\s/g, '\n-') // Ensure each bullet point starts on a new line
-      .replace(/([.:])\s*-/g, '$1\n\n-') // Add line break after headings before bullet points
-      .replace(/\n-\s*([^\n]+)(?!\n)/g, '\n- $1\n') // Add line break after each bullet point
-      .replace(/\n{4,}/g, '\n\n\n') // Normalize excessive line breaks
-      .trim();
-
-    // Parse the sections based on numbered headings with improved bullet point handling
-    const sections = cleanedText.split(/\d+\.\s+/).filter(Boolean);
-    
-    // Create a structured response
-    const structuredResponse = {
-      welcome: sections[0]?.trim() || "Welcome section not found",
-      hairStatus: sections[1]?.trim() || "Hair status section not found",
-      growthPhase: sections[2]?.trim() || "Growth phase section not found",
-      careRoutine: sections[3]?.trim() || "Care routine section not found",
-      lifestyleTips: sections[4]?.trim() || "Lifestyle tips section not found",
-      seasonalCare: sections[5]?.trim() || "Seasonal care section not found",
-      treatments: sections[6]?.trim() || "Treatments section not found",
-      progressGoals: sections[7]?.trim() || "Progress goals section not found",
-      emergencyCare: sections[8]?.trim() || "Emergency care section not found",
-      productGuide: sections[9]?.trim() || "Product guide section not found"
-    };
-
-    console.log('Structured response:', structuredResponse);
-    return structuredResponse;
-
-  } catch (error) {
-    console.error('Secondary analysis error:', error);
-    toast.error('Secondary analysis failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
-    throw error;
   }
+
+  // All models failed
+  console.error('❌ All secondary analysis attempts failed');
+  const errorType = determineErrorType(lastError);
+  const errorMessage = getErrorMessage(errorType, lastError);
+  
+  toast.error(`Secondary analysis failed: ${errorMessage}`);
+  throw new AnalysisError(errorType, errorMessage, lastError);
 };

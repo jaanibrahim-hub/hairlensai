@@ -361,9 +361,11 @@ const transformApiResponse = (apiResponse: any): AnalysisResult => {
 };
 interface AnalysisResultsProps {
   apiKey: string | null;
+  onAnalysisComplete?: (analysis: any) => void;
 }
 const AnalysisResults = ({
-  apiKey
+  apiKey,
+  onAnalysisComplete
 }: AnalysisResultsProps) => {
   const [analysisData, setAnalysisData] = useState<AnalysisResult>({
     metrics: defaultMetrics,
@@ -410,6 +412,30 @@ const AnalysisResults = ({
         const transformedData = transformApiResponse(event.detail);
         setAnalysisData(transformedData);
         setHasResults(true);
+        
+        // Call the onAnalysisComplete callback with the analysis data
+        if (onAnalysisComplete) {
+          onAnalysisComplete(event.detail);
+        }
+        
+        // Automatically save to progress tracking
+        try {
+          const { progressTracker } = require('@/utils/progressTracking');
+          progressTracker.saveSnapshot({
+            imageUrl: '', // Would need to store the actual image URL
+            analysisData: event.detail,
+            userNotes: `Analysis completed with ${event.detail._modelUsed || 'AI model'}`,
+            weather: {
+              humidity: 50,
+              temperature: 20,
+              season: getCurrentSeason(),
+              uvIndex: 3
+            }
+          });
+          console.log('📊 Analysis saved to progress tracking');
+        } catch (error) {
+          console.warn('Failed to save to progress tracking:', error);
+        }
       }
     };
     window.addEventListener('hairAnalysisComplete', handleAnalysisComplete as EventListener);
@@ -417,6 +443,14 @@ const AnalysisResults = ({
       window.removeEventListener('hairAnalysisComplete', handleAnalysisComplete as EventListener);
     };
   }, []);
+
+  const getCurrentSeason = (): 'spring' | 'summer' | 'fall' | 'winter' => {
+    const month = new Date().getMonth();
+    if (month >= 2 && month <= 4) return 'spring';
+    if (month >= 5 && month <= 7) return 'summer';
+    if (month >= 8 && month <= 10) return 'fall';
+    return 'winter';
+  };
   const handleAIDoctorClick = async () => {
     if (!apiKey) {
       toast({
