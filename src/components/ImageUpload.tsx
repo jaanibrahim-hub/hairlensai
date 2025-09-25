@@ -43,6 +43,50 @@ const ImageUpload = () => {
   const [currentImage, setCurrentImage] = useState<string | null>(null);
   const [isProcessingQuality, setIsProcessingQuality] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Force file input trigger function
+  const triggerFileInput = () => {
+    console.log('triggerFileInput called');
+    
+    // Method 1: Try via ref
+    if (fileInputRef.current) {
+      console.log('Clicking via ref');
+      fileInputRef.current.click();
+      return;
+    }
+    
+    // Method 2: Try via document ID
+    const input = document.getElementById('imageInput') as HTMLInputElement;
+    if (input) {
+      console.log('Clicking via document.getElementById');
+      input.click();
+      return;
+    }
+    
+    // Method 3: Try via querySelector
+    const inputQuery = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (inputQuery) {
+      console.log('Clicking via querySelector');
+      inputQuery.click();
+      return;
+    }
+    
+    // Method 4: Create new file input dynamically as backup
+    console.warn('Creating new file input dynamically');
+    const newInput = document.createElement('input');
+    newInput.type = 'file';
+    newInput.accept = '.png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp';
+    newInput.style.display = 'none';
+    newInput.onchange = (e) => {
+      const target = e.target as HTMLInputElement;
+      if (target.files && target.files[0]) {
+        handleImageUpload({ target: { files: target.files } } as any);
+      }
+      document.body.removeChild(newInput);
+    };
+    document.body.appendChild(newInput);
+    newInput.click();
+  };
 
   const validateImage = async (file: File): Promise<boolean> => {
     console.log('Validating image:', file.name, file.size, file.type);
@@ -281,9 +325,18 @@ const ImageUpload = () => {
         </div>
       </div>
       
-      <div className="border-2 border-dashed border-white/30 rounded-xl p-6 sm:p-8 lg:p-12 text-center hover:border-purple-400 transition-all duration-300 hover:bg-white/5 relative overflow-hidden">
+      <div 
+        className="border-2 border-dashed border-white/30 rounded-xl p-6 sm:p-8 lg:p-12 text-center hover:border-purple-400 transition-all duration-300 hover:bg-white/5 relative overflow-hidden cursor-pointer"
+        onClick={(e) => {
+          // Only trigger if clicked on the container itself, not on buttons
+          if (e.target === e.currentTarget) {
+            console.log('Upload area clicked');
+            triggerFileInput();
+          }
+        }}
+      >
         {/* Animated background effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 animate-shimmer" />
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 animate-shimmer pointer-events-none" style={{zIndex: -1}} />
         
         <div className="mb-6 relative z-10">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0">
@@ -307,8 +360,9 @@ const ImageUpload = () => {
               type="file" 
               className="hidden" 
               id="imageInput" 
-              accept=".png,.jpg,.jpeg,.webp"
+              accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp"
               onChange={handleImageUpload}
+              style={{ position: 'absolute', top: -9999, left: -9999, opacity: 0, pointerEvents: 'none' }}
             />
             <div className="relative mb-4">
               <div className="w-16 h-16 mx-auto bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center animate-pulse-glow">
@@ -352,17 +406,15 @@ const ImageUpload = () => {
             {!currentImage ? (
               <div className="space-y-4">
                 <Button 
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg"
-                  onClick={() => {
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg relative z-20"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     console.log('Main upload button clicked');
-                    console.log('fileInputRef.current:', fileInputRef.current);
-                    if (fileInputRef.current) {
-                      fileInputRef.current.click();
-                    } else {
-                      console.error('fileInputRef.current is null');
-                    }
+                    triggerFileInput();
                   }}
                   disabled={isProcessingQuality}
+                  type="button"
                 >
                   {isProcessingQuality ? (
                     <div className="flex items-center gap-2">
@@ -381,7 +433,12 @@ const ImageUpload = () => {
                 <div className="text-center">
                   <label 
                     htmlFor="imageInput" 
-                    className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg cursor-pointer transition-colors"
+                    className="inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg cursor-pointer transition-colors relative z-20"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      console.log('Label clicked');
+                      triggerFileInput();
+                    }}
                   >
                     Alternative: Click here to upload
                   </label>
