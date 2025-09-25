@@ -7,6 +7,7 @@ import { analyzeImageQuality, getQualityStatusColor, getQualityStatusText, Image
 import { toast } from "sonner";
 import PremiumAccessModal from "./PremiumAccessModal";
 import LivePulse from "./LivePulse";
+import AIAnalysisModal from "./AIAnalysisModal";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -701,6 +702,12 @@ const ImageUpload = () => {
           <p>🚀 Enhanced with advanced neural networks trained on 100,000+ hair analysis images for clinical-grade analysis</p>
         </div>
       </div>
+
+      {/* AI Analysis Loading Modal */}
+      <AIAnalysisModal 
+        isOpen={isAnalyzing} 
+        onClose={() => setIsAnalyzing(false)} 
+      />
     </div>
   );
 };
