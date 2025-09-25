@@ -1,0 +1,108 @@
+name: 🚀 Deploy to Cloudflare
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  deploy-backend:
+    name: 🔧 Deploy Backend (Workers + D1 + R2)
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 📦 Install backend dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: 🚀 Deploy backend to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: backend
+          command: deploy
+
+      - name: 🗄️ Run database migrations
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: backend
+          command: d1 migrations apply hair-analysis-db --env production
+
+  deploy-frontend:
+    name: 🌐 Deploy Frontend (Pages)
+    runs-on: ubuntu-latest
+    needs: deploy-backend
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: 📦 Install frontend dependencies
+        run: npm ci
+
+      - name: 🔧 Build frontend
+        run: npm run build:production
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_AI_ANALYSIS_API_KEY: ${{ secrets.VITE_AI_ANALYSIS_API_KEY }}
+          VITE_IMAGE_UPLOAD_API_KEY: ${{ secrets.VITE_IMAGE_UPLOAD_API_KEY }}
+          VITE_APP_ENV: production
+          VITE_DEBUG_MODE: false
+
+      - name: 🚀 Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy dist --project-name hair-analysis-ai --compatibility-date=2024-09-25
+
+  test-deployment:
+    name: 🧪 Test Deployment
+    runs-on: ubuntu-latest
+    needs: [deploy-backend, deploy-frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: 🔍 Test backend health
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.BACKEND_URL }})
+          if [ $response != "200" ]; then
+            echo "❌ Backend health check failed with status: $response"
+            exit 1
+          fi
+          echo "✅ Backend health check passed"
+
+      - name: 🔍 Test frontend accessibility
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" ${{ secrets.FRONTEND_URL }})
+          if [ $response != "200" ]; then
+            echo "❌ Frontend accessibility check failed with status: $response"
+            exit 1
+          fi
+          echo "✅ Frontend accessibility check passed"
+
+      - name: 📊 Deployment Summary
+        run: |
+          echo "## 🎉 Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Backend API deployed and healthy" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Frontend application deployed and accessible" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Database migrations applied" >> $GITHUB_STEP_SUMMARY
+          echo "- 🌐 Frontend URL: ${{ secrets.FRONTEND_URL }}" >> $GITHUB_STEP_SUMMARY
+          echo "- 🔧 Backend API: ${{ secrets.BACKEND_URL }}" >> $GITHUB_STEP_SUMMARY
