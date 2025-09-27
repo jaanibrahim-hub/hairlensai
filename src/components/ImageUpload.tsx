@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { analyzeImageQuality, getQualityStatusColor, getQualityStatusText, ImageAnalysisResult } from "@/utils/imageQuality";
+import { analyzeHairImage } from "@/utils/geminiApi";
 import { toast } from "sonner";
 import { imageService } from "@/services/imageService";
 import { analysisService } from "@/services/analysisService";
@@ -382,13 +383,13 @@ const ImageUpload = () => {
   };
 
   const handleAnalyzeImage = async () => {
-    if (!uploadedImageData) {
-      toast.error("No image uploaded for analysis");
+    const file = fileInputRef.current?.files?.[0];
+
+    if (!uploadedImageData && !file && !imageQuality?.processedImage && !currentImage) {
+      toast.error("Please upload an image first");
       return;
     }
 
-    const file = fileInputRef.current?.files?.[0];
-    
     try {
       setIsAnalyzing(true);
       setUploadProgress(0);
@@ -405,8 +406,8 @@ const ImageUpload = () => {
         });
       }, 800);
 
-      // Use enhanced image if available
-      const imageToAnalyze = imageQuality.processedImage || URL.createObjectURL(file);
+      // Use enhanced image if available or fall back to current preview/file
+      const imageToAnalyze = imageQuality?.processedImage || (file ? URL.createObjectURL(file) : (currentImage as string));
       
       // Convert to base64
       const canvas = document.createElement('canvas');
@@ -418,35 +419,45 @@ const ImageUpload = () => {
         canvas.height = img.height;
         ctx?.drawImage(img, 0, 0);
         
-        const base64String = canvas.toDataURL().split(',')[1];
+        const dataUrl = canvas.toDataURL('image/jpeg');
+        const base64String = dataUrl.split(',')[1];
         
         try {
-          console.log('🚀 Starting backend AI analysis');
-          
-          // Start analysis using the backend service
-          const analysisResponse = await analysisService.analyzeImage({
-            imageId: uploadedImageData.id,
-            userId: sessionToken || undefined,
-            analysisType: 'comprehensive'
-          });
-          
-          if (analysisResponse.success && analysisResponse.data) {
-            console.log('✅ Backend analysis completed:', analysisResponse.data);
+          if (uploadedImageData) {
+            console.log('🚀 Starting backend AI analysis');
             
-            // Process the analysis data for frontend components
-            const processedResults = analysisService.formatForTreatmentTabs(analysisResponse.data);
+            // Start analysis using the backend service
+            const analysisResponse = await analysisService.analyzeImage({
+              imageId: uploadedImageData.id,
+              userId: sessionToken || undefined,
+              analysisType: 'comprehensive'
+            });
             
-            // Add quality metadata to results
-            processedResults._imageQuality = imageQuality?.quality;
-            processedResults._enhancementApplied = imageQuality?.enhancementApplied;
-            processedResults._analysisId = analysisResponse.data.id;
-            processedResults._imageId = uploadedImageData.id;
-            
-            window.dispatchEvent(new CustomEvent('hairAnalysisComplete', { detail: processedResults }));
-            setUploadProgress(100);
-            toast.success("🎉 Advanced AI analysis complete!");
+            if (analysisResponse.success && analysisResponse.data) {
+              console.log('✅ Backend analysis completed:', analysisResponse.data);
+              
+              // Process the analysis data for frontend components
+              const processedResults = analysisService.formatForTreatmentTabs(analysisResponse.data);
+              
+              // Add quality metadata to results
+              processedResults._imageQuality = imageQuality?.quality;
+              processedResults._enhancementApplied = imageQuality?.enhancementApplied;
+              processedResults._analysisId = analysisResponse.data.id;
+              processedResults._imageId = uploadedImageData.id;
+              
+              window.dispatchEvent(new CustomEvent('hairAnalysisComplete', { detail: processedResults }));
+              setUploadProgress(100);
+              toast.success("🎉 Advanced AI analysis complete!");
+            } else {
+              throw new Error(analysisResponse.error || 'Analysis failed');
+            }
           } else {
-            throw new Error(analysisResponse.error || 'Analysis failed');
+            console.warn('⚠️ No backend image ID available, using direct AI analysis fallback');
+            // Direct AI analysis fallback using Gemini
+            const aiResult = await analyzeHairImage(dataUrl);
+            window.dispatchEvent(new CustomEvent('hairAnalysisComplete', { detail: aiResult }));
+            setUploadProgress(100);
+            toast.success("🎉 AI analysis complete!");
           }
           
           // Clear the image after successful analysis
@@ -465,8 +476,15 @@ const ImageUpload = () => {
           setUploadProgress(0);
         }
       };
+
+      img.onerror = () => {
+        clearInterval(progressInterval);
+        setIsAnalyzing(false);
+        setUploadProgress(0);
+        toast.error('Failed to load image for analysis');
+      };
       
-      img.src = imageToAnalyze;
+      img.src = imageToAnalyze as string;
       
     } catch (error) {
       console.error('Analysis error:', error);
