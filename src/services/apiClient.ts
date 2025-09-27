@@ -5,7 +5,15 @@ class ApiClient {
   private sessionToken: string | null = null;
 
   constructor() {
-    this.baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787';
+    // Prefer explicit base URL; otherwise use relative paths in browser to hit Cloudflare Pages Functions
+    const envBase = import.meta.env.VITE_API_BASE_URL;
+    if (envBase && envBase.trim().length > 0) {
+      this.baseUrl = envBase;
+    } else if (typeof window !== 'undefined') {
+      this.baseUrl = '';
+    } else {
+      this.baseUrl = 'http://localhost:8787';
+    }
   }
 
   // Session Management

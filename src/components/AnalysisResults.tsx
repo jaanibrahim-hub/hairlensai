@@ -746,7 +746,7 @@ const AnalysisResults = ({
         title: "Analysis Started",
         description: "Processing your hair analysis data..."
       });
-      const secondaryAnalysis = await performSecondaryAnalysis(analysisData, API_KEYS[0]);
+      const secondaryAnalysis = await performSecondaryAnalysis(analysisData);
       setGeminiAnalysis(secondaryAnalysis);
       toast({
         title: "Analysis Complete",

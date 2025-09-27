@@ -16,6 +16,8 @@ HairLensAI is a cutting-edge platform that leverages artificial intelligence to 
 
 ## 🛠️ Technical Stack
 
+Note: Do not commit API keys. In deployment, all Gemini and analysis calls are proxied through Cloudflare (Workers/Pages Functions) so secrets remain server-side.
+
 - **Frontend**: React, TypeScript, Vite
 - **Styling**: Tailwind CSS, shadcn/ui
 - **AI Integration**: Google Gemini API

@@ -1,19 +1,9 @@
 import { toast } from "sonner";
 
-// Enhanced API key management with fallback support
-export const API_KEYS = [
-  'AIzaSyCbiokMrXsfZyXHi_OFwFwM5bG9QXazCPA',
-  'AIzaSyBrUoI6e9BCAarqbXQf3NfTe3wyZ_4O-Mo',
-  'AIzaSyDP-5zEsfl0SkNAdfB2Hx70MOgC3j6QvHk',
-  'AIzaSyBZJ7jynPsUbw8310LtVgx9dhB_sQK6hx4',
-  'AIzaSyC6G-t916odkj3tkx4lO0S9FMK3NhwpuUo',
-  'AIzaSyA3DkGlAi-vRDUq0af-zFywV9K6e8TwFG4',
-  'AIzaSyAaL_-PTwt5TDjt5QnNQ31kZWCapKJRrmU',
-  'AIzaSyCKmqEfpww0HcbgBKjVCOQwZIONmsWZHGQ',
-  'AIzaSyBcyEA5uAB0RXlLy1LKvREzlymz-DVk9SI'
-];
+// Client no longer stores API keys. All Gemini calls go through Cloudflare Pages Functions.
+export const API_KEYS: string[] = [];
 
-// Model configuration for advanced AI analysis
+// Model configuration for reference (server uses these)
 const MODEL_CONFIG = {
   PRIMARY_MODEL: 'gemini-2.5-flash',
   FALLBACK_MODEL: 'gemini-1.5-flash',
@@ -263,6 +253,7 @@ CRITICAL ANALYSIS GUIDELINES:
 
 Ensure all assessments are based on visible evidence with appropriate confidence levels and scientific backing.`;
 
+// Frontend calls serverless function to keep API keys hidden
 export const analyzeHairImage = async (imageBase64: string): Promise<any> => {
   if (!validateImage(imageBase64)) {
     throw new AnalysisError(
@@ -271,78 +262,23 @@ export const analyzeHairImage = async (imageBase64: string): Promise<any> => {
     );
   }
 
-  let lastError: unknown;
-  
-  // First try with Gemini 2.5 Flash
-  for (let attempt = 0; attempt < API_KEYS.length; attempt++) {
-    const apiKey = API_KEYS[attempt];
-    
-    try {
-      console.log(`🚀 Attempting Gemini 2.5 Flash analysis with key ${attempt + 1}/${API_KEYS.length}`);
-      
-      const result = await makeApiCallWithRetry(imageBase64, apiKey, MODEL_CONFIG.PRIMARY_MODEL);
-      
-      if (result) {
-        console.log('✅ Analysis successful with Gemini 2.5 Flash:', {
-          model: MODEL_CONFIG.PRIMARY_MODEL,
-          keyIndex: attempt + 1,
-          confidenceScore: result.confidenceScore || 'N/A'
-        });
-        
-        // Add model version to result for tracking
-        result._modelUsed = MODEL_CONFIG.PRIMARY_MODEL;
-        result._analysisTimestamp = new Date().toISOString();
-        
-        return result;
-      }
-    } catch (error) {
-      lastError = error;
-      console.warn(`❌ Key ${attempt + 1} failed with Gemini 2.5 Flash:`, error);
-      
-      // If it's a quota error, try fallback model immediately
-      if (isQuotaError(error)) {
-        console.log('⚠️ Quota exceeded, trying fallback model...');
-        break;
-      }
-      
-      continue;
+  try {
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageBase64 })
+    });
+    if (!res.ok) {
+      const msg = await res.text().catch(() => '');
+      throw new Error(`Analyze API failed: ${res.status} ${res.statusText} ${msg}`);
     }
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    const errorType = determineErrorType(error);
+    const errorMessage = getErrorMessage(errorType, error);
+    throw new AnalysisError(errorType, errorMessage, error);
   }
-
-  // Fallback to Gemini 1.5 Flash if 2.5 Flash failed
-  console.log('🔄 Falling back to Gemini 1.5 Flash...');
-  
-  for (let attempt = 0; attempt < API_KEYS.length; attempt++) {
-    const apiKey = API_KEYS[attempt];
-    
-    try {
-      console.log(`🚀 Attempting Gemini 1.5 Flash fallback with key ${attempt + 1}/${API_KEYS.length}`);
-      
-      const result = await makeApiCallWithRetry(imageBase64, apiKey, MODEL_CONFIG.FALLBACK_MODEL);
-      
-      if (result) {
-        console.log('✅ Fallback analysis successful with Gemini 1.5 Flash');
-        result._modelUsed = MODEL_CONFIG.FALLBACK_MODEL;
-        result._analysisTimestamp = new Date().toISOString();
-        
-        toast.info('Using fallback AI model for analysis', {
-          description: 'Primary model unavailable, using alternative for analysis'
-        });
-        
-        return result;
-      }
-    } catch (error) {
-      lastError = error;
-      console.warn(`❌ Fallback key ${attempt + 1} failed:`, error);
-      continue;
-    }
-  }
-
-  // All attempts failed
-  const errorType = determineErrorType(lastError);
-  const errorMessage = getErrorMessage(errorType, lastError);
-  
-  throw new AnalysisError(errorType, errorMessage, lastError);
 };
 
 const validateImage = (imageBase64: string): boolean => {
@@ -453,6 +389,7 @@ const getErrorMessage = (errorType: AnalysisErrorType, originalError: unknown): 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Enhanced API call with retry logic and model fallback
+// The client no longer calls Gemini directly. Kept for reference but unused.
 async function makeApiCallWithRetry(
   imageBase64: string, 
   apiKey: string, 
@@ -828,7 +765,7 @@ Essential Products:
 Clinical Disclaimer:
 This analysis is based on advanced AI technology and extensive clinical data. While comprehensive, it should not replace professional medical advice. We recommend scheduling a consultation with a certified trichologist or dermatologist for personalized treatment plans.`;
 
-export const performSecondaryAnalysis = async (analysisData: any, apiKey: string) => {
+export const performSecondaryAnalysis = async (analysisData: any) => {
   console.log('🚀 Starting enhanced secondary analysis with Gemini 2.5 Flash');
   
   if (!analysisData || !analysisData.rawMetrics) {
@@ -918,6 +855,24 @@ export const performSecondaryAnalysis = async (analysisData: any, apiKey: string
   let lastError: unknown;
   
   // Try primary model first, then fallback
+  // Offload to serverless function to keep keys secret
+  try {
+    const res = await fetch('/api/secondary', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ analysisData })
+    });
+    if (!res.ok) {
+      const msg = await res.text().catch(() => '');
+      throw new Error(`Secondary API failed: ${res.status} ${res.statusText} ${msg}`);
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    throw new AnalysisError(determineErrorType(error), getErrorMessage(determineErrorType(error), error), error);
+  }
+
+  // Legacy client-side path (not used anymore)
   for (const model of [MODEL_CONFIG.PRIMARY_MODEL, MODEL_CONFIG.FALLBACK_MODEL]) {
     try {
       console.log(`🔄 Secondary analysis attempt with ${model}`);
