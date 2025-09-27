@@ -263,7 +263,12 @@ export const analyzeHairImage = async (imageBase64: string): Promise<any> => {
   }
 
   try {
-    const res = await fetch('/api/analyze', {
+    // Netlify Functions path fallback: /.netlify/functions/analyze
+    const endpoint = typeof window !== 'undefined' && window.location?.host?.includes('netlify')
+      ? '/.netlify/functions/analyze'
+      : '/api/analyze';
+
+    const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ imageBase64 })
@@ -857,7 +862,11 @@ export const performSecondaryAnalysis = async (analysisData: any) => {
   // Try primary model first, then fallback
   // Offload to serverless function to keep keys secret
   try {
-    const res = await fetch('/api/secondary', {
+    const endpoint = typeof window !== 'undefined' && window.location?.host?.includes('netlify')
+      ? '/.netlify/functions/secondary'
+      : '/api/secondary';
+
+    const res = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ analysisData })
