@@ -20,6 +20,9 @@ command = "npm run build"
 cwd = ""
 watch_dir = "src"
 
+# Cloudflare Pages: tell Wrangler where the built assets are
+pages_build_output_dir = "dist"
+
 # Pages configuration for static site
 [[env.production.services]]
 binding = "IMAGES_DB"
